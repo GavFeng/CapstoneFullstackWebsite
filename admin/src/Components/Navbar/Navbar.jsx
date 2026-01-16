@@ -5,9 +5,12 @@ import './Navbar.css'
 const Navbar = () => {
   return (
     <div className='navbar'>
+      <div className='nav-left'>
         <img src={logo} alt="" className='nav-logo'/>
-        <p>Squid Jigs</p>
-        <img src={temp_user} alt="user" className='nav-profile'/>
+        <p className='nav-name'>Squid Jigs</p>
+      </div>
+      <p className='nav-center'>Admin Panel</p>
+      <img src={temp_user} alt="user" className='nav-profile'/>
     </div>
   )
 }

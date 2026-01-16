@@ -8,14 +8,24 @@
     margin-bottom: 2px;
     background: white;
 }
-
-.navbar p {
+.nav-left {
+    display: flex;
+    align-items: center;
     font-size: 24px;
     font-weight: 700;
-    color: black;
+    gap: 18px;
 }
 .nav-logo {
     width: 50px;
+}
+.nav-name {
+    display: flex
+}
+
+.nav-center {
+    font-size: 24px;
+    font-weight: 700;
+    color: black;
 }
 .nav-profile {
     width: 75px;
