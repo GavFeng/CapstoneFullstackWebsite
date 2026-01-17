@@ -12,7 +12,7 @@ const imageName = "pink_14.jpg";
 const imagePath = path.join(__dirname, "test_images", imageName);
 
 const form = new FormData();
-form.append("product", fs.createReadStream(imagePath)); 
+form.append("image", fs.createReadStream(imagePath)); 
 
 axios
   .post(SERVER_URL_UPLOAD, form, { headers: form.getHeaders() })

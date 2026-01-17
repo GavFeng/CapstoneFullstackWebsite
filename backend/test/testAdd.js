@@ -6,7 +6,7 @@ const axios = require("axios");
 
 const PORT = process.env.PORT || 4000;
 const SERVER_UPLOAD = `http://localhost:${PORT}/api/uploadImage`;
-const SERVER_ADD = `http://localhost:${PORT}/api/products`;
+const SERVER_ADD = `http://localhost:${PORT}/api/jigs`;
 
 const dragon = "6968258a381988a99d57c675";
 const cyber = "69682594381988a99d57c677";
@@ -28,21 +28,18 @@ const imagesToUpload = {
   pink: "pink_38.jpg",
 };
 
-// Function to upload a single image
 async function uploadImage(imageName) {
   const imagePath = path.join(__dirname, "test_images", imageName);
   const form = new FormData();
-  form.append("product", fs.createReadStream(imagePath));
+  form.append("image", fs.createReadStream(imagePath));
 
   const res = await axios.post(SERVER_UPLOAD, form, {
     headers: form.getHeaders(),
   });
 
-  // Return full URL
   return `http://localhost:${PORT}${res.data.image_url}`;
 }
 
-// Upload all images first
 (async () => {
   try {
     const uploadedImages = {};
@@ -52,11 +49,10 @@ async function uploadImage(imageName) {
       console.log(`Uploaded ${color}: ${uploadedImages[color]}`);
     }
 
-    // Create product using uploaded image URLs
-    const testProduct = {
-      name: "Test Squid Jig 5",
+    const testJig = {
+      name: "Test Squid Jig 6",
       description: "A Test Description giving information about the Jig",
-      price: 5,
+      price: 6,
       category: CategoryID,
       weight: WeightID,
       colors: {
@@ -66,9 +62,9 @@ async function uploadImage(imageName) {
       },
     };
 
-    const productRes = await axios.post(SERVER_ADD, testProduct);
-    console.log("Product created:");
-    console.log(productRes.data);
+    const jigRes = await axios.post(SERVER_ADD, testJig);
+    console.log("Jig created:");
+    console.log(jigRes.data);
   } catch (err) {
     if (err.response) {
       console.error("Error:", err.response.data);

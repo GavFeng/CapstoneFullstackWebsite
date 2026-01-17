@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const uploadImageRoutes = require("./routes/uploadImageRoutes");
-const productRoutes = require("./routes/productRoutes");
+const jigRoutes = require("./routes/jigRoutes");
 const path = require("path");
 
 const app = express();
@@ -21,7 +21,7 @@ app.get("/", (req, res) =>{
 
 app.use("/images", express.static(path.join(__dirname, "uploads")));
 app.use("/api/uploadImage", uploadImageRoutes);
-app.use("/api/products", productRoutes);
+app.use("/api/jigs", jigRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

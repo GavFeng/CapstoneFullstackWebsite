@@ -1,22 +1,22 @@
-const Product = require("../models/Product");
+const Jig = require("../models/Jig");
 const Category = require("../models/Category");
 const Weight = require("../models/Weight");
 
-exports.createProducts = async (req, res) => {
+exports.createJigs = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
-    res.status(201).json(product);
+    const jig = await Jig.create(req.body);
+    res.status(201).json(jig);
   } catch (err) {
     res.status(400).json({message: err.message});
   }
 };
 
-exports.getProducts = async (req, res) => {
+exports.getJigs = async (req, res) => {
   try {
-    const products = await Product.find()
+    const jigs = await Jig.find()
       .populate("category")
       .populate("weight");
-    res.json(products);
+    res.json(jigs);
   } catch (err) {
     res.status(500).json({message: err.message});
   }

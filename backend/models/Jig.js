@@ -13,7 +13,7 @@ const colorSchema = new mongoose.Schema({
 });
 
 // Schema for Jigs
-const productSchema = new mongoose.Schema({
+const jigSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -49,4 +49,4 @@ const productSchema = new mongoose.Schema({
   timestamps: true 
 });
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model("Jig", jigSchema);
