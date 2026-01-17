@@ -4,9 +4,11 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const uploadImageRoutes = require("./routes/uploadImageRoutes");
 const productRoutes = require("./routes/productRoutes");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
 
 app.use(express.json());
 app.use(cors());

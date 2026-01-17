@@ -13,7 +13,6 @@ const Dashboard = () => {
         <ul>
             <li></li>
         </ul>
-
       </div>
       <div className='dashb-right'>
         <div className='dashb-stock'>
