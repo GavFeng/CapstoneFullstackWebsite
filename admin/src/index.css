@@ -3,6 +3,7 @@ body {
   min-height: 100vh;
   font-family: system-ui, sans-serif;
   background-color: whitesmoke;
+  overflow: hidden;
 }
 
 :root {

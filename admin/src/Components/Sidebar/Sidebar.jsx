@@ -3,8 +3,10 @@ import './Sidebar.css'
 import { NavLink, Link } from 'react-router-dom'
 const Sidebar = () => {
   const navLinks = [
+    {label: 'Dashboard', to: '/home'},
     {label: 'Add', to: '/addjig'},
     {label: 'View All', to: '/jig'},
+    {label: 'Analytics', to: '/analytic'},
   ]
 
   return (

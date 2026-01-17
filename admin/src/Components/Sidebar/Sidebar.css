@@ -48,8 +48,8 @@
   right: 0;
   bottom: -0.5rem;
   height: 4px;
-  background-color: #0d9488; /* teal-600 */
-  border-radius: 9999px;
+  background-color: #0d9488;
+  border-radius: 50px;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
