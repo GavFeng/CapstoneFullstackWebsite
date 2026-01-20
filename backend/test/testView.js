@@ -16,13 +16,16 @@ const SERVER_URL_ViEW = `http://localhost:${PORT}/api/jigs`;
       console.log(`Category: ${product.category?.name || product.category}`);
       console.log(`Weight: ${product.weight?.label || product.weight}`);
       console.log("Colors:");
-      if (product.colors) {
-        for (const [color, details] of Object.entries(product.colors)) {
-          console.log(`  - ${color}`);
-          console.log(`    Stock: ${details.stock}`);
-          console.log(`    Images:`);
-          details.image.forEach((img) => console.log(`${img}`));
-        }
+      if (product.colors && product.colors.length > 0) {
+        product.colors.forEach((c) => {
+          const colorName = c.color?.name || c.color;
+          console.log(`  - ${colorName}`);
+          console.log(`    Stock: ${c.stock}`);
+          console.log("    Images:");
+          c.image.forEach((img) => console.log(`      ${img}`));
+        });
+      } else {
+        console.log("  No colors available");
       }
     });
   } catch (err) {

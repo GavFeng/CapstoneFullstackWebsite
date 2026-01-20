@@ -1,10 +1,16 @@
 const mongoose = require("mongoose");
 
 // Different Colors for Each Jig (Quantity + Image)
-const colorSchema = new mongoose.Schema({
+const jigColorSchema = new mongoose.Schema({
+  color: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Color",
+    required: true,
+  },
   image: [{
     type: String,
     required: true,
+    min: 0,
   }],
   stock:{
     type: Number,
@@ -41,10 +47,7 @@ const jigSchema = new mongoose.Schema({
     ref: "Weight",
     required: true,
   },
-  colors: {
-    type: Map,
-    of: colorSchema,
-  },
+  colors: [jigColorSchema],
 }, { 
   timestamps: true 
 });

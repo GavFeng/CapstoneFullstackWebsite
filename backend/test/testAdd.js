@@ -8,19 +8,32 @@ const PORT = process.env.PORT || 4000;
 const SERVER_UPLOAD = `http://localhost:${PORT}/api/uploadImage`;
 const SERVER_ADD = `http://localhost:${PORT}/api/jigs`;
 
-const dragon = "6968258a381988a99d57c675";
-const cyber = "69682594381988a99d57c677";
 
-const w116 = "696825dd381988a99d57c67a";
-const w18 = "69682603381988a99d57c67c";
-const w14 = "69682610381988a99d57c67e";
-const w38 = "69682651381988a99d57c680";
-const w12 = "69682666381988a99d57c682";
-const w34 = "69682671381988a99d57c684";
-const w1 = "6968267d381988a99d57c686";
+const Category = {
+  dragon: "6968258a381988a99d57c675",
+  cyber: "69682594381988a99d57c677"
 
-const CategoryID = cyber;
-const WeightID = w38;
+}
+
+const Weights = {
+  w116: "696825dd381988a99d57c67a",
+  w18: "69682603381988a99d57c67c",
+  w14: "69682610381988a99d57c67e",
+  w38: "69682651381988a99d57c680",
+  w12: "69682666381988a99d57c682",
+  w34: "69682671381988a99d57c684",
+  w1: "6968267d381988a99d57c686"
+};
+
+
+const CategoryID = Category.dragon;
+const WeightID = Weights.w38;
+
+const Colors = {
+  blue: "696ff0d4a27ae04f7dee6245",
+  green: "696ff0eda27ae04f7dee6247",
+  pink: "696ff10fa27ae04f7dee624b",
+};
 
 const imagesToUpload = {
   blue: "blue_38.jpg",
@@ -52,14 +65,14 @@ async function uploadImage(imageName) {
     const testJig = {
       name: "Test Squid Jig 6",
       description: "A Test Description giving information about the Jig",
-      price: 6,
+      price: 5,
       category: CategoryID,
       weight: WeightID,
-      colors: {
-        blue: { image: [uploadedImages.blue], stock: 5 },
-        green: { image: [uploadedImages.green], stock: 5 },
-        pink: { image: [uploadedImages.pink], stock: 5 },
-      },
+      colors: [
+        { color: Colors.blue, image: [uploadedImages.blue], stock: 5 },
+        { color: Colors.green, image: [uploadedImages.green], stock: 5 },
+        { color: Colors.pink, image: [uploadedImages.pink], stock: 5 },
+      ],
     };
 
     const jigRes = await axios.post(SERVER_ADD, testJig);
