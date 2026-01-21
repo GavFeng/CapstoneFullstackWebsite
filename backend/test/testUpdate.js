@@ -5,9 +5,7 @@ const FormData = require("form-data");
 const axios = require("axios");
 
 const PORT = process.env.PORT || 4000;
-const SERVER_UPLOAD = `http://localhost:${PORT}/api/uploadImage`;
-const SERVER_ADD = `http://localhost:${PORT}/api/jigs`;
-
+const JIG_ID = "6970660e056ecf30b240fab9";
 
 const Category = {
   dragon: "6968258a381988a99d57c675",
@@ -25,10 +23,6 @@ const Weights = {
   w1: "6968267d381988a99d57c686"
 };
 
-
-const CategoryID = Category.dragon;
-const WeightID = Weights.w34;
-
 const Colors = {
   blue: "696ff0d4a27ae04f7dee6245",
   green: "696ff0eda27ae04f7dee6247",
@@ -36,11 +30,15 @@ const Colors = {
   pink: "696ff10fa27ae04f7dee624b",
 };
 
+const CategoryID = Category.dragon;
+const WeightID = Weights.w34;
+
 const imagesToUpload = {
-  blue: "blue_34.jpg",
-  green: "green_34.jpg",
-  pink: "pink_34.jpg",
+  blue: "blue_14.jpg",
+  green: "green_14.jpg",
 };
+const SERVER_UPLOAD = `http://localhost:${PORT}/api/uploadImage`;
+const SERVER_URL_UPDATE = `http://localhost:${PORT}/api/jigs/${JIG_ID}`;
 
 async function uploadImage(imageName) {
   const imagePath = path.join(__dirname, "test_images", imageName);
@@ -51,34 +49,37 @@ async function uploadImage(imageName) {
     headers: form.getHeaders(),
   });
 
+  // Return full URL for jig update
   return `http://localhost:${PORT}${res.data.image_url}`;
 }
 
 (async () => {
   try {
+    // 1️⃣ Upload all images first
     const uploadedImages = {};
-
     for (const [color, filename] of Object.entries(imagesToUpload)) {
       uploadedImages[color] = await uploadImage(filename);
       console.log(`Uploaded ${color}: ${uploadedImages[color]}`);
     }
 
-    const testJig = {
-      name: "Wrong Squid Jig 10",
-      description: "A Test Description giving information about the Jig",
-      price: 5,
+    // 2️⃣ Build the updated jig object
+    const updateJigBody = {
+      name: "Updated Squid Jig",
+      description: "This is a updated description",
+      price: 7,
       category: CategoryID,
       weight: WeightID,
       colors: [
-        { color: Colors.blue, image: [uploadedImages.blue], stock: 5 },
-        { color: Colors.green, image: [uploadedImages.green], stock: 5 },
-        { color: Colors.pink, image: [uploadedImages.pink], stock: 5 },
+        { color: Colors.blue, image: [uploadedImages.blue], stock: 25 },
+        { color: Colors.green, image: [uploadedImages.green], stock: 15 },
       ],
     };
 
-    const jigRes = await axios.post(SERVER_ADD, testJig);
-    console.log("Jig created:");
-    console.log(jigRes.data);
+    // 3️⃣ Send PUT request to fully update the jig
+    const res = await axios.put(SERVER_URL_UPDATE, updateJigBody);
+    console.log("Jig updated:");
+    console.log(res.data);
+
   } catch (err) {
     if (err.response) {
       console.error("Error:", err.response.data);

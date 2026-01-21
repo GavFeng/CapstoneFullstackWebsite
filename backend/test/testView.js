@@ -2,11 +2,11 @@ require("dotenv").config();
 const axios = require("axios");
 
 const PORT = process.env.PORT || 4000;
-const SERVER_URL_ViEW = `http://localhost:${PORT}/api/jigs`;
+const SERVER_URL_VIEW = `http://localhost:${PORT}/api/jigs`;
 
 (async () => {
   try {
-    const res = await axios.get(SERVER_URL_ViEW);
+    const res = await axios.get(SERVER_URL_VIEW);
 
     console.log("Products fetched:", res.data.length);
     res.data.forEach((product, i) => {
