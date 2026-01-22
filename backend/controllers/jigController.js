@@ -3,8 +3,8 @@ const Category = require("../models/Category");
 const Weight = require("../models/Weight");
 const Color = require("../models/Color");
 
-//Adding Jig
-exports.createJigs = async (req, res) => {
+// Adding Jig
+exports.createJig = async (req, res) => {
   try {
     const jig = await Jig.create(req.body);
     res.status(201).json(jig);
@@ -13,7 +13,7 @@ exports.createJigs = async (req, res) => {
   }
 };
 
-//Viewing All Jigs to DB
+// Viewing All Jigs in DB
 exports.getJigs = async (req, res) => {
   try {
     const jigs = await Jig.find()
@@ -26,6 +26,7 @@ exports.getJigs = async (req, res) => {
   }
 };
 
+// Viewing a Jig in DB
 exports.getJigById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -34,22 +35,23 @@ exports.getJigById = async (req, res) => {
       .populate("weight")
       .populate("colors.color", "name slug");
     
-    if (!jig) return res.status(404).json({message: "Product Not Found"});
+    if (!jig) return res.status(404).json({message: "Jig Not Found"});
     res.status(200).json(jig);
   } catch (err) {
     res.status(500).json({message: err.message});
   }
 };
 
+// Deleting a Jig in DB
 exports.deleteJig = async (req, res) => {
   try {
     const { id } = req.params;
     const jig = await Jig.findByIdAndDelete(id);
 
-    if (!jig) return res.status(404).json({message: "Product Not Found"});
+    if (!jig) return res.status(404).json({message: "Jig Not Found"});
 
     res.status(200).json({
-      message: "Successfully deleted Product",
+      message: "Successfully deleted Jig",
       id: jig._id,
     });
     
@@ -58,6 +60,7 @@ exports.deleteJig = async (req, res) => {
   }
 };
 
+// Deleting a color of a Jig in DB
 exports.deleteColor = async (req, res) => {
   try {
     const { id, colorId } = req.params;
@@ -86,6 +89,7 @@ exports.deleteColor = async (req, res) => {
   }
 };
 
+// Patching a Jig in DB
 exports.patchJig = async (req, res) => {
   try {
     const { id } = req.params;

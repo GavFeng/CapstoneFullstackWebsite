@@ -1,7 +1,7 @@
 const express = require("express");
 
 const {
-  createJigs,
+  createJig,
   getJigs,
   getJigById,
   deleteJig,
@@ -12,7 +12,7 @@ const {
 
 const router = express.Router();
 
-router.post("/", createJigs);
+router.post("/", createJig);
 
 router.get("/", getJigs);
 
