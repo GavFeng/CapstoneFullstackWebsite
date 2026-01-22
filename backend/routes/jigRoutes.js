@@ -6,6 +6,7 @@ const {
   getJigById,
   deleteJig,
   patchJig,
+  deleteColor,
 
 } = require("../controllers/jigController");
 
@@ -18,6 +19,8 @@ router.get("/", getJigs);
 router.get("/:id", getJigById);
 
 router.delete("/:id", deleteJig);
+
+router.delete("/:id/colors/:colorId", deleteColor);
 
 router.patch("/:id", patchJig);
 

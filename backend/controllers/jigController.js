@@ -49,7 +49,7 @@ exports.deleteJig = async (req, res) => {
     if (!jig) return res.status(404).json({message: "Product Not Found"});
 
     res.status(200).json({
-      message: "Sucessfully deleted Product",
+      message: "Successfully deleted Product",
       id: jig._id,
     });
     
@@ -58,7 +58,35 @@ exports.deleteJig = async (req, res) => {
   }
 };
 
-exports.patchJig = async(req, res) => {
+exports.deleteColor = async (req, res) => {
+  try {
+    const { id, colorId } = req.params;
+
+    const jig = await Jig.findById(id);
+    if (!jig) return res.status(404).json({ message: "Jig not found" });
+
+    const initialLength = jig.colors.length;
+
+    jig.colors = jig.colors.filter(c => c.color.toString() !== colorId);
+
+    if (jig.colors.length === initialLength) {
+      return res.status(404).json({ message: "Color not found" });
+    }
+
+    const updatedJig = await jig.save();
+
+    const populatedJig = await Jig.findById(updatedJig._id)
+      .populate("category")
+      .populate("weight")
+      .populate("colors.color", "name slug");
+
+    res.status(200).json(populatedJig);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.patchJig = async (req, res) => {
   try {
     const { id } = req.params;
     const { colors, ...rest } = req.body;
@@ -66,63 +94,41 @@ exports.patchJig = async(req, res) => {
     const allowedFields = ['name', 'description', 'price', 'category', 'weight'];
     const updatedFields = {};
 
-    allowedFields.forEach(field =>{
+    allowedFields.forEach(field => {
       if (rest[field] !== undefined) updatedFields[field] = rest[field];
     });
 
     updatedFields.updateAt = Date.now();
 
-    let updateQuery = { $set: updatedFields };
+    const jig = await Jig.findById(id);
+    if (!jig) return res.status(404).json({ message: "Jig not found" });
 
-    if (colors !== undefined && Array.isArray(colors) && colors.length > 0) {
-      const partialColors = colors.filter(c => c.color && (c.stock !== undefined || c.image !== undefined));
+    Object.assign(jig, updatedFields);
 
-      if (partialColors.length > 0){
-        const arrayFilters = partialColors.map((c, idx) => ({
-          [`c${idx}.color`]: c.color
-        }));
+    if (colors && Array.isArray(colors) && colors.length > 0) {
+      colors.forEach(newColor => {
+        if (!newColor.color) return;
 
-        partialColors.forEach((c, idx) => {
-          if (c.stock !== undefined) updateQuery.$set[`colors.$[c${idx}].stock`] = c.stock;
-          if (c.image !== undefined) updateQuery.$set[`colors.$[c${idx}].image`] = c.image;
-        });
-
-        const updatedJig = await Jig.findByIdAndUpdate(
-          id,
-          updateQuery,
-          {
-            new: true,
-            runValidators: true,
-            arrayFilters
-          }
-        )
-          .populate("category")
-          .populate("weight")
-          .populate("colors.color", "name slug");
-
-        if (!updatedJig) return res.status(404).json({ message: "Jig not found" });
-        return res.status(200).json(updatedJig);
-
-      } else {
-        updateQuery.$set.colors = colors;
-      }
+        const existingColor = jig.colors.find(c => c.color.toString() === newColor.color);
+        if (existingColor) {
+          if (newColor.stock !== undefined) existingColor.stock = newColor.stock;
+          if (newColor.image !== undefined) existingColor.image = newColor.image;
+        } else {
+          jig.colors.push(newColor);
+        }
+      });
     }
-    const updateJig = await Jig.findByIdAndUpdate(
-      id,
-      updateQuery,
-      {
-        new: true,
-        runValidators: true,
-      }
-    )
+
+    const updatedJig = await jig.save();
+
+    const populatedJig = await Jig.findById(updatedJig._id)
       .populate("category")
       .populate("weight")
       .populate("colors.color", "name slug");
-    
-      if (!updateJig) return res.status(404).json({message: "Product Not Found"});
-      res.status(200).json(updateJig);
+
+    res.status(200).json(populatedJig);
 
   } catch (err) {
-    res.status(500).json({message: err.message});
+    res.status(500).json({ message: err.message });
   }
 };

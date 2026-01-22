@@ -75,6 +75,21 @@ const jigTestCase4 = {
   ],
 };
 
+const jigTestCase5 = {
+  name: "Newer Updated Squid Jig",
+  description: "Dragon, weight 14, basic colors + Jig Test Case 5",
+  price: 15,
+  category: Category.dragon,
+  weight: Weights.w14,
+  colors: [
+    { color: Colors.blue, image: ["blue_14.jpg"], stock: 25 },
+    { color: Colors.green, image: ["green_14.jpg"], stock: 5 },
+    { color: Colors.pink, image: ["pink_14.jpg"], stock: 10 },
+    { color: Colors.orange, image: ["orange_14.jpg"], stock: 10 },
+  ],
+};
+
+
 const SERVER_UPLOAD = `http://localhost:${PORT}/api/uploadImage`;
 const SERVER_URL_UPDATE = `http://localhost:${PORT}/api/jigs/${JIG_ID}`;
 
@@ -111,7 +126,7 @@ async function patchJig(jigBody) {
 
 (async () => {
   try {
-    await patchJig(jigTestCase4);
+    await patchJig(jigTestCase5);
   } catch (err) {
     if (err.response) {
       console.error("Error:", err.response.data);
