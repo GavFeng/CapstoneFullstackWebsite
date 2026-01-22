@@ -6,16 +6,21 @@ import AddJig from '../../Components/AddJig/AddJig'
 import ViewJigs from '../../Components/ViewJigs/ViewJigs'
 import Analytic from '../../Components/Analytic/Analytic'
 import { Route, Routes } from 'react-router-dom'
+
+
 const Admin = () => {
   return (
-    <div className='admin'>
-        <Sidebar />
+    <div className="admin">
+      <Sidebar />
+      
+      <main className="content-area">
         <Routes>
-          <Route path='/home' element={<Dashboard/>}></Route>
-          <Route path='/addjig' element={<AddJig/>}></Route>
-          <Route path='/jig' element={<ViewJigs/>}></Route>
-          <Route path='/analytic' element={<Analytic/>}></Route>
+          <Route path="/home"    element={<Dashboard />} />
+          <Route path="/addjig"  element={<AddJig />} />
+          <Route path="/jig"     element={<ViewJigs />} />
+          <Route path="/analytic" element={<Analytic />} />
         </Routes>
+      </main>
     </div>
   )
 }
