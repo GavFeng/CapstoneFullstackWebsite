@@ -5,7 +5,7 @@ const {
   getJigs,
   getJigById,
   deleteJig,
-  updateJig,
+  patchJig,
 
 } = require("../controllers/jigController");
 
@@ -19,7 +19,7 @@ router.get("/:id", getJigById);
 
 router.delete("/:id", deleteJig);
 
-router.put("/:id", updateJig);
+router.patch("/:id", patchJig);
 
 module.exports = router;
 
