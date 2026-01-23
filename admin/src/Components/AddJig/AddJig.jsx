@@ -52,12 +52,23 @@ const AddJig = () => {
   }, []);
 
   const handleChange = (e) => {
+    if (e.target.name === "price") {
+      const val = Math.max(0, e.target.value);
+      setFormData({ ...formData, price: val });
+      return;
+    }
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   // Handle new color input
   const handleNewColorChange = (e) => {
     const { name, value, files } = e.target;
+    if (name === "stock") {
+      const val = Math.max(1, Number(value));
+      setNewColor({ ...newColor, stock: val });
+      return;
+    }
+
     if (name === "images") {
       setNewColor({ ...newColor, images: Array.from(files) });
     } else {
@@ -67,8 +78,22 @@ const AddJig = () => {
 
   // Add new color to formData
   const addColor = () => {
-    if (!newColor.color) return;
+    if (!newColor.color) {
+      setMessage("Please select a color");
+      return;
+    };
 
+
+    
+    if (!newColor.stock || newColor.stock < 1) {
+      setMessage("Stock must be at least 1");
+      return;
+    }
+
+    if (newColor.images.length === 0) {
+      setMessage("Please add at least one image");
+      return;
+    }
     const exists = formData.colors.some(
       c => c.color === newColor.color
     );
@@ -106,7 +131,11 @@ const AddJig = () => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-
+    if (formData.colors.length === 0) {
+      setMessage("Please add at least one color");
+      setLoading(false);
+      return;
+    }
     try {
       const uploadedColors = [];
       for (const c of formData.colors) {
@@ -190,9 +219,15 @@ const AddJig = () => {
           <input
             name="price"
             type="number"
+            min="0"
             step="0.01"
             value={formData.price}
             onChange={handleChange}
+            onKeyDown={(e) => {
+              if (["e", "E", "+", "-"].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
             required
           />
         </label>
@@ -274,16 +309,24 @@ const AddJig = () => {
             onChange={handleNewColorChange}
           >
             <option value="">--Select Color--</option>
-            {colors.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.name}
-              </option>
+            {colors
+              .filter(c => !formData.colors.some(fc => fc.color === c._id))
+              .map(c => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
             ))}
           </select>
           <input
             name="stock"
             type="number"
             min="1"
+            step="1"
+            onKeyDown={(e) => {
+              if (["e", "E", "+", "-", "."].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
             value={newColor.stock}
             onChange={handleNewColorChange}
           />

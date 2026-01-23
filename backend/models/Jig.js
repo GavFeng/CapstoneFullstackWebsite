@@ -10,11 +10,12 @@ const jigColorSchema = new mongoose.Schema({
   image: [{
     type: String,
     required: true,
-    min: 0,
+    minLength: 1,
   }],
   stock:{
     type: Number,
     required: true,
+    min: 0,
   }
 });
 
@@ -47,7 +48,11 @@ const jigSchema = new mongoose.Schema({
     ref: "Weight",
     required: true,
   },
-  colors: [jigColorSchema],
+  colors: {
+    type: [jigColorSchema],
+    requried: true,
+    minLength: 1,
+  },
 }, { 
   timestamps: true 
 });
