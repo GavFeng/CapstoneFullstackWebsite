@@ -117,7 +117,13 @@ const AddJig = () => {
           const res = await axios.post(`${API_URL}/uploadImage`, form, {
             headers: { "Content-Type": "multipart/form-data" },
           });
-          imagesURLs.push(`${API_URL.replace("/api", "")}${res.data.image_url}`);
+          let imageUrl = res.data.image_url;
+
+          if (!imageUrl.startsWith("http")) {
+            imageUrl = `https://${imageUrl.replace(/^\/+/, "")}`;
+          }
+
+          imagesURLs.push(imageUrl);        
         }
         uploadedColors.push({
           color: c.color,

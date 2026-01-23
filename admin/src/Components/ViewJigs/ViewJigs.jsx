@@ -11,6 +11,7 @@ const ViewJigs = () => {
       const fetchJigs = async () => {
         try {
           const res = await axios.get("http://localhost:4000/api/jigs");
+          console.log(res.data);
           setJigs(res.data);
         } catch (err) {
           console.error("Error fetching jigs:", err);
