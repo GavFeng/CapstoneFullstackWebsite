@@ -52,28 +52,38 @@ const AddJig = () => {
   }, []);
 
   const handleChange = (e) => {
-    if (e.target.name === "price") {
-      const val = Math.max(0, e.target.value);
-      setFormData({ ...formData, price: val });
+    const { name, value } = e.target;
+
+    if (name === "price") {
+      // Allow digits + one decimal
+      const cleaned = value
+        .replace(/[^0-9.]/g, "")
+        .replace(/^0+(?!\.)/, "")
+        .replace(/(\..*)\./g, "$1");
+
+      setFormData({ ...formData, price: cleaned });
       return;
     }
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    setFormData({ ...formData, [name]: value });
   };
 
   // Handle new color input
   const handleNewColorChange = (e) => {
     const { name, value, files } = e.target;
+
     if (name === "stock") {
-      const val = Math.max(1, Number(value));
-      setNewColor({ ...newColor, stock: val });
+      const cleaned = value.replace(/\D/g, "").replace(/^0+/, "");
+      setNewColor({ ...newColor, stock: cleaned });
       return;
     }
 
     if (name === "images") {
       setNewColor({ ...newColor, images: Array.from(files) });
-    } else {
-      setNewColor({ ...newColor, [name]: value });
+      return;
     }
+
+    setNewColor({ ...newColor, [name]: value });
   };
 
   // Add new color to formData
@@ -83,8 +93,6 @@ const AddJig = () => {
       return;
     };
 
-
-    
     if (!newColor.stock || newColor.stock < 1) {
       setMessage("Stock must be at least 1");
       return;
@@ -126,16 +134,48 @@ const AddJig = () => {
     }));
   };
 
+  const fail = (msg) => {
+    setMessage(msg);
+    setLoading(false);
+    return false;
+  };
+
+  //Checking if everything is correct
+  const validateJigForm = () => {
+    if (!formData.name.trim()) return fail("Name is required");
+    if (!formData.description.trim()) return fail("Description is required");
+
+    const priceNum = Number(formData.price);
+    if (isNaN(priceNum) || priceNum < 0)
+      return fail("Price must be a valid number");
+
+    if (!formData.category) return fail("Please select a category");
+    if (!formData.weight) return fail("Please select a weight");
+
+    if (formData.colors.length === 0)
+      return fail("Please add at least one color");
+
+    for (const c of formData.colors) {
+      const stockNum = Number(c.stock);
+      if (isNaN(stockNum) || stockNum < 1)
+        return fail("Each color must have stock ≥ 1");
+
+      if (!c.images || c.images.length === 0)
+        return fail("Each color must have at least one image");
+    }
+
+    return true;
+  };
+  
+  
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-    if (formData.colors.length === 0) {
-      setMessage("Please add at least one color");
-      setLoading(false);
-      return;
-    }
+    
+    if (!validateJigForm()) return;
+
     try {
       const uploadedColors = [];
       for (const c of formData.colors) {
@@ -156,7 +196,7 @@ const AddJig = () => {
         }
         uploadedColors.push({
           color: c.color,
-          stock: c.stock,
+          stock: Number(c.stock),
           image: imagesURLs,
         });
       }
@@ -165,7 +205,7 @@ const AddJig = () => {
       const jigPayload = {
         name: formData.name,
         description: formData.description,
-        price: parseFloat(formData.price),
+        price: Number(formData.price),
         category: formData.category,
         weight: formData.weight,
         colors: uploadedColors,
@@ -218,16 +258,11 @@ const AddJig = () => {
           Price:
           <input
             name="price"
-            type="number"
-            min="0"
-            step="0.01"
+            type="text"
+            inputMode="decimal"
+            placeholder="0"
             value={formData.price}
             onChange={handleChange}
-            onKeyDown={(e) => {
-              if (["e", "E", "+", "-"].includes(e.key)) {
-                e.preventDefault();
-              }
-            }}
             required
           />
         </label>
@@ -317,19 +352,14 @@ const AddJig = () => {
                 </option>
             ))}
           </select>
-          <input
-            name="stock"
-            type="number"
-            min="1"
-            step="1"
-            onKeyDown={(e) => {
-              if (["e", "E", "+", "-", "."].includes(e.key)) {
-                e.preventDefault();
-              }
-            }}
-            value={newColor.stock}
-            onChange={handleNewColorChange}
-          />
+            <input
+              name="stock"
+              type="text"
+              inputMode="numeric"
+              value={newColor.stock}
+              onChange={handleNewColorChange}
+              required
+            />
           <div className="file-input-wrapper">
             <input
               type="file"
