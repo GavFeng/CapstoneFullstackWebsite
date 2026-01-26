@@ -1,55 +1,89 @@
 .dashboard {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    padding: 10px 60px;
-    gap: 20px;
-}
-
-.dashboard p{
-    font-size: 20px;
-    font-weight: 700;
-    color: black;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  padding: 24px;
+  background: #f5f7fa;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .dashb-left {
-    flex: 1;
-    display: flex;
-    max-height: 70%;
-    flex-direction: column;
-    align-items: left;
-    justify-content: space-between;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.dashb-left > p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 16px 0 8px;
+  color: #333;
+}
+
+.dashb-left ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dashb-left li {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fafafa;
+}
+
+.dashb-left li strong {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.dashb-left li div {
+  font-size: 0.85rem;
+  color: #555;
 }
 
 .dashb-right {
-    flex: 1;
-    display: flex;
-    max-height: 90%;
-    flex-direction: column;
-    align-items: left;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .dashb-stock {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: left;
-    justify-content: space-between;
-    padding-right: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-
-.dashboard ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-items: center;
-    gap: 20px;
-    font-size: 20px;
+.dashb-stock > div {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
 }
 
-.dashboard a {
-    text-decoration: none;
+.dashb-stock p {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.dashb-stock ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dashb-stock li {
+  font-size: 0.85rem;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dashb-stock li:last-child {
+  border-bottom: none;
 }

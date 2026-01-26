@@ -5,7 +5,7 @@ import Dashboard from '../../Components/Dashboard/Dashboard'
 import AddJig from '../../Components/AddJig/AddJig'
 import ViewJigs from '../../Components/ViewJigs/ViewJigs'
 import Analytic from '../../Components/Analytic/Analytic'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 
 
 const Admin = () => {
@@ -15,6 +15,7 @@ const Admin = () => {
       
       <main className="content-area">
         <Routes>
+           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home"    element={<Dashboard />} />
           <Route path="/addjig"  element={<AddJig />} />
           <Route path="/jig"     element={<ViewJigs />} />
