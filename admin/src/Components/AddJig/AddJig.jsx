@@ -9,7 +9,9 @@ const AddJig = () => {
   const [weights, setWeights] = useState([]);
   const [colors, setColors] = useState([]);
   const [popupImage, setPopupImage] = useState(null);
-
+  const [nameError, setNameError] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [colorOrder, setColorOrder] = useState([]);
   
 
   const [formData, setFormData] = useState({
@@ -44,6 +46,7 @@ const AddJig = () => {
         setCategories(catRes.data);
         setWeights(weightRes.data);
         setColors(colorRes.data);
+        setColorOrder(colorRes.data.map(c => c._id));
       } catch (err) {
         console.error("Error fetching options:", err);
       }
@@ -51,8 +54,36 @@ const AddJig = () => {
     fetchData();
   }, []);
 
+
+  const checkDuplicateName = async () => {
+    const name = formData.name.trim();
+    console.log("duplicate name check");
+    if (!name) return false;
+     console.log("duplicate name?");
+    try {
+      const res = await axios.get(`${API_URL}/jigs/check-name`, {
+        params: { name }
+      });
+      if (res.data.exists) {
+        setNameError("A jig with this name already exists");
+        console.log("duplicate name");
+        return true;
+      }
+      setNameError("");
+      console.log("no duplicate name");
+      return false;
+    } catch (err) {
+      console.error("Error checking duplicate name:", err);
+      return false;
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "name") {
+      setNameError(""); 
+    }
 
     if (name === "price") {
       // Allow digits + one decimal
@@ -167,14 +198,25 @@ const AddJig = () => {
     return true;
   };
   
-  
-  // Handle form submit
-  const handleSubmit = async (e) => {
+
+  const handleAddJigClick = async (e) => {
     e.preventDefault();
+    setMessage("");
+
+    // Validate form first
+    if (!validateJigForm()) return;
+
+    // Check duplicate name
+    const isDuplicate = await checkDuplicateName();
+    if (isDuplicate) return;
+
+    // Show preview modal
+    setShowConfirm(true);
+  };
+  
+  const handleConfirmAdd = async () => {
     setLoading(true);
     setMessage("");
-    
-    if (!validateJigForm()) return;
 
     try {
       const uploadedColors = [];
@@ -187,12 +229,10 @@ const AddJig = () => {
             headers: { "Content-Type": "multipart/form-data" },
           });
           let imageUrl = res.data.image_url;
-
           if (!imageUrl.startsWith("http")) {
             imageUrl = `https://${imageUrl.replace(/^\/+/, "")}`;
           }
-
-          imagesURLs.push(imageUrl);        
+          imagesURLs.push(imageUrl);
         }
         uploadedColors.push({
           color: c.color,
@@ -201,7 +241,6 @@ const AddJig = () => {
         });
       }
 
-      // Step 2: Submit Jig
       const jigPayload = {
         name: formData.name,
         description: formData.description,
@@ -221,6 +260,8 @@ const AddJig = () => {
         weight: "",
         colors: [],
       });
+      setShowConfirm(false);
+
     } catch (err) {
       console.error(err);
       setMessage("Error creating jig.");
@@ -229,21 +270,28 @@ const AddJig = () => {
     }
   };
 
-
   return (
     <div className="add-jig-container">
       <h2>Add New Jig</h2>
-      <form onSubmit={handleSubmit} className="add-jig-form">
+      <form onSubmit={handleAddJigClick} className="add-jig-form">
+
+        {/* Name */}
         <label>
           Name:
           <input
             name="name"
             value={formData.name}
-            onChange={handleChange}
+              onChange={(e) => {
+                setFormData({ ...formData, name: e.target.value });
+                setNameError("");
+              }}
             required
+            onBlur={checkDuplicateName}
           />
+          {nameError && <span className="error-text">{nameError}</span>}
         </label>
 
+        {/* Description */}
         <label>
           Description:
           <textarea
@@ -253,6 +301,8 @@ const AddJig = () => {
             required
           />
         </label>
+
+        {/* Price */}
 
         <label>
           Price:
@@ -267,7 +317,8 @@ const AddJig = () => {
           />
         </label>
 
-        <div class="form-row">
+        {/* Category + Weight */}
+        <div className="form-row">
           <div>
             <label>
               Category:
@@ -298,44 +349,52 @@ const AddJig = () => {
         </div>
 
         <h3>Colors</h3>
+
+        {/* View Added Colors */}
+
         {formData.colors.length > 0 && (
           <ul className="color-list">
-            {formData.colors.map((c, idx) => (
-              <li key={idx} className="color-item">
-                <div className="color-main">
-                  <span>
-                    {colors.find(co => co._id === c.color)?.name}
-                    {" "}– Stock: {c.stock}
-                  </span>
-
-                  {/* Image preview area */}
-                  {c.images.length > 0 && (
-                    <div className="preview-list">
-                      {c.images.map((file, i) => {
-                        const previewUrl = URL.createObjectURL(file);
-                        return (
-                          <div key={i} className="preview-item">
-                            <img
-                              src={previewUrl}
-                              alt={file.name}
-                              className="clickable-image"
-                              onClick={() => setPopupImage(previewUrl)}
-                            />
-                            <span className="filename">{file.name}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+            {formData.colors
+              .slice() // clone so original array isn’t mutated
+              .sort(
+                (a, b) => colorOrder.indexOf(a.color) - colorOrder.indexOf(b.color)
+              )
+              .map((c, idx) => (
+                <li key={idx} className="color-item">
+                  <div className="color-main">
+                    <span>
+                      {colors.find(co => co._id === c.color)?.name} – Stock: {c.stock}
+                    </span>
+                    {c.images.length > 0 && (
+                      <div className="preview-list">
+                        {c.images.map((file, i) => {
+                          const previewUrl = URL.createObjectURL(file);
+                          return (
+                            <div key={i} className="preview-item">
+                              <img
+                                src={previewUrl}
+                                alt={file.name}
+                                className="clickable-image"
+                                onClick={() => setPopupImage(previewUrl)}
+                              />
+                              <span className="filename">{file.name}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                   <div className="color-actions">
                     <button type="button" onClick={() => editColor(idx)}>Edit</button>
                     <button type="button" onClick={() => removeColor(idx)}>Delete</button>
                   </div>
-              </li>
+                </li>
             ))}
           </ul>
         )}
+
+
+        {/* Colors Adder */}
 
         <div className="color-inputs">
           <select
@@ -378,13 +437,22 @@ const AddJig = () => {
             Add Color
           </button>
         </div>
-
-        <button type="submit" disabled={loading}>
+          
+        {/* Submit Jig */}
+        <button
+          type="submit"
+          onClick={handleAddJigClick}
+          disabled={loading || !!nameError}
+        >
           {loading ? "Adding..." : "Add Jig"}
         </button>
       </form>
       {message && <p className="message">{message}</p>}
 
+
+
+      
+      {/* Image Popup */}
       {popupImage && (
         <div className="image-popup" onClick={() => setPopupImage(null)}>
           <div className="popup-content" onClick={e => e.stopPropagation()}>
@@ -395,6 +463,73 @@ const AddJig = () => {
               ×
             </button>
             <img src={popupImage} className="popup-img" />
+          </div>
+        </div>
+      )}
+
+       {/* Confirmation Popup */}
+      {showConfirm && (
+        <div className="modal-backdrop">
+          <div className="modal-container">
+            <h2>Confirm Jig Details</h2>
+
+            {/* Jig Info */}
+            <div className="modal-info">
+              <p><strong>Name:</strong> {formData.name}</p>
+              <p><strong>Description:</strong> {formData.description}</p>
+              <p><strong>Price:</strong> ${formData.price}</p>
+              <p>
+                <strong>Category:</strong> {categories.find(c => c._id === formData.category)?.name}
+              </p>
+              <p>
+                <strong>Weight:</strong> {weights.find(w => w._id === formData.weight)?.label}
+              </p>
+            </div>
+
+            {/* Colors */}
+            <div>
+              <p className="font-medium mb-2">Colors</p>
+              <div className="colors-grid">
+                {formData.colors
+                  .slice()
+                  .sort((a, b) => colorOrder.indexOf(a.color) - colorOrder.indexOf(b.color))
+                  .map((c, idx) => (
+                    <div key={idx} className="color-card">
+                      <div className="color-images">
+                        {c.images.map((img, i) => {
+                          const previewUrl = URL.createObjectURL(img);
+                          return (
+                            <img
+                              key={i}
+                              src={previewUrl}
+                              alt="Color Preview"
+                              className="color-preview-img"
+                            />
+                          );
+                        })}
+                      </div>
+                      <p className="color-name">{colors.find(co => co._id === c.color)?.name}</p>
+                      <p className="color-stock">Stock: {c.stock}</p>
+                    </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="modal-buttons">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="cancel-btn"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmAdd}
+                className="confirm-btn"
+              >
+                Confirm & Add
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -6,12 +6,39 @@ const Color = require("../models/Color");
 // Adding Jig
 exports.createJig = async (req, res) => {
   try {
-    const jig = await Jig.create(req.body);
+    const name = req.body.name.trim().toLowerCase();
+    const existingJig = await Jig.findOne({ name });
+
+    if (existingJig) {
+      return res.status(400).json({
+        message: "Name already exists",
+      });
+    }
+    
+    // Get Color Order
+    const allColors = await Color.find().sort({ name: 1 }); 
+    const colorOrder = allColors.map(c => c._id.toString());
+
+    // Sort in color order
+    let sortedColors = req.body.colors || [];
+    sortedColors = sortedColors.sort(
+      (a, b) => colorOrder.indexOf(a.color) - colorOrder.indexOf(b.color)
+    );
+
+    const jig = await Jig.create({
+      ...req.body,
+      name,
+      colors: sortedColors,
+    });
+
     res.status(201).json(jig);
+
   } catch (err) {
-    res.status(400).json({message: err.message});
+    console.error(err);
+    res.status(500).json({ message: err.message });
   }
 };
+
 
 // Viewing All Jigs in DB
 exports.getJigs = async (req, res) => {
@@ -107,8 +134,10 @@ exports.patchJig = async (req, res) => {
     const jig = await Jig.findById(id);
     if (!jig) return res.status(404).json({ message: "Jig not found" });
 
+    // Update simple fields
     Object.assign(jig, updatedFields);
 
+    // Handle colors
     if (colors && Array.isArray(colors) && colors.length > 0) {
       colors.forEach(newColor => {
         if (!newColor.color) return;
@@ -121,6 +150,15 @@ exports.patchJig = async (req, res) => {
           jig.colors.push(newColor);
         }
       });
+
+      // Fetch all colors from DB to get canonical order
+      const allColors = await Color.find().sort({ name: 1 });
+      const colorOrder = allColors.map(c => c._id.toString());
+
+      // Sort jig colors according to canonical order
+      jig.colors = jig.colors.sort(
+        (a, b) => colorOrder.indexOf(a.color.toString()) - colorOrder.indexOf(b.color.toString())
+      );
     }
 
     const updatedJig = await jig.save();
@@ -133,6 +171,21 @@ exports.patchJig = async (req, res) => {
     res.status(200).json(populatedJig);
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
+  }
+};
+
+
+exports.checkJigName = async (req, res) => {
+  try {
+    const name = req.query.name?.trim().toLowerCase();
+    if (!name) return res.json({ exists: false });
+
+    const existingJig = await Jig.findOne({ name });
+    res.json({ exists: !!existingJig });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ exists: false, message: err.message });
   }
 };

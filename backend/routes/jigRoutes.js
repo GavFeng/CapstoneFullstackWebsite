@@ -3,10 +3,12 @@ const express = require("express");
 const {
   createJig,
   getJigs,
+  checkJigName,
   getJigById,
   deleteJig,
-  patchJig,
   deleteColor,
+  patchJig,
+
 
 } = require("../controllers/jigController");
 
@@ -15,6 +17,8 @@ const router = express.Router();
 router.post("/", createJig);
 
 router.get("/", getJigs);
+
+router.get("/check-name", checkJigName);
 
 router.get("/:id", getJigById);
 
