@@ -47,6 +47,10 @@ const AddJig = () => {
   const [newWeight, setNewWeight] = useState({ label: "", value: "" });
   const [newColor, setNewColor] = useState("");
 
+  const [categoryError, setCategoryError] = useState("");
+  const [weightError, setWeightError] = useState("");
+  const [colorError, setColorError] = useState("");
+
   /* ---------- EFFECTS ---------- */
   useEffect(() => {
     const fetchData = async () => {
@@ -70,7 +74,11 @@ const AddJig = () => {
 
   /* ---------- HELPERS ---------- */
   const fail = (msg) => {
-    setMessage(msg);
+    setMessage(
+      <div className="error-message">
+        ⚠️ <strong>{msg}</strong>
+      </div>
+    );
     setLoading(false);
     return false;
   };
@@ -85,7 +93,7 @@ const AddJig = () => {
       });
 
       if (res.data.exists) {
-        setNameError("A jig with this name already exists");
+        setNameError("⚠️ A jig with this name already exists");
         return true;
       }
 
@@ -113,6 +121,27 @@ const AddJig = () => {
         return fail("Each color must have at least one image");
     }
     return true;
+  };
+
+  const checkCategoryDuplicate = async (name) => {
+    const res = await axios.get(`${API_URL}/categories/check-name`, {
+      params: { name },
+    });
+    return res.data.exists;
+  };
+
+  const checkWeightDuplicate = async (label, value) => {
+    const res = await axios.get(`${API_URL}/weights/check-label`, {
+      params: { label, value },
+    });
+    return res.data.exists;
+  };
+
+  const checkColorDuplicate = async (name) => {
+    const res = await axios.get(`${API_URL}/colors/check-name`, {
+      params: { name },
+    });
+    return res.data.exists;
   };
 
   /* ---------- FORM HANDLERS ---------- */
@@ -329,7 +358,7 @@ const AddJig = () => {
         </button>
       </form>
 
-      {message && <p className="message">{message}</p>}
+      {message && message}
 
       {/* Popup & Modals */}
       {popupImage && <ImagePopup src={popupImage} onClose={() => setPopupImage(null)} />}
@@ -351,11 +380,28 @@ const AddJig = () => {
           title="Add New Category"
           value={newCategory}
           setValue={setNewCategory}
-          onClose={() => setShowNewCategory(false)}
+          error={categoryError}
+          onClose={() => {
+            setCategoryError("");
+            setShowNewCategory(false);
+          }}
           onSave={async () => {
+            setCategoryError("");
+
+            if (!newCategory.trim()) {
+              setCategoryError("Category name is required");
+              return;
+            }
+
+            if (await checkCategoryDuplicate(newCategory)) {
+              setCategoryError("Category already exists");
+              return;
+            }
+
             const res = await axios.post(`${API_URL}/categories`, {
               name: newCategory.trim(),
             });
+
             setCategories(prev => [...prev, res.data]);
             setFormData({ ...formData, category: res.data._id });
             setNewCategory("");
@@ -369,16 +415,31 @@ const AddJig = () => {
           title="Add New Weight"
           value={newWeight}
           setValue={setNewWeight}
-          onClose={() => setShowNewWeight(false)}
           isWeight
+          error={weightError}
+          onClose={() => {
+            setWeightError("");
+            setShowNewWeight(false);
+          }}
           onSave={async () => {
+            setWeightError("");
+
+            if (!newWeight.label.trim() || !newWeight.value) {
+              setWeightError("Label and value are required");
+              return;
+            }
+
+            if (await checkWeightDuplicate(newWeight.label, newWeight.value)) {
+              setWeightError("Weight already exists");
+              return;
+            }
+
             const res = await axios.post(`${API_URL}/weights`, {
               label: newWeight.label.trim(),
               value: Number(newWeight.value),
             });
-            setWeights(prev =>
-              [...prev, res.data].sort((a, b) => a.value - b.value)
-            );
+
+            setWeights(prev => [...prev, res.data].sort((a, b) => a.value - b.value));
             setFormData({ ...formData, weight: res.data._id });
             setNewWeight({ label: "", value: "" });
             setShowNewWeight(false);
@@ -391,20 +452,38 @@ const AddJig = () => {
           title="Add New Color"
           value={newColor}
           setValue={setNewColor}
-          onClose={() => setShowNewColor(false)}
+          error={colorError}
+          onClose={() => {
+            setColorError("");
+            setShowNewColor(false);
+          }}
           onSave={async () => {
+            setColorError("");
+
+            if (!newColor.trim()) {
+              setColorError("Color name is required");
+              return;
+            }
+
+            if (await checkColorDuplicate(newColor)) {
+              setColorError("Color already exists");
+              return;
+            }
+
             const res = await axios.post(`${API_URL}/colors`, {
               name: newColor.trim(),
               slug: newColor.toLowerCase().replace(/\s+/g, "-"),
             });
+
             setColors(prev => [...prev, res.data]);
             setNewColor("");
             setShowNewColor(false);
           }}
         />
       )}
+
     </div>
   );
 };
 
-export default AddJig;
+export default AddJig

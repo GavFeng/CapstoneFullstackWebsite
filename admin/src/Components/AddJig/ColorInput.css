@@ -69,8 +69,14 @@
 }
 
 .error-text {
-  color: #e53935;
-  font-size: 0.85rem;
-  margin-top: 4px;
+  background-color: #ffe5e5;
+  color: #b00020;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: 500;
   display: block;
+  width: 100%;
+  margin-top: 8px;
+  box-sizing: border-box;
+  text-align: left;        
 }

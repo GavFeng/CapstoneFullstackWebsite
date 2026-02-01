@@ -13,7 +13,7 @@ const fractionToDecimal = (str) => {
 };
 
 
-const AddOptionModal = ({ title, value, setValue, onClose, onSave, isWeight }) => {
+const AddOptionModal = ({ title, value, setValue, onClose, onSave, error, isWeight }) => {
   return (
     <div className="modal-backdrop">
       <div className="modal-box">
@@ -59,7 +59,7 @@ const AddOptionModal = ({ title, value, setValue, onClose, onSave, isWeight }) =
             onChange={(e) => setValue(e.target.value)}
             />
         )}
-
+        {error && <p className="error-text">{error}</p>}
         <div className="modal-actions">
           <button className="cancel-btn" onClick={onClose}>Cancel</button>
           <button className="confirm-btn" onClick={onSave}>Save</button>

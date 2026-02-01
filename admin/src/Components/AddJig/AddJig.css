@@ -117,5 +117,14 @@
 }
 
 .add-new-color-btn:hover {
-	background: #2563eb;
+	background: #3b82f6;
+}
+
+.error-message {
+  background-color: #ffe5e5;
+  color: #b00020;
+  padding: 12px 15px;
+  border-radius: 5px;
+  font-weight: 500;
+  display: inline-block;
 }
