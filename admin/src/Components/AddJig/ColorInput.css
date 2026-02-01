@@ -1,0 +1,76 @@
+.color-inputs {
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.color-inputs > * {
+  flex: 1 1 140px;
+}
+
+.color-inputs input[type="number"],
+.color-inputs select {
+  height: 44px;
+}
+
+.color-inputs button {
+  height: 44px;
+  padding: 0 20px;
+  background: #10b981;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.color-inputs button:hover {
+  background: #059669;
+}
+
+.file-input-wrapper {
+  position: relative;
+  height: 44px;
+}
+
+.file-input-wrapper input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 16px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  font-size: 14px;
+  text-align: center;
+  line-height: 44px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-label:hover {
+  background: #e5e7eb;
+}
+
+.error-text {
+  color: #e53935;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  display: block;
+}

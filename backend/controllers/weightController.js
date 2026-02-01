@@ -49,3 +49,23 @@ exports.deleteWeight = async (req, res) => {
     res.status(500).json({message: err.message});
   }
 };
+
+// Check if Weight Exists
+exports.checkWeightLabel = async (req, res) => {
+  try {
+    const { label, value } = req.query;
+    if (!label && !value) return res.status(400).json({ exists: false });
+
+    const exists = await Weight.findOne({
+      $or: [
+        { label: new RegExp(`^${label.trim()}$`, 'i') },
+        { value: value ? Number(value) : undefined }
+      ].filter(Boolean)
+    });
+
+    res.json({ exists: !!exists });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ exists: false });
+  }
+};

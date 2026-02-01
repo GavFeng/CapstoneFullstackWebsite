@@ -49,3 +49,17 @@ exports.deleteCategory = async (req, res) => {
     res.status(500).json({message: err.message});
   }
 };
+
+// Checking if Category Exists
+exports.checkCategoryName = async (req, res) => {
+  try {
+    const { name } = req.query;
+    if (!name) return res.status(400).json({ exists: false });
+
+    const exists = await Category.findOne({ name: new RegExp(`^${name.trim()}$`, 'i') });
+    res.json({ exists: !!exists });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ exists: false });
+  }
+};

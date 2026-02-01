@@ -1,0 +1,82 @@
+.color-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0 0 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.color-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.color-main {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+
+.preview-list {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.preview-item {
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.preview-item img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.filename {
+  font-size: 11px;
+  text-align: center;
+  word-break: break-all;
+  color: #555;
+}
+
+.color-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.color-actions button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+}
+
+.color-actions button:hover {
+  opacity: 0.9;
+}
+
+.color-actions .edit-btn {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.color-actions .delete-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+}

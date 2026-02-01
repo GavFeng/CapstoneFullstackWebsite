@@ -3,6 +3,7 @@ const express = require("express");
 const {
   createColor,
   getColors,
+  checkColorName,
   getColorById,
   deleteColor,
 
@@ -14,6 +15,8 @@ const router = express.Router();
 router.post("/", createColor);
 
 router.get("/", getColors);
+
+router.get("/check-name", checkColorName);
 
 router.get("/:id", getColorById);
 
