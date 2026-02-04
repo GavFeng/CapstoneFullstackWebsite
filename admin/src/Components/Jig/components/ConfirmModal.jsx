@@ -21,10 +21,14 @@ const ConfirmModal = ({ formData, colors, colorOrder, categories, weights, handl
             {formData.colors.slice().sort((a, b) => colorOrder.indexOf(a.color) - colorOrder.indexOf(b.color)).map((c, idx) => (
               <div key={idx} className="modal-color-card">
                 <div className="modal-color-images">
-                  {c.images.map((img, i) => {
-                    const previewUrl = URL.createObjectURL(img);
-                    return <img key={i} src={previewUrl} alt="Color Preview" className="modal-color-preview-img" />;
-                  })}
+                  {c.images.map((imgObj, i) => (
+                    <img
+                      key={i}
+                      src={imgObj.url || imgObj.preview}
+                      alt="Color Preview"
+                      className="modal-color-preview-img"
+                    />
+                  ))}
                 </div>
                 <p>{colors.find(co => co._id === c.color)?.name}</p>
                 <p>Stock: {c.stock}</p>

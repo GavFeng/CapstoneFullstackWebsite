@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './ColorInput.css';
-
 
 const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor }) => {
   const [message, setMessage] = useState("");
@@ -17,7 +16,14 @@ const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor })
     }
 
     if (name === "images") {
-      setNewJigColor({ ...newJigColor, images: Array.from(files) });
+      const filesArray = Array.from(files).map(file => ({
+        file,
+        preview: URL.createObjectURL(file),
+        url: "", 
+        key: ""  
+      }));
+
+      setNewJigColor({ ...newJigColor, images: filesArray });
       return;
     }
 
@@ -31,9 +37,18 @@ const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor })
     if (formData.colors.some(c => c.color === newJigColor.color)) return setMessage("⚠️ Color already added");
 
     addColor();
+
     setNewJigColor({ color: "", stock: 1, images: [] });
     setMessage("");
   };
+
+  useEffect(() => {
+    return () => {
+      formData.colors.forEach(color => {
+        color.images.forEach(img => URL.revokeObjectURL(img.preview));
+      });
+    };
+  }, []);
 
   return (
     <div className="color-inputs">
@@ -42,28 +57,35 @@ const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor })
         value={newJigColor.color}
         onChange={handleChange}
         className={message.includes("color") ? "input-error" : ""}
-         required={isFirstColor}
-        >
+        required={isFirstColor}
+      >
         <option value="">--Select Color--</option>
         {colors
-            .filter(c => !formData.colors.some(fc => fc.color === c._id))
-            .map(c => (
+          .filter(c => !formData.colors.some(fc => fc.color === c._id))
+          .map(c => (
             <option key={c._id} value={c._id}>{c.name}</option>
-            ))}
+          ))}
       </select>
 
       <input
-          name="stock"
-          type="text"
-          inputMode="numeric"
-          value={newJigColor.stock}
-          onChange={handleChange}
-          className={message.includes("Stock") ? "input-error" : ""}
-           required={isFirstColor}
+        name="stock"
+        type="text"
+        inputMode="numeric"
+        value={newJigColor.stock}
+        onChange={handleChange}
+        className={message.includes("Stock") ? "input-error" : ""}
+        required={isFirstColor}
       />
 
       <div className="file-input-wrapper">
-        <input type="file" name="images" multiple onChange={handleChange} id="color-images-input"  required={isFirstColor}/>
+        <input
+          type="file"
+          name="images"
+          multiple
+          onChange={handleChange}
+          id="color-images-input"
+          required={isFirstColor}
+        />
         <label htmlFor="color-images-input" className="file-label">
           {newJigColor.images.length > 0
             ? `${newJigColor.images.length} file${newJigColor.images.length > 1 ? "s" : ""} selected`

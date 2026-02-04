@@ -1,0 +1,40 @@
+.delete-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.delete-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-modal {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  width: 300px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.confirm-delete {
+  background: #ef4444;
+  color: white;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+}

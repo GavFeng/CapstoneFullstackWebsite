@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import './AddJig.css';
 
-import ColorList from "./ColorList";
-import ColorInput from "./ColorInput";
-import ConfirmModal from "./ConfirmModal";
-import AddOptionModal from "./AddOptionModal";
-import ImagePopup from "./ImagePopup";
+import {
+  ColorList,
+  ColorInput,
+  ConfirmModal,
+  AddOptionModal,
+  ImagePopup
+} from "../components";
 
 const API_URL = "http://localhost:4000/api";
 
@@ -182,27 +184,36 @@ const AddJig = () => {
       for (const c of formData.colors) {
         const imagesURLs = [];
 
-        for (const file of c.images) {
+        for (const imgObj of c.images) {
           const form = new FormData();
-          form.append("image", file);
+          form.append("image", imgObj.file);
 
           const res = await axios.post(`${API_URL}/uploadImage`, form, {
             headers: { "Content-Type": "multipart/form-data" },
           });
 
-          let imageUrl = res.data.image_url;
-          if (!imageUrl.startsWith("http"))
-            imageUrl = `https://${imageUrl.replace(/^\/+/, "")}`;
+          let imageUrl = res.data?.image_url;
 
-          imagesURLs.push(imageUrl);
+          if (!imageUrl || typeof imageUrl !== "string") {
+            throw new Error("Invalid image URL returned from server");
+          }
+
+          if (!imageUrl.startsWith("http")) {
+            imageUrl = `https://${imageUrl.replace(/^\/+/, "")}`;
+          }
+
+          const key = res.data.key;
+
+          imagesURLs.push({ url: imageUrl, key });
         }
 
         uploadedColors.push({
           color: c.color,
           stock: Number(c.stock),
-          image: imagesURLs,
+          images: imagesURLs,
         });
       }
+
 
       const jigPayload = {
         ...formData,
@@ -230,6 +241,7 @@ const AddJig = () => {
       setLoading(false);
     }
   };
+
 
   /* ==================== JSX ==================== */
   return (

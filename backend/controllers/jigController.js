@@ -10,25 +10,32 @@ exports.createJig = async (req, res) => {
     const existingJig = await Jig.findOne({ name });
 
     if (existingJig) {
-      return res.status(400).json({
-        message: "Name already exists",
-      });
+      return res.status(400).json({ message: "Name already exists" });
     }
-    
+
     // Get Color Order
-    const allColors = await Color.find().sort({ name: 1 }); 
+    const allColors = await Color.find().sort({ name: 1 });
     const colorOrder = allColors.map(c => c._id.toString());
 
-    // Sort in color order
-    let sortedColors = req.body.colors || [];
-    sortedColors = sortedColors.sort(
+    // Sort colors from request according to order
+    let sortedColors = (req.body.colors || []).sort(
       (a, b) => colorOrder.indexOf(a.color) - colorOrder.indexOf(b.color)
     );
+
+    // Map each color images  {url, key}
+    const formattedColors = sortedColors.map(c => ({
+      color: c.color,
+      stock: c.stock,
+      images: (c.images || []).map(img => ({
+        url: img.url || img, // handle old string format just in case
+        key: img.key || ""
+      })),
+    }));
 
     const jig = await Jig.create({
       ...req.body,
       name,
-      colors: sortedColors,
+      colors: formattedColors,
     });
 
     res.status(201).json(jig);
@@ -38,6 +45,7 @@ exports.createJig = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 
 // Viewing All Jigs in DB
@@ -129,7 +137,7 @@ exports.patchJig = async (req, res) => {
       if (rest[field] !== undefined) updatedFields[field] = rest[field];
     });
 
-    updatedFields.updateAt = Date.now();
+    updatedFields.updatedAt = Date.now();
 
     const jig = await Jig.findById(id);
     if (!jig) return res.status(404).json({ message: "Jig not found" });
@@ -143,19 +151,26 @@ exports.patchJig = async (req, res) => {
         if (!newColor.color) return;
 
         const existingColor = jig.colors.find(c => c.color.toString() === newColor.color);
+        const formattedImages = (newColor.images || []).map(img => ({
+          url: img.url || img,
+          key: img.key || ""
+        }));
+
         if (existingColor) {
           if (newColor.stock !== undefined) existingColor.stock = newColor.stock;
-          if (newColor.image !== undefined) existingColor.image = newColor.image;
+          if (newColor.images !== undefined) existingColor.images = formattedImages;
         } else {
-          jig.colors.push(newColor);
+          jig.colors.push({
+            color: newColor.color,
+            stock: newColor.stock || 1,
+            images: formattedImages,
+          });
         }
       });
 
-      // Fetch all colors from DB to get canonical order
+      // Sort colors according to canonical order
       const allColors = await Color.find().sort({ name: 1 });
       const colorOrder = allColors.map(c => c._id.toString());
-
-      // Sort jig colors according to canonical order
       jig.colors = jig.colors.sort(
         (a, b) => colorOrder.indexOf(a.color.toString()) - colorOrder.indexOf(b.color.toString())
       );
@@ -175,6 +190,7 @@ exports.patchJig = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 
 exports.checkJigName = async (req, res) => {

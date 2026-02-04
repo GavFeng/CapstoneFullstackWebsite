@@ -7,10 +7,9 @@ const jigColorSchema = new mongoose.Schema({
     ref: "Color",
     required: true,
   },
-  image: [{
-    type: String,
-    required: true,
-    minLength: 1,
+  images: [{
+    url: { type: String, required: true },
+    key: { type: String, required: true }
   }],
   stock:{
     type: Number,
@@ -52,8 +51,11 @@ const jigSchema = new mongoose.Schema({
   },
   colors: {
     type: [jigColorSchema],
-    requried: true,
-    minLength: 1,
+    required: true,
+    validate: {
+      validator: v => v.length > 0,
+      message: "At least one color required"
+    }
   },
 }, { 
   timestamps: true 

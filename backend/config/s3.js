@@ -21,7 +21,10 @@ const uploadImageToS3 = async (fileBuffer, productId) => {
     ContentType: "image/webp",
   }));
 
-  return `${CLOUDFRONT_URL}/${key}`;
+  if (!CLOUDFRONT_URL) throw new Error("CLOUDFRONT_URL not set");
+
+  // Ensure String
+  return `${CLOUDFRONT_URL.replace(/\/$/, "")}/${key}`;
 };
 
 module.exports = { uploadImageToS3 };

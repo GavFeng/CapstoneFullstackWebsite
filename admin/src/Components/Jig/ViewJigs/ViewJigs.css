@@ -26,6 +26,20 @@
 	align-items: center;
 }
 
+.jig-header-left {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+}
+
+.jig-header-right {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+
+
 /* ── Description & Info ── */
 .jig-desc {
 	font-size: 0.95rem;

@@ -32,20 +32,17 @@ const ColorList = ({ colors, colorOrder, formData, setFormData, setPopupImage, s
               </span>
               {c.images.length > 0 && (
                 <div className="preview-list">
-                  {c.images.map((file, i) => {
-                    const previewUrl = URL.createObjectURL(file);
-                    return (
-                      <div key={i} className="preview-item">
-                        <img
-                          src={previewUrl}
-                          alt={file.name}
-                          className="clickable-image"
-                          onClick={() => setPopupImage(previewUrl)}
-                        />
-                        <span className="filename">{file.name}</span>
-                      </div>
-                    );
-                  })}
+                  {c.images.map((imgObj, i) => (
+                    <div key={i} className="preview-item">
+                      <img
+                        src={imgObj.url || imgObj.preview}
+                        alt={imgObj.file?.name || `color-${c.color}-image-${i}`}
+                        className="clickable-image"
+                        onClick={() => setPopupImage(imgObj.preview || imgObj.url)}
+                      />
+                      <span className="filename">{imgObj.file?.name || `image-${i}`}</span>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
