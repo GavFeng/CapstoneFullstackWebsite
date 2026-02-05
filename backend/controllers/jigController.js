@@ -2,6 +2,9 @@ const Jig = require("../models/Jig");
 const Category = require("../models/Category");
 const Weight = require("../models/Weight");
 const Color = require("../models/Color");
+const { S3Client, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const s3 = new S3Client({ region: process.env.AWS_REGION });
+const BUCKET_NAME = process.env.S3_BUCKET;
 
 // Adding Jig
 exports.createJig = async (req, res) => {
@@ -81,20 +84,44 @@ exports.getJigById = async (req, res) => {
 exports.deleteJig = async (req, res) => {
   try {
     const { id } = req.params;
-    const jig = await Jig.findByIdAndDelete(id);
+    const jig = await Jig.findById(id);
+    if (!jig) return res.status(404).json({ message: "Jig Not Found" });
 
-    if (!jig) return res.status(404).json({message: "Jig Not Found"});
+    const deletePromises = [];
 
-    res.status(200).json({
-      message: "Successfully deleted Jig",
-      id: jig._id,
-    });
-    
+    for (const color of jig.colors) {
+      for (const img of color.images) {
+        if (img.key) {
+          let key = img.key.trim();
+          key = key.replace(/^\/+/, '');
+
+          console.log(`Deleting: ${key}`); // ← keep this for debugging!
+
+          deletePromises.push(
+            s3.send(
+              new DeleteObjectCommand({
+                Bucket: BUCKET_NAME,
+                Key: key,
+              })
+            ).catch(err => {
+              console.error(`Failed to delete ${key}:`, err);
+              throw err;
+            })
+          );
+        }
+      }
+    }
+
+    await Promise.all(deletePromises);
+
+    await Jig.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Jig deleted successfully" });
   } catch (err) {
-    res.status(500).json({message: err.message});
+    console.error("Delete jig error:", err);
+    res.status(500).json({ message: err.message });
   }
 };
-
 // Deleting a color of a Jig in DB
 exports.deleteColor = async (req, res) => {
   try {

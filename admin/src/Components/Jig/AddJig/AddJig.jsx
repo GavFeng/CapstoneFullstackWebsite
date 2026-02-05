@@ -290,59 +290,73 @@ const AddJig = () => {
         {/* Category & Weight */}
         <div className="form-row">
           <div>
-            <label>
-              Category:
-              <select
-                value={formData.category}
-                onChange={(e) =>
-                  e.target.value === "__add_new__"
-                    ? setShowNewCategory(true)
-                    : setFormData({ ...formData, category: e.target.value })
-                }
-                required
+            <div className="colors-header">
+              <h3>Category</h3>
+              <button
+                type="button"
+                className="icon-add-btn"
+                data-tooltip="Add new category"
+                onClick={() => setShowNewCategory(true)}
               >
-                <option value="">--Select Category--</option>
-                {categories.map(c => (
-                  <option key={c._id} value={c._id}>{c.name}</option>
-                ))}
-                <option disabled>──────────</option>
-                <option value="__add_new__">Add new category</option>
-              </select>
-            </label>
-          </div>
+                +
+              </button>
+            </div>
 
+            <select
+              value={formData.category}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
+              required
+            >
+              <option value="">-- Select Category --</option>
+              {categories.map(c => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div>
-            <label>
-              Weight:
-              <select
-                value={formData.weight}
-                onChange={(e) =>
-                  e.target.value === "__add_new__"
-                    ? setShowNewWeight(true)
-                    : setFormData({ ...formData, weight: e.target.value })
-                }
-                required
+            <div className="colors-header">
+              <h3>Weight</h3>
+              <button
+                type="button"
+                className="icon-add-btn"
+                data-tooltip="Add new weight"
+                onClick={() => setShowNewWeight(true)}
               >
-                <option value="">--Select Weight--</option>
-                {weights.map(w => (
-                  <option key={w._id} value={w._id}>{w.label}</option>
-                ))}
-                <option disabled>──────────</option>
-                <option value="__add_new__">Add new weight</option>
-              </select>
-            </label>
+                +
+              </button>
+            </div>
+
+            <select
+              value={formData.weight}
+              onChange={(e) =>
+                setFormData({ ...formData, weight: e.target.value })
+              }
+              required
+            >
+              <option value="">-- Select Weight --</option>
+              {weights.map(w => (
+                <option key={w._id} value={w._id}>
+                  {w.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
         {/* Colors */}
         <div className="colors-header">
-          <h3>Colors</h3>
+          <h3>Colors + Stock</h3>
           <button
             type="button"
+            className="icon-add-btn"
+            data-tooltip="Add new color"
             onClick={() => setShowNewColor(true)}
-            className="add-new-color-btn"
           >
-            + Add New Color
+            +
           </button>
         </div>
         <ColorList

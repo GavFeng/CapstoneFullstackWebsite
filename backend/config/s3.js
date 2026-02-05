@@ -6,7 +6,7 @@ const s3 = new S3Client({ region: process.env.AWS_REGION });
 const BUCKET_NAME = process.env.S3_BUCKET;
 const CLOUDFRONT_URL = process.env.CLOUDFRONT_URL;
 
-const uploadImageToS3 = async (fileBuffer, productId) => {
+const uploadImageToS3 = async (fileBuffer, productId = "general") => {
   const buffer = await sharp(fileBuffer)
     .resize(800)
     .webp({ quality: 80 })
@@ -23,8 +23,9 @@ const uploadImageToS3 = async (fileBuffer, productId) => {
 
   if (!CLOUDFRONT_URL) throw new Error("CLOUDFRONT_URL not set");
 
-  // Ensure String
-  return `${CLOUDFRONT_URL.replace(/\/$/, "")}/${key}`;
+  const imageUrl = `${CLOUDFRONT_URL.replace(/\/$/, "")}/${key}`;
+
+  return { imageUrl, key };
 };
 
 module.exports = { uploadImageToS3 };

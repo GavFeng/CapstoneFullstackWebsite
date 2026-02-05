@@ -93,7 +93,7 @@ const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor })
         </label>
       </div>
 
-      <button type="button" onClick={handleAdd}>Add Color</button>
+      <button type="button" onClick={handleAdd}>Add</button>
       {message && <span className="error-text">{message}</span>}
     </div>
   );

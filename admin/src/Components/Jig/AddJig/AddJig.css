@@ -78,6 +78,63 @@
 	cursor: not-allowed;
 }
 
+.icon-add-btn {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-add-btn:hover {
+  background: #2563eb;
+}
+
+/* Tooltip */
+.icon-add-btn::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111827;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.icon-add-btn::before {
+  content: "";
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #111827 transparent transparent transparent;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.icon-add-btn:hover::after,
+.icon-add-btn:hover::before {
+  opacity: 1;
+}
+
 /* ── Category + Weight Row ── */
 .form-row {
 	display: flex;
@@ -106,19 +163,6 @@
 	margin: 0;
 }
 
-.add-new-color-btn {
-	padding: 0.25rem 0.5rem;
-	font-size: 0.9rem;
-	cursor: pointer;
-	background: #3b82f6;
-	color: #fff;
-	border: none;
-	border-radius: 4px;
-}
-
-.add-new-color-btn:hover {
-	background: #3b82f6;
-}
 
 .error-message {
   background-color: #ffe5e5;

@@ -18,7 +18,7 @@ const DeleteJig = ({ jigId, jigName, onDeleteSuccess }) => {
 
     try {
       setLoading(true);
-      await axios.delete(`${API_URL}/${jigId}`);
+      await axios.delete(`${API_URL}/jigs/${jigId}`);
 
       onDeleteSuccess(jigId);
       setOpen(false);

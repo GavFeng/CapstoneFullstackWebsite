@@ -7,6 +7,9 @@ const Sidebar = () => {
     {label: 'Add', to: '/addjig'},
     {label: 'View All', to: '/jig'},
     {label: 'Analytics', to: '/analytic'},
+    {label: 'Add Category', to: '/addcategory'},
+    {label: 'Add Weight', to: '/addweight'},
+    {label: 'Add Color', to: '/addcolor'},
   ]
 
   return (

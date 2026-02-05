@@ -7,17 +7,15 @@ exports.uploadImage = async (req, res) => {
     }
 
     const productId = req.body.productId || "general";
-    const imageUrl = await uploadImageToS3(req.file.buffer, productId);
 
-    console.log("S3 upload result:", imageUrl); // Debug
+    const { imageUrl, key } = await uploadImageToS3(req.file.buffer, productId);
 
-    if (!imageUrl || typeof imageUrl !== "string") {
-      return res.status(500).json({ message: "Failed to generate image URL" });
-    }
+    console.log("Uploaded:", { key, imageUrl });
 
-    const key = `products/${productId}/${Date.now()}.webp`;
-
-    res.status(201).json({ image_url: imageUrl, key });
+    res.status(201).json({
+      image_url: imageUrl,
+      key,
+    });
 
   } catch (err) {
     console.error("Upload error:", err);
