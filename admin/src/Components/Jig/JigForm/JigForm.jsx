@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import './AddJig.css';
+import './JigForm.css';
+import { useParams, useNavigate } from "react-router-dom";
 
 import {
   ColorList,
@@ -13,7 +14,15 @@ import {
 const API_URL = "http://localhost:4000/api";
 
 
-const AddJig = () => {
+const JigForm = ({ mode: initialMode = "add" }) => {
+
+  const { id } = useParams(); 
+  const navigate = useNavigate();
+
+  const mode = initialMode === "add" && id ? "edit" : initialMode;
+  const jigId = id || null;
+
+
   /* ---------- STATE ---------- */
   const [categories, setCategories] = useState([]);
   const [weights, setWeights] = useState([]);
@@ -28,6 +37,10 @@ const AddJig = () => {
     weight: "",
     colors: [],
   });
+
+
+  
+  const [originalData, setOriginalData] = useState(null);
 
   const [newJigColor, setNewJigColor] = useState({
     color: "",
@@ -74,6 +87,38 @@ const AddJig = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (mode === "edit" && jigId) {
+      axios.get(`${API_URL}/jigs/${jigId}`).then(res => {
+        const jig = res.data;
+        setOriginalData(jig);
+        setFormData({
+          name: jig.name || "",
+          description: jig.description || "",
+          price: jig.price?.toString() || "",
+          category: jig.category?._id || "",
+          weight: jig.weight?._id || "",
+          colors: (jig.colors || []).map(c => ({
+            color: c.color._id,
+            stock: c.stock,
+            images: c.images.map(img => ({ url: img.url, key: img.key })),
+          })),
+        });
+      });
+    } else if (mode === "add") {
+      // Reset form when switching to add mode
+      setOriginalData(null);
+      setFormData({
+        name: "",
+        description: "",
+        price: "",
+        category: "",
+        weight: "",
+        colors: [],
+      });
+    }
+  }, [mode, jigId]);
+
   /* ---------- HELPERS ---------- */
   const fail = (msg) => {
     setMessage(
@@ -93,6 +138,11 @@ const AddJig = () => {
       const res = await axios.get(`${API_URL}/jigs/check-name`, {
         params: { name },
       });
+
+      if (mode === "edit" && originalData && originalData.name === name) {
+        setNameError("");
+        return false;
+      }
 
       if (res.data.exists) {
         setNameError("⚠️ A jig with this name already exists");
@@ -114,12 +164,12 @@ const AddJig = () => {
       return fail("Price must be valid");
     if (!formData.category) return fail("Please select a category");
     if (!formData.weight) return fail("Please select a weight");
-    if (formData.colors.length === 0) return fail("Add at least one color");
+    if (mode === "add" && formData.colors.length === 0) return fail("Add at least one color");
 
     for (const c of formData.colors) {
       if (isNaN(Number(c.stock)) || Number(c.stock) < 1)
         return fail("Each color must have stock ≥ 1");
-      if (!c.images || c.images.length === 0)
+      if (mode === "add" && (!c.images || c.images.length === 0))
         return fail("Each color must have at least one image");
     }
     return true;
@@ -164,7 +214,7 @@ const AddJig = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleAddJigClick = async (e) => {
+  const handleSubmitJigClick = async (e) => {
     e.preventDefault();
     setMessage("");
 
@@ -174,7 +224,7 @@ const AddJig = () => {
     setShowConfirm(true);
   };
 
-  const handleConfirmAdd = async () => {
+  const handleConfirmSubmit = async () => {
     setLoading(true);
     setMessage("");
 
@@ -185,26 +235,30 @@ const AddJig = () => {
         const imagesURLs = [];
 
         for (const imgObj of c.images) {
-          const form = new FormData();
-          form.append("image", imgObj.file);
+          if (imgObj.file) {
+            // Only upload new files
+            const form = new FormData();
+            form.append("image", imgObj.file);
 
-          const res = await axios.post(`${API_URL}/uploadImage`, form, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
+            const res = await axios.post(`${API_URL}/uploadImage`, form, {
+              headers: { "Content-Type": "multipart/form-data" },
+            });
 
-          let imageUrl = res.data?.image_url;
+            let imageUrl = res.data?.image_url;
+            if (!imageUrl || typeof imageUrl !== "string") {
+              throw new Error("Invalid image URL returned from server");
+            }
 
-          if (!imageUrl || typeof imageUrl !== "string") {
-            throw new Error("Invalid image URL returned from server");
+            if (!imageUrl.startsWith("http")) {
+              imageUrl = `https://${imageUrl.replace(/^\/+/, "")}`;
+            }
+
+            const key = res.data.key;
+            imagesURLs.push({ url: imageUrl, key });
+          } else {
+            // Existing image, keep as-is
+            imagesURLs.push({ url: imgObj.url, key: imgObj.key });
           }
-
-          if (!imageUrl.startsWith("http")) {
-            imageUrl = `https://${imageUrl.replace(/^\/+/, "")}`;
-          }
-
-          const key = res.data.key;
-
-          imagesURLs.push({ url: imageUrl, key });
         }
 
         uploadedColors.push({
@@ -221,22 +275,52 @@ const AddJig = () => {
         colors: uploadedColors,
       };
 
-      await axios.post(`${API_URL}/jigs`, jigPayload);
+      if (mode === "add") {
+        await axios.post(`${API_URL}/jigs`, jigPayload);
+        setMessage("Jig created successfully!");
+        setFormData({
+          name: "",
+          description: "",
+          price: "",
+          category: "",
+          weight: "",
+          colors: [],
+        });
+      }
+      if (mode === "edit") {
+        const patchPayload = {};
 
-      setMessage("Jig created successfully!");
-      setFormData({
-        name: "",
-        description: "",
-        price: "",
-        category: "",
-        weight: "",
-        colors: [],
-      });
+        ["name", "description", "price", "category", "weight", "colors"].forEach(f => {
+          let value = f === "colors" ? uploadedColors : formData[f]; // use uploadedColors for colors
+          let originalVal = originalData[f];
+          if (f === "category" || f === "weight") originalVal = originalVal?._id;
+
+          if (f === "colors") {
+            if (JSON.stringify(value) !== JSON.stringify(originalVal)) patchPayload.colors = value;
+          } else {
+            if (value !== originalVal) {
+              patchPayload[f] = f === "price" ? Number(value) : value;
+            }
+          }
+        });
+
+        if (Object.keys(patchPayload).length > 0) {
+          await axios.patch(`${API_URL}/jigs/${jigId}`, patchPayload);
+          setMessage("Jig updated successfully!");
+        } else {
+          setMessage("No changes to update.");
+        }
+      }
 
       setShowConfirm(false);
+
+      if (mode === "edit") {
+        setTimeout(() => navigate("/jig"), 100);
+      }
+
     } catch (err) {
       console.error(err);
-      setMessage("Error creating jig.");
+      setMessage(mode === "add" ? "Error creating jig." : "Error updating jig.");
     } finally {
       setLoading(false);
     }
@@ -246,8 +330,8 @@ const AddJig = () => {
   /* ==================== JSX ==================== */
   return (
     <div className="add-jig-container">
-      <h2>Add New Jig</h2>
-      <form className="add-jig-form" onSubmit={handleAddJigClick}>
+      <h2>{mode === "add" ? "Add New Jig" : "Edit Jig"}</h2>
+      <form className="add-jig-form" onSubmit={handleSubmitJigClick}>
 
         {/* Name */}
         <label>
@@ -396,7 +480,7 @@ const AddJig = () => {
           colorOrder={colorOrder}
           categories={categories}
           weights={weights}
-          handleConfirmAdd={handleConfirmAdd}
+          handleConfirmAdd={handleConfirmSubmit}
           onClose={() => setShowConfirm(false)}
         />
       )}
@@ -512,4 +596,4 @@ const AddJig = () => {
   );
 };
 
-export default AddJig
+export default JigForm

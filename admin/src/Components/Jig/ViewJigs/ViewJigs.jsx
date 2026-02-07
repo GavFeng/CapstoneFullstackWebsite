@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import './ViewJigs.css';
+import { useNavigate } from "react-router-dom";
 
 import {
   DeleteJig,
@@ -8,6 +9,7 @@ import {
 } from "../components";
 
 const ViewJigs = () => {
+  const navigate = useNavigate();
   const [jigs, setJigs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [popupImage, setPopupImage] = useState(null); 
@@ -44,7 +46,13 @@ const ViewJigs = () => {
             </div>
 
             <div className="jig-header-right">
-              <p>edit</p>
+              <button
+                type="button"
+                className="edit-btn"
+                onClick={() => navigate(`/editjig/${jig._id}`)}
+              >
+                Edit
+              </button>
               <DeleteJig
                 jigId={jig._id}
                 jigName={jig.name}
