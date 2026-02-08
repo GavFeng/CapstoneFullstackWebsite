@@ -7,6 +7,7 @@ import {
   ColorList,
   ColorInput,
   ConfirmModal,
+  ConfirmEditModal,
   AddOptionModal,
   ImagePopup
 } from "../components";
@@ -464,7 +465,13 @@ const JigForm = ({ mode: initialMode = "add" }) => {
 
         {/* Submit */}
         <button type="submit" disabled={loading || !!nameError}>
-          {loading ? "Adding..." : "Add Jig"}
+          {loading
+            ? mode === "add"
+              ? "Adding..."
+              : "Saving..."
+            : mode === "add"
+              ? "Add Jig"
+              : "Save Changes"}
         </button>
       </form>
 
@@ -473,7 +480,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
       {/* Popup & Modals */}
       {popupImage && <ImagePopup src={popupImage} onClose={() => setPopupImage(null)} />}
 
-      {showConfirm && (
+      {showConfirm && mode === "add" && (
         <ConfirmModal
           formData={formData}
           colors={colors}
@@ -481,6 +488,19 @@ const JigForm = ({ mode: initialMode = "add" }) => {
           categories={categories}
           weights={weights}
           handleConfirmAdd={handleConfirmSubmit}
+          onClose={() => setShowConfirm(false)}
+        />
+      )}
+
+      {showConfirm && mode === "edit" && originalData && (
+        <ConfirmEditModal
+          oldJig={originalData}
+          formData={formData}
+          colors={colors}
+          colorOrder={colorOrder}
+          categories={categories}
+          weights={weights}
+          handleConfirmEdit={handleConfirmSubmit}
           onClose={() => setShowConfirm(false)}
         />
       )}

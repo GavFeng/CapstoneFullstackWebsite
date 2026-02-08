@@ -169,23 +169,95 @@ exports.patchJig = async (req, res) => {
     const jig = await Jig.findById(id);
     if (!jig) return res.status(404).json({ message: "Jig not found" });
 
-    // Update simple fields
+    const existingColors = jig.colors;
+
+    const incomingColorIds = (colors || [])
+      .map(c => c.color?.toString())
+      .filter(Boolean);
+
+    const removedColors = existingColors.filter(
+      c => !incomingColorIds.includes(c.color.toString())
+    );
+
+    const deletePromises = [];
+
+    for (const color of removedColors) {
+      for (const img of color.images || []) {
+        if (img.key) {
+          let key = img.key.trim().replace(/^\/+/, '');
+
+          console.log(`Deleting removed color image: ${key}`);
+
+          deletePromises.push(
+            s3.send(
+              new DeleteObjectCommand({
+                Bucket: BUCKET_NAME,
+                Key: key,
+              })
+            ).catch(err => {
+              console.error(`Failed to delete ${key}:`, err);
+              throw err;
+            })
+          );
+        }
+      }
+    }
+
+    await Promise.all(deletePromises);
+
     Object.assign(jig, updatedFields);
 
-    // Handle colors
-    if (colors && Array.isArray(colors) && colors.length > 0) {
+    // manage colors
+    if (colors && Array.isArray(colors)) {
+
+      // Remove deleted colors from jig
+      jig.colors = jig.colors.filter(c =>
+        incomingColorIds.includes(c.color.toString())
+      );
+
+      // Update or add colors
       colors.forEach(newColor => {
         if (!newColor.color) return;
 
-        const existingColor = jig.colors.find(c => c.color.toString() === newColor.color);
+        const existingColor = jig.colors.find(
+          c => c.color.toString() === newColor.color
+        );
+
         const formattedImages = (newColor.images || []).map(img => ({
           url: img.url || img,
           key: img.key || ""
         }));
 
         if (existingColor) {
-          if (newColor.stock !== undefined) existingColor.stock = newColor.stock;
-          if (newColor.images !== undefined) existingColor.images = formattedImages;
+          const oldKeys = (existingColor.images || [])
+            .map(img => img.key)
+            .filter(Boolean);
+
+          const newKeys = (formattedImages || [])
+            .map(img => img.key)
+            .filter(Boolean);
+
+          const removedKeys = oldKeys.filter(k => !newKeys.includes(k));
+
+          for (const key of removedKeys) {
+            const cleanKey = key.trim().replace(/^\/+/, '');
+            console.log(`Deleting removed image: ${cleanKey}`);
+
+            deletePromises.push(
+              s3.send(
+                new DeleteObjectCommand({
+                  Bucket: BUCKET_NAME,
+                  Key: cleanKey,
+                })
+              )
+            );
+          }
+
+          if (newColor.stock !== undefined)
+            existingColor.stock = newColor.stock;
+
+          if (newColor.images !== undefined)
+            existingColor.images = formattedImages;
         } else {
           jig.colors.push({
             color: newColor.color,
@@ -195,14 +267,19 @@ exports.patchJig = async (req, res) => {
         }
       });
 
-      // Sort colors according to canonical order
+
+      // sorting colors
       const allColors = await Color.find().sort({ name: 1 });
       const colorOrder = allColors.map(c => c._id.toString());
+
       jig.colors = jig.colors.sort(
-        (a, b) => colorOrder.indexOf(a.color.toString()) - colorOrder.indexOf(b.color.toString())
+        (a, b) =>
+          colorOrder.indexOf(a.color.toString()) -
+          colorOrder.indexOf(b.color.toString())
       );
     }
 
+    // save + populate
     const updatedJig = await jig.save();
 
     const populatedJig = await Jig.findById(updatedJig._id)
@@ -213,7 +290,7 @@ exports.patchJig = async (req, res) => {
     res.status(200).json(populatedJig);
 
   } catch (err) {
-    console.error(err);
+    console.error("Patch jig error:", err);
     res.status(500).json({ message: err.message });
   }
 };
