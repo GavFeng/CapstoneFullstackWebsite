@@ -39,8 +39,6 @@ const JigForm = ({ mode: initialMode = "add" }) => {
     colors: [],
   });
 
-
-  
   const [originalData, setOriginalData] = useState(null);
 
   const [newJigColor, setNewJigColor] = useState({
@@ -197,6 +195,15 @@ const JigForm = ({ mode: initialMode = "add" }) => {
     return res.data.exists;
   };
 
+  const isEditingColor = Boolean(newJigColor.color);
+
+  const isDirty =
+    Boolean(newJigColor.color) &&
+    (
+      newJigColor.images.length > 0 ||
+      Number(newJigColor.stock) !== 1
+    );
+
   /* ---------- FORM HANDLERS ---------- */
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -221,6 +228,14 @@ const JigForm = ({ mode: initialMode = "add" }) => {
 
     if (!validateJigForm()) return;
     if (await checkDuplicateName()) return;
+    if (isDirty) {
+        setMessage(
+          <div className="error-message">
+            ⚠️ You have unsaved color changes. Please click <strong>Add</strong> first.
+          </div>
+        );
+        return;
+      }
 
     setShowConfirm(true);
   };
@@ -292,7 +307,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
         const patchPayload = {};
 
         ["name", "description", "price", "category", "weight", "colors"].forEach(f => {
-          let value = f === "colors" ? uploadedColors : formData[f]; // use uploadedColors for colors
+          let value = f === "colors" ? uploadedColors : formData[f];
           let originalVal = originalData[f];
           if (f === "category" || f === "weight") originalVal = originalVal?._id;
 
@@ -451,6 +466,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
           setFormData={setFormData}
           setPopupImage={setPopupImage}
           setNewJigColor={setNewJigColor}
+          isEditing={isEditingColor}
         />
         <ColorInput
           colors={colors}
@@ -460,6 +476,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
           addColor={() =>
             setFormData(prev => ({ ...prev, colors: [...prev.colors, newJigColor] }))
           }
+          isEditing={isEditingColor}
         />
         
 

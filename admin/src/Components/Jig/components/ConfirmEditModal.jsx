@@ -18,11 +18,16 @@ const renderJig = ({
       <p><strong>Price:</strong> ${data.price}</p>
       <p>
         <strong>Category:</strong>{" "}
-        {categories.find(c => c._id === data.category)?.name}
+        {typeof data.category === "object"
+          ? data.category.name
+          : categories.find(c => c._id === data.category)?.name}
       </p>
+
       <p>
         <strong>Weight:</strong>{" "}
-        {weights.find(w => w._id === data.weight)?.label}
+        {typeof data.weight === "object"
+          ? data.weight.label
+          : weights.find(w => w._id === data.weight)?.label}
       </p>
     </div>
 
@@ -75,7 +80,7 @@ const ConfirmEditModal = ({
 
         <div className="modal-edit-grid">
           {renderJig({
-            title: "Current Jig",
+            title: "Old Jig",
             data: oldJig,
             colors,
             colorOrder,
@@ -84,7 +89,7 @@ const ConfirmEditModal = ({
           })}
 
           {renderJig({
-            title: "Updated Jig",
+            title: "New Jig",
             data: formData,
             colors,
             colorOrder,

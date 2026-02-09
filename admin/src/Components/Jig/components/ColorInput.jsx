@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import './ColorInput.css';
 
-const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor }) => {
+const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor, isEditing }) => {
   const [message, setMessage] = useState("");
+  const [failedImageAttempts, setFailedImageAttempts] = useState(0);
 
   const isFirstColor = formData.colors.length === 0;
 
@@ -33,13 +34,23 @@ const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor })
   const handleAdd = () => {
     if (!newJigColor.color) return setMessage("⚠️ Please select a color");
     if (!newJigColor.stock || newJigColor.stock < 1) return setMessage("⚠️ Stock must be ≥ 1");
-    if (!newJigColor.images.length) return setMessage("⚠️ Please add at least one image");
+    if (!newJigColor.images.length) {
+      const attempt = failedImageAttempts + 1;
+      setFailedImageAttempts(attempt);
+
+      let msg = "⚠️ Please add at least one image";
+      if (attempt >= 2) {
+        msg += "  Note: You aren't able to select Duplicate files. Please Choose different files.";
+      }
+      return setMessage(msg);
+    }
     if (formData.colors.some(c => c.color === newJigColor.color)) return setMessage("⚠️ Color already added");
 
     addColor();
 
     setNewJigColor({ color: "", stock: 1, images: [] });
     setMessage("");
+    setFailedImageAttempts(0);
   };
 
   useEffect(() => {
