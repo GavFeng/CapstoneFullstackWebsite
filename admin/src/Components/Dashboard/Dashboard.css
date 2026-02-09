@@ -1,6 +1,6 @@
 .dashboard {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 3fr 4fr;
   gap: 24px;
   padding: 24px;
   background: #f5f7fa;
@@ -86,4 +86,76 @@
 
 .dashb-stock li:last-child {
   border-bottom: none;
+}
+
+@media (max-width: 1024px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 20px;
+  }
+
+  .dashb-stock {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 16px;
+    gap: 20px;
+  }
+
+  .dashb-left {
+    padding: 16px;
+  }
+
+  .dashb-right {
+    gap: 20px;
+  }
+
+  .dashb-stock {
+    gap: 16px;
+  }
+
+  .dashb-left li,
+  .dashb-stock > div {
+    padding: 14px;
+  }
+
+  .dashb-left > p,
+  .dashb-stock p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 16px;
+  }
+
+  .dashb-left {
+    padding: 16px;
+  }
+
+  .dashb-right {
+    gap: 20px;
+  }
+
+  .dashb-stock {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dashb-left li,
+  .dashb-stock > div {
+    padding: 14px;
+  }
+
+  .dashb-left > p,
+  .dashb-stock p {
+    font-size: 1rem;
+  }
 }

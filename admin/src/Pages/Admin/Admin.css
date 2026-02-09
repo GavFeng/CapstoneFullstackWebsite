@@ -13,3 +13,9 @@
   background: whitesmoke;
   padding: 24px 32px;
 }
+
+@media (max-width: 768px) {
+  .content-area {
+    padding-bottom: 70px; 
+  }
+}

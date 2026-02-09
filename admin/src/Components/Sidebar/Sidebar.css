@@ -4,7 +4,7 @@
     height: 100vh;
     padding-top: 40px;
     width: 100%;
-    max-width: 250px;
+    max-width: 240px;
     background: white;
     border-right: 1px solid black;
 }
@@ -56,4 +56,114 @@
 
 .nav-link.active::after {
   opacity: 1;
+}
+
+@media (max-width: 1575px) {
+  .sidebar {
+    max-width: 220px;
+  }
+}
+@media (max-width: 1100px) {
+    .sidebar {
+        max-width: 200px;
+        padding-top: 30px;
+    }
+
+    .sidebar ul {
+        font-size: 18px;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+    max-width: 100%;
+    border-right: none;
+    border-top: 1px solid black;
+    padding: 12px 0;
+    background: white;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+
+  .sidebar ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+    margin: 0;
+    padding: 0 16px 0 16px;
+    font-size: 14px;
+
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden; 
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+    scrollbar-color: #bbb #f1f1f1;
+  }
+
+
+  .sidebar ul::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  .sidebar ul::-webkit-scrollbar-thumb {
+    background: #aaa;
+    border-radius: 4px;
+  }
+
+  .sidebar ul::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .nav-item {
+    flex: 0 0 auto;
+    list-style: none;
+  }
+
+  .nav-link {
+    display: inline-block;
+    padding: 8px 12px;
+    color: gray;
+    text-decoration: none;
+    border-radius: 8px;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: black;
+    background: #f0f0f0;
+  }
+
+  .nav-link::after {
+    bottom: -6px;
+    height: 3px;
+  }
+
+  .nav-link.active::after {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+    .sidebar ul {
+        font-size: 13px;
+    }
+
+    .nav-link {
+        padding: 4px 6px;
+    }
 }
