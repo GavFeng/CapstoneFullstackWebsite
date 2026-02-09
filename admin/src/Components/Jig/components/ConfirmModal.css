@@ -103,18 +103,51 @@
   background-color: #e0e0e0;
 }
 
-
-.modal-wide {
-  max-width: 1100px;
-}
-
-.modal-compare-grid {
+.modal-edit-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 32px;
 }
 
-.modal-jig-column h3 {
+.modal-edit-column {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  background: #fafafa;
+}
+
+.modal-edit-column h3 {
   text-align: center;
   margin-bottom: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.modal-edit-meta {
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.modal-edit-meta p {
+  margin: 2px 0;
+}
+
+.modal-edit-meta strong {
+  color: #374151;
+}
+
+/* make color grids breathe */
+.modal-edit-column .modal-colors-grid {
+  grid-template-columns: 1fr;
+}
+
+/* slightly smaller images for comparison */
+.modal-edit-column .modal-color-preview-img {
+  width: 96px;
+  height: 96px;
+}
+
+.modal-edit-column .modal-color-images {
+  gap: 8px;
 }
