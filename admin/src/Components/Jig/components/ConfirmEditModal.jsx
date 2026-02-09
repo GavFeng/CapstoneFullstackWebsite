@@ -35,7 +35,7 @@ const renderJig = ({
             colorOrder.indexOf(a.color) - colorOrder.indexOf(b.color)
         )
         .map((c, idx) => (
-          <div key={idx} className="modal-color-card">
+          <div key={idx} className="modal-edit-color-card">
             <div className="modal-color-images">
               {(c.images || []).map((imgObj, i) => (
                 <img

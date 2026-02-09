@@ -34,7 +34,7 @@
 .modal-colors-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 10px;
   margin-top: 10px;
 }
 
@@ -103,16 +103,28 @@
   background-color: #e0e0e0;
 }
 
+.modal-edit-color-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  background-color: #f9f9f9;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
 .modal-edit-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  gap: 24px;
 }
 
 .modal-edit-column {
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  padding: 16px;
+  padding: 12px;
   background: #fafafa;
 }
 
@@ -137,12 +149,10 @@
   color: #374151;
 }
 
-/* make color grids breathe */
 .modal-edit-column .modal-colors-grid {
   grid-template-columns: 1fr;
 }
 
-/* slightly smaller images for comparison */
 .modal-edit-column .modal-color-preview-img {
   width: 96px;
   height: 96px;
