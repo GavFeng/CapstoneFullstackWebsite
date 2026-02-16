@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 import {
   DeleteJig,
-  ImagePopup
+  ImagePopup,
+  StockEditor
 } from "../components";
 
 const ViewJigs = () => {
@@ -71,12 +72,24 @@ const ViewJigs = () => {
             <div className="colors-list">
               {jig.colors.map((c) => (
                 <div key={c.color?._id} className="color-item">
-                  <div
-                    className="color-swatch"
-                    style={{ backgroundColor: c.color?.slug || "#ccc" }}
-                  />
-                  <span>{c.color?.name}</span>
-                  <span className="stock">Stock: {c.stock}</span>
+                  <div className="color-info">
+                    <div
+                      className="color-swatch"
+                      style={{ backgroundColor: c.color?.slug || "#ccc" }}
+                    />
+                    <span>{c.color?.name}</span>
+                  </div>
+
+                  <div className="stock-center">
+                    <StockEditor 
+                      jigId={jig._id} 
+                      colorId={c.color?._id || c.color} 
+                      stock={c.stock} 
+                      onUpdate={(updatedJig) => {
+                        setJigs(prev => prev.map(j => j._id === updatedJig._id ? updatedJig : j));
+                      }}
+                    />
+                  </div>
                   <div className="color-images">
                     {c.images?.map((imgObj, idx) => (
                       <img

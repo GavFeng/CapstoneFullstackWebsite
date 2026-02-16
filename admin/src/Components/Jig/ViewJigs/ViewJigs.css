@@ -74,9 +74,24 @@
 }
 
 .color-item {
-	display: flex;
-	align-items: center;
-	gap: 10px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 5px 0;
+}
+
+.color-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.stock-editor {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
 }
 
 .color-swatch {
@@ -93,9 +108,10 @@
 
 /* ── Color Images ── */
 .color-images {
-	display: flex;
-	gap: 5px;
-	align-items: center;
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+  align-items: center;
 }
 
 .color-images img {
@@ -171,6 +187,100 @@
 	transform: scale(1.2);
 	background-color: rgba(255,255,255,1);
 }
+
+/* ── Stock Editor ── */
+.stock-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.stock-editor {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Buttons */
+.stock-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.stock-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+/* Input */
+.stock-input {
+  width: 50px;
+  height: 28px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Tooltip wrapper */
+.stock-btn-wrapper,
+.stock-number-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+/* Tooltip itself */
+.stock-btn-wrapper::after,
+.stock-number-wrapper::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%; /* above element */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111827;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+/* Tooltip arrow */
+.stock-btn-wrapper::before,
+.stock-number-wrapper::before {
+  content: "";
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #111827 transparent transparent transparent;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+/* Show tooltip on hover */
+.stock-btn-wrapper:hover::after,
+.stock-number-wrapper:hover::after,
+.stock-btn-wrapper:hover::before,
+.stock-number-wrapper:hover::before {
+  opacity: 1;
+}
+
 
 /* ── Animations ── */
 @keyframes fadeIn {

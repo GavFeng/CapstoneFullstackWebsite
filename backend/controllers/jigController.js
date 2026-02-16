@@ -295,8 +295,6 @@ exports.patchJig = async (req, res) => {
   }
 };
 
-
-
 exports.checkJigName = async (req, res) => {
   try {
     const name = req.query.name?.trim().toLowerCase();
@@ -307,5 +305,45 @@ exports.checkJigName = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ exists: false, message: err.message });
+  }
+};
+
+exports.updateStock = async (req, res) => {
+  try {
+    const { id, colorId } = req.params;
+    const { stock, action } = req.body;
+
+    const jig = await Jig.findById(id);
+    if (!jig) return res.status(404).json({ message: "Jig not found" });
+
+    // Handle both populated color (_id) or raw ObjectId
+    const color = jig.colors.find(c => {
+      const cId = c.color?._id?.toString() || c.color?.toString();
+      return cId === colorId;
+    });
+    if (!color) return res.status(404).json({ message: "Color not found" });
+
+    if (action === "increment") {
+      color.stock += stock || 1;
+    } else if (action === "decrement") {
+      color.stock = Math.max(0, color.stock - (stock || 1));
+    } else {
+      // default set
+      if (stock === undefined || stock < 0)
+        return res.status(400).json({ message: "Stock must be non-negative" });
+      color.stock = stock;
+    }
+
+    await jig.save();
+
+    const populatedJig = await Jig.findById(jig._id)
+      .populate("category")
+      .populate("weight")
+      .populate("colors.color", "name slug");
+
+    res.status(200).json(populatedJig);
+  } catch (err) {
+    console.error("Update stock error:", err);
+    res.status(500).json({ message: err.message });
   }
 };
