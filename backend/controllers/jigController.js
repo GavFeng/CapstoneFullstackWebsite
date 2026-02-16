@@ -29,6 +29,7 @@ exports.createJig = async (req, res) => {
     const formattedColors = sortedColors.map(c => ({
       color: c.color,
       stock: c.stock,
+      sold: 0,
       images: (c.images || []).map(img => ({
         url: img.url || img, // handle old string format just in case
         key: img.key || ""
@@ -255,6 +256,8 @@ exports.patchJig = async (req, res) => {
 
           if (newColor.stock !== undefined)
             existingColor.stock = newColor.stock;
+          if (newColor.sold !== undefined)
+            existingColor.sold = Math.max(0, newColor.sold);
 
           if (newColor.images !== undefined)
             existingColor.images = formattedImages;
@@ -262,6 +265,7 @@ exports.patchJig = async (req, res) => {
           jig.colors.push({
             color: newColor.color,
             stock: newColor.stock || 1,
+            sold: newColor.sold || 0,
             images: formattedImages,
           });
         }
@@ -308,15 +312,14 @@ exports.checkJigName = async (req, res) => {
   }
 };
 
-exports.updateStock = async (req, res) => {
+exports.updateInventory = async (req, res) => {
   try {
     const { id, colorId } = req.params;
-    const { stock, action } = req.body;
+    const { stock, sold, action } = req.body;
 
     const jig = await Jig.findById(id);
     if (!jig) return res.status(404).json({ message: "Jig not found" });
 
-    // Handle both populated color (_id) or raw ObjectId
     const color = jig.colors.find(c => {
       const cId = c.color?._id?.toString() || c.color?.toString();
       return cId === colorId;
@@ -327,11 +330,14 @@ exports.updateStock = async (req, res) => {
       color.stock += stock || 1;
     } else if (action === "decrement") {
       color.stock = Math.max(0, color.stock - (stock || 1));
-    } else {
-      // default set
-      if (stock === undefined || stock < 0)
-        return res.status(400).json({ message: "Stock must be non-negative" });
+    } else if (stock !== undefined) {
+      if (stock < 0) return res.status(400).json({ message: "Stock cannot be negative" });
       color.stock = stock;
+    }
+
+    if (sold !== undefined) {
+      if (sold < 0) return res.status(400).json({ message: "Sold cannot be negative" });
+      color.sold = sold;
     }
 
     await jig.save();
@@ -343,7 +349,7 @@ exports.updateStock = async (req, res) => {
 
     res.status(200).json(populatedJig);
   } catch (err) {
-    console.error("Update stock error:", err);
+    console.error("Update inventory error:", err);
     res.status(500).json({ message: err.message });
   }
 };

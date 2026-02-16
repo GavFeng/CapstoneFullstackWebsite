@@ -6,27 +6,16 @@ const orderItemSchema = new mongoose.Schema({
     ref: "Jig",
     required: true,
   },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
-  },
-
-  weight: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: "Weight", required: true 
-  },
   color: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Color",
     required: true,
   },
-  
   quantity: {
     type: Number,
     required: true,
     min: 1,
   },
-
   price: {
     type: Number,
     required: true,
@@ -40,23 +29,19 @@ const orderSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-
   items: {
     type: [orderItemSchema],
     required: true,
   },
-
   totalAmount: {
     type: Number,
     required: true,
   },
-
   deliveryMethod: {
     type: String,
     enum: ["shipping", "pickup"],
     required: true,
   },
-
   shippingAddress: {
     name: String,
     street: String,
@@ -65,19 +50,16 @@ const orderSchema = new mongoose.Schema({
     zip: String,
     country: String,
   },
-
   pickupDetails: {
     location: String,
     pickupDate: Date,
     pickupCode: String,
   },
-
   status: {
     type: String,
     enum: ["pending", "paid", "ready", "shipped", "delivered", "completed", "cancelled"],
     default: "pending",
   },
-
   paymentStatus: {
     type: String,
     enum: ["unpaid", "paid", "refunded"],
@@ -85,6 +67,5 @@ const orderSchema = new mongoose.Schema({
   }
 
 }, { timestamps: true });
-
 
 module.exports = mongoose.model("Order", orderSchema);

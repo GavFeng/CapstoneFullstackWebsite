@@ -33,6 +33,7 @@ const Navbar = () => {
               >
                 {label}
               </NavLink>
+              <span className="nav-underline" />
             </li>
           ))}
         </ul>

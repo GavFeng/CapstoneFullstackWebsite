@@ -15,6 +15,11 @@ const jigColorSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 0,
+  },
+  sold: {
+    type: Number,
+    default: 0,
+    min: 0
   }
 });
 

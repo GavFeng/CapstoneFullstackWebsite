@@ -8,7 +8,7 @@ const {
   deleteJig,
   deleteColor,
   patchJig,
-  updateStock,
+  updateInventory,
 } = require("../controllers/jigController");
 
 const router = express.Router();
@@ -27,7 +27,7 @@ router.patch("/:id", patchJig);
 
 router.delete("/:id/colors/:colorId", deleteColor);
 
-router.patch("/:id/colors/:colorId/stock", updateStock);
+router.patch("/:id/colors/:colorId/stock", updateInventory);
 
 
 
