@@ -6,3 +6,4 @@ export { default as ImagePopup }    from './ImagePopup';
 export { default as DeleteJig }    from './DeleteJig';
 export {default as ConfirmEditModal } from './ConfirmEditModal';
 export {default as InventoryEditor} from './InventoryEditor';
+export {default as ViewJigsFilters} from './ViewJigsFilters';

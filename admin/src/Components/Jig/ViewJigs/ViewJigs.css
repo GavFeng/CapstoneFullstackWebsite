@@ -362,6 +362,63 @@
   font-style: italic;
 }
 
+/* ── Load More Button ── */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 2.5rem 0 4rem;
+  padding: 0 1rem;
+}
+
+.load-more-btn {
+  padding: 0.9rem 2.8rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: white;
+  background-color: #228B22;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  min-width: 180px;
+  transition: all 0.22s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.load-more-btn:hover:not(:disabled) {
+  background-color: #1e6e1e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+
+.load-more-btn:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading-full-width {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 0;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+
+.showing-info {
+  text-align: center;
+  margin: 1.2rem 0 1.8rem;
+  font-size: 1.05rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.showing-info strong {
+  color: #111827;
+}
+
+
 /* ── Animations ── */
 @keyframes fadeIn {
 	from { opacity: 0; }

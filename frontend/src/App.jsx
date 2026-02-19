@@ -1,10 +1,11 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './Components/Navbar/Navbar'
-import Homepage from './Pages/Homepage'
-import JigCategory from './Pages/JigCategory'
-import Cart from './Pages/Cart'
-import Login from './Pages/Login'
+import Homepage from './Pages/HomePage/HomePage'
+import JigCategory from './Pages/JigCategory/JigCategory'
+import Cart from './Pages/Cart/Cart'
+import Login from './Pages/Login/Login'
+import JigPage from './Pages/JigPage/JigPage'
 
 const App = () => {
   return (
@@ -13,8 +14,14 @@ const App = () => {
       <Routes>
       <Route path="/" element={<Homepage />} />
       <Route path="/alljig" element={<JigCategory />} />
+
+      <Route path="/jig" element={<JigPage />}>
+        <Route path=":jigId" element={<JigPage />} />
+      </Route>
+
       <Route path="/cart" element={<Cart />} />
       <Route path="/login" element={<Login />} />
+      
       </Routes>
     </BrowserRouter>
 

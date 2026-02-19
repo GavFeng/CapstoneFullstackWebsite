@@ -2,6 +2,7 @@ const Jig = require("../models/Jig");
 const Category = require("../models/Category");
 const Weight = require("../models/Weight");
 const Color = require("../models/Color");
+const mongoose = require('mongoose');
 const { S3Client, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const s3 = new S3Client({ region: process.env.AWS_REGION });
 const BUCKET_NAME = process.env.S3_BUCKET;
@@ -55,13 +56,63 @@ exports.createJig = async (req, res) => {
 // Viewing All Jigs in DB
 exports.getJigs = async (req, res) => {
   try {
-    const jigs = await Jig.find()
+    const {
+      category,
+      weight,
+      minPrice,
+      maxPrice,
+      color,
+      page = 1,
+      limit = 10
+    } = req.query;
+
+    const query = {};
+
+    if (category) {
+      if (mongoose.isValidObjectId(category)) {
+        query.category = new mongoose.Types.ObjectId(category);
+      }
+    }
+
+    if (weight) {
+      if (mongoose.isValidObjectId(weight)) {
+        query.weight = new mongoose.Types.ObjectId(weight);
+      }
+    }
+
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+
+    if (color) {
+      if (mongoose.isValidObjectId(color)) {
+        query["colors.color"] = new mongoose.Types.ObjectId(color);
+      }
+    }
+
+    const skip = (page - 1) * Number(limit);
+
+    const jigs = await Jig.find(query)
       .populate("category")
       .populate("weight")
-      .populate("colors.color", "name slug");
-    res.json(jigs);
+      .populate("colors.color", "name slug")
+      .skip(skip)
+      .limit(Number(limit));
+
+    const total = await Jig.countDocuments(query);
+
+    res.json({
+      jigs: jigs || [],
+      total: total || 0,
+      page: Number(page),
+      totalPages: total > 0 ? Math.ceil(total / limit) : 1
+    });
+
   } catch (err) {
-    res.status(500).json({message: err.message});
+    console.error("getJigs error:", err);
+    res.status(500).json({ message: err.message });
   }
 };
 
