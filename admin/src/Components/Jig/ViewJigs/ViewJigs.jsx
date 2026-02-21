@@ -7,6 +7,7 @@ import {
   ImagePopup,
   InventoryEditor,
   ViewJigsFilters,
+  SoldEditorModal,
 } from '../components';
 
 
@@ -40,6 +41,7 @@ const ViewJigs = () => {
   const [weights, setWeights] = useState([]);
   const [colors, setColors] = useState([]);
 
+  const [soldModal, setSoldModal] = useState(null);
   const [popupImage, setPopupImage] = useState(null);
 
   /* ---------- EFFECTS ---------- */
@@ -178,7 +180,8 @@ const fetchJigs = useCallback(async () => {
           const breakdown = jig.colors
             .map(c => `${c.color?.name || 'Unnamed'}: ${c.sold || 0} sold`)
             .join('\n');
-
+          
+            
           return (
             <div key={jig._id} className="jig-card">
               <div className="jig-header">
@@ -213,6 +216,18 @@ const fetchJigs = useCallback(async () => {
                     ⓘ
                   </span>
                 </p>
+                <button
+                  className="edit-sold-btn"
+                  onClick={() =>
+                    setSoldModal({
+                      jigId: jig._id,
+                      jigName: jig.name,
+                      colors: jig.colors
+                    })
+                  }
+                >
+                  Modify Sold
+                </button>
               </div>
 
               <div className="colors-section">
@@ -275,8 +290,21 @@ const fetchJigs = useCallback(async () => {
         </div>
       )}
       {popupImage && <ImagePopup src={popupImage} onClose={() => setPopupImage(null)} />}
-    </div>
+      {soldModal && (
+        <SoldEditorModal
+          jigId={soldModal.jigId}
+          jigName={soldModal.jigName}
+          colors={soldModal.colors}
+          onClose={() => setSoldModal(null)}
+          onSuccess={(updatedJig) => {
+            setJigs(prev =>
+              prev.map(j => (j._id === updatedJig._id ? updatedJig : j))
+            );
+          }}
+        />
+      )}
     
+    </div>
   );
 };
 

@@ -9,6 +9,7 @@ const {
   deleteColor,
   patchJig,
   updateInventory,
+  updateSold,
 } = require("../controllers/jigController");
 
 const router = express.Router();
@@ -29,7 +30,7 @@ router.delete("/:id/colors/:colorId", deleteColor);
 
 router.patch("/:id/colors/:colorId/stock", updateInventory);
 
-
+router.patch("/:id/colors/sold", updateSold);
 
 module.exports = router;
 

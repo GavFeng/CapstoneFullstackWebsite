@@ -404,3 +404,44 @@ exports.updateInventory = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.updateSold = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { soldUpdates } = req.body;
+
+    if (!soldUpdates || typeof soldUpdates !== "object") {
+      return res.status(400).json({ message: "soldUpdates object required" });
+    }
+
+    const jig = await Jig.findById(id);
+    if (!jig) return res.status(404).json({ message: "Jig not found" });
+
+    jig.colors.forEach(c => {
+      const colorId = c.color?._id?.toString() || c.color?.toString();
+
+      if (soldUpdates[colorId] !== undefined) {
+        const newSold = Number(soldUpdates[colorId]);
+
+        if (isNaN(newSold) || newSold < 0) {
+          throw new Error(`Invalid sold value for color ${colorId}`);
+        }
+
+        c.sold = newSold;
+      }
+    });
+
+    await jig.save();
+
+    const populatedJig = await Jig.findById(jig._id)
+      .populate("category")
+      .populate("weight")
+      .populate("colors.color", "name slug");
+
+    res.status(200).json(populatedJig);
+
+  } catch (err) {
+    console.error("Bulk sold update error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};

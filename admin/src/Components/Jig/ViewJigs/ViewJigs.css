@@ -284,6 +284,11 @@
 .jig-total-sold-wrapper {
   margin: 12px 0;
   font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .jig-total-sold {
@@ -291,6 +296,7 @@
   align-items: center;
   gap: 8px;
   margin: 0;
+  white-space: nowrap;
 }
 
 .sold-breakdown-tooltip {
@@ -360,6 +366,32 @@
   color: #888;
   font-size: 0.9rem;
   font-style: italic;
+}
+
+.edit-sold-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #2563eb;               
+  background-color: white;
+  border: 1px solid #d1d5db;    
+  border-radius: 6px;
+  
+  cursor: pointer;
+  transition: all 0.14s ease;
+  white-space: nowrap;
+}
+
+.edit-sold-btn:hover {
+  background-color: #f0f9ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.edit-sold-btn:active {
+  background-color: #e0f2fe;
+  transform: translateY(1px);
 }
 
 /* ── Load More Button ── */
