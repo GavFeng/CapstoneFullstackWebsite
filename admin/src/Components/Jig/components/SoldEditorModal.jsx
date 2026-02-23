@@ -92,7 +92,7 @@ const SoldEditorModal = ({ jigId, jigName, colors, onClose, onSuccess }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SoldEditorModal;
+export default SoldEditorModal

@@ -11,7 +11,7 @@ const ImagePopup = ({ src, onClose }) => {
         <img src={src} className="popup-img" alt="Preview" />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ImagePopup;
+export default ImagePopup

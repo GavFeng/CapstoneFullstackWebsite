@@ -66,7 +66,7 @@ const AddOptionModal = ({ title, value, setValue, onClose, onSave, error, isWeig
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AddOptionModal;
+export default AddOptionModal

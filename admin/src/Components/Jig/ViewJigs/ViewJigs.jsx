@@ -305,7 +305,7 @@ const fetchJigs = useCallback(async () => {
       )}
     
     </div>
-  );
-};
+  )
+}
 
-export default ViewJigs;
+export default ViewJigs

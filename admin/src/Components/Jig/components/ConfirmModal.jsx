@@ -56,7 +56,7 @@ const ConfirmModal = ({ formData, colors, colorOrder, categories, weights, handl
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ConfirmModal;
+export default ConfirmModal

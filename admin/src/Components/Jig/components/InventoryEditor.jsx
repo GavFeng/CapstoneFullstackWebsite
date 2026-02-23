@@ -98,7 +98,7 @@ return (
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default InventoryEditor;
+export default InventoryEditor

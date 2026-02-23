@@ -76,7 +76,7 @@ const ColorList = ({ colors, colorOrder, formData, setFormData, setPopupImage, s
         </li>
       ))}
     </ul>
-  );
-};
+  )
+}
 
-export default ColorList;
+export default ColorList

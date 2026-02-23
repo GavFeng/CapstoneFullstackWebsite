@@ -630,7 +630,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
       )}
 
     </div>
-  );
-};
+  )
+}
 
 export default JigForm

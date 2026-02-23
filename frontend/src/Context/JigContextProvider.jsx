@@ -34,7 +34,7 @@ const JigContextProvider = ({ children }) => {
     <JigContext.Provider value={{ jigs, loading }}>
       {children}
     </JigContext.Provider>
-  );
-};
+  )
+}
 
-export default JigContextProvider;
+export default JigContextProvider

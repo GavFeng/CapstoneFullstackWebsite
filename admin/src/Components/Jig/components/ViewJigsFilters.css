@@ -85,7 +85,6 @@
   white-space: nowrap;
   flex: 1 1 auto;
   min-width: 140px;
-  max-width: 400px;
   margin-top: 1.8rem;
 }
 
@@ -97,23 +96,26 @@
   transform: translateY(1px);
 }
 
+
 @media (max-width: 1328px) and (min-width: 1160px) {
   .reset-btn {
     margin-top: 0.4rem;
     flex-grow: 2;
     max-width: none;
   }
+
 }
 @media (max-width: 768px) {
   .jigs-filters {
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
     padding: 1.25rem 1rem;
   }
 
   .filter-group {
     min-width: 100%;
     max-width: none;
+    flex: 0;
   }
 
   .price-range {
@@ -140,7 +142,7 @@
   }
 
   .reset-btn {
-    margin-top: 0.75rem;
+    margin-top: 0.5rem;
     margin-left: 0;
     width: 100%;
     height: auto;
@@ -152,7 +154,7 @@
 
 @media (max-width: 480px) {
   .price-inputs {
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
     gap: 0.9rem;
   }
@@ -170,7 +172,7 @@
   }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 400px) {
   .price-inputs {
     gap: 0.8rem;
   }

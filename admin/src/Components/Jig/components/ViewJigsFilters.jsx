@@ -72,7 +72,7 @@ const ViewJigsFilters = ({ categories, weights, colors, filters, onFilterChange,
         Reset Filters
       </button>
     </div>
-  );
-};
+  )
+}
 
-export default ViewJigsFilters;
+export default ViewJigsFilters

@@ -117,7 +117,7 @@ const ConfirmEditModal = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ConfirmEditModal;
+export default ConfirmEditModal
