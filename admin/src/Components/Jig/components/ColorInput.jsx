@@ -33,7 +33,7 @@ const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor, i
 
   const handleAdd = () => {
     if (!newJigColor.color) return setMessage("⚠️ Please select a color");
-    if (!newJigColor.stock || newJigColor.stock < 1) return setMessage("⚠️ Stock must be ≥ 1");
+    if (newJigColor.stock === ""|| Number(newJigColor.stock) < 0) return setMessage("⚠️ Stock must be ≥ 0");
     if (!newJigColor.images.length) {
       const attempt = failedImageAttempts + 1;
       setFailedImageAttempts(attempt);
