@@ -166,8 +166,8 @@ const JigForm = ({ mode: initialMode = "add" }) => {
     if (mode === "add" && formData.colors.length === 0) return fail("Add at least one color");
 
     for (const c of formData.colors) {
-      if (isNaN(Number(c.stock)) || Number(c.stock) < 1)
-        return fail("Each color must have stock ≥ 1");
+      if (isNaN(Number(c.stock)) || Number(c.stock) < 0)
+        return fail("Each color must have stock ≥ 0");
       if (mode === "add" && (!c.images || c.images.length === 0))
         return fail("Each color must have at least one image");
     }
