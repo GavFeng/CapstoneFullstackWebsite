@@ -20,11 +20,15 @@ const Item = ({ id, name, price, colors }) => {
     selectedColorObj?.images?.[0]?.url ||
     colors?.[0]?.images?.[0]?.url;
 
+
+  const slug = name.toLowerCase().replace(/\s+/g, "-");
+
+
   return (
     <div className="item-card">
 
       <div className="item-image-container">
-        <Link to={`/jig/${id}`}>
+        <Link to={`/jig/${id}/${slug}`}>
           <img
             src={imageUrl}
             alt={name}

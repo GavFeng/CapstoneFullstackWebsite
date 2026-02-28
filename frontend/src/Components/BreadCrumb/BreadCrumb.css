@@ -1,0 +1,26 @@
+.breadcrumb {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.breadcrumb a {
+  color: #333;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.separator {
+  margin: 0 0.5rem;
+  color: #999;
+}
+
+.current {
+  color: #222;
+  font-weight: 600;
+}

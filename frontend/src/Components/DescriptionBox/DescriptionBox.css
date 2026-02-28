@@ -1,0 +1,27 @@
+.description-box {
+  max-width: 1400px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+.tab-header {
+  padding: 1rem 1.5rem;
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #333;
+}
+
+.content {
+  padding: 2rem 1.5rem;
+  border: 1px solid #ddd;
+  background: white;
+  line-height: 1.7;
+  color: #444;
+}
+
+.content p {
+  margin: 1rem 0;
+}

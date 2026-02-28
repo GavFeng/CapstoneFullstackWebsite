@@ -13,11 +13,9 @@ const App = () => {
       <Navbar />
       <Routes>
       <Route path="/" element={<Homepage />} />
-      <Route path="/alljig" element={<JigCategory />} />
+      <Route path="/alljigs" element={<JigCategory />} />
 
-      <Route path="/jig" element={<JigPage />}>
-        <Route path=":jigId" element={<JigPage />} />
-      </Route>
+      <Route path="/jig/:id/:slug" element={<JigPage />} />
 
       <Route path="/cart" element={<Cart />} />
       <Route path="/login" element={<Login />} />
