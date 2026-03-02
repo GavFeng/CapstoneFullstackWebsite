@@ -5,15 +5,6 @@ import './CartItems.css';
 const CartItems = () => {
   const context = useContext(JigContext);
 
-  if (!context) {
-    return (
-      <div className="cart-error">
-        <h2>Context not available</h2>
-        <p>Cart functionality is currently unavailable.</p>
-      </div>
-    );
-  }
-
   const {
     jigs = [],
     cartItems = {},
@@ -45,7 +36,7 @@ const CartItems = () => {
       {/* Desktop Table Header */}
       <div className="cart-header desktop-only">
         <div>Product</div>
-        <div>Name</div>
+        <div></div>
         <div>Price</div>
         <div>Quantity</div>
         <div>Total</div>
@@ -196,7 +187,7 @@ const CartItems = () => {
           <span>${cartTotal.toFixed(2)}</span>
         </div>
 
-        <div className="promo-section">
+        {/* <div className="promo-section">
           <label htmlFor="promo">Promo Code</label>
           <div className="promo-input-group">
             <input
@@ -206,7 +197,7 @@ const CartItems = () => {
             />
             <button type="button">Apply</button>
           </div>
-        </div>
+        </div> */}
 
         <button className="checkout-btn">
           Proceed to Checkout

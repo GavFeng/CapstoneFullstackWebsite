@@ -20,7 +20,7 @@ exports.getCategories = async (req, res) => {
   }
 };
 
-// Viewing a Category in DB
+// Viewing a Category by ID in DB
 exports.getCategoryById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -29,6 +29,24 @@ exports.getCategoryById = async (req, res) => {
     res.status(200).json(category);
   } catch (err) {
     res.status(500).json({message: err.message});
+  }
+};
+// Viewing a Category by Name in DB
+exports.getCategoryByName = async (req, res) => {
+  try {
+    const { name } = req.params;
+
+    const category = await Category.findOne({
+      name: new RegExp(`^${name.trim()}$`, "i"),
+    });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category Not Found" });
+    }
+
+    res.status(200).json(category);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 

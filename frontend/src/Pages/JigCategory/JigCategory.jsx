@@ -1,23 +1,44 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
-import Item from '../../Components/Item/Item';
-import './JigCategory.css';
+import React, { useEffect, useState, useCallback } from "react";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import Item from "../../Components/Item/Item";
+import "./JigCategory.css";
 
-const API_URL = 'http://localhost:4000/api';
+const API_URL = "http://localhost:4000/api";
+const LIMIT = 12;
+
+const DEFAULT_FILTERS = {
+  category: "",
+  weight: "",
+  color: "",
+  minPrice: "",
+  maxPrice: "",
+};
+
+const parseQueryParams = (search) => {
+  const params = new URLSearchParams(search);
+
+  return {
+    category: params.get("category") || "",
+    weight: params.get("weight") || "",
+    color: params.get("color") || "",
+    minPrice: params.get("minPrice") || "",
+    maxPrice: params.get("maxPrice") || "",
+  };
+};
+
 
 const JigCategory = () => {
-  const [filters, setFilters] = useState({
-    category: '',
-    weight: '',
-    color: '',
-    minPrice: '',
-    maxPrice: '',
-  });
+  const location = useLocation();
 
+  /* ---------- STATE ---------- */
+
+  const [filters, setFilters] = useState(() =>
+    parseQueryParams(location.search)
+  );
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [totalJigs, setTotalJigs] = useState(0);
-
   const [jigs, setJigs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +47,18 @@ const JigCategory = () => {
   const [colors, setColors] = useState([]);
   const [filterOptionsLoading, setFilterOptionsLoading] = useState(true);
 
-  const LIMIT = 12;
+  /* ---------- HELPERS ---------- */
+  const buildParams = () => ({
+    page,
+    limit: LIMIT,
+    ...(filters.category && { category: filters.category }),
+    ...(filters.weight && { weight: filters.weight }),
+    ...(filters.color && { color: filters.color }),
+    ...(filters.minPrice && { minPrice: Number(filters.minPrice) }),
+    ...(filters.maxPrice && { maxPrice: Number(filters.maxPrice) }),
+  });
+
+  /* ---------- FETCH FILTER OPTIONS (ONCE) ---------- */
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -41,7 +73,7 @@ const JigCategory = () => {
         setWeights(weightRes.data.sort((a, b) => a.value - b.value));
         setColors(colorRes.data);
       } catch (err) {
-        console.error('Failed to load filter options:', err);
+        console.error("Failed to load filter options:", err);
       } finally {
         setFilterOptionsLoading(false);
       }
@@ -50,37 +82,7 @@ const JigCategory = () => {
     fetchOptions();
   }, []);
 
-  const fetchJigs = useCallback(async () => {
-    setLoading(true);
-
-    try {
-      const params = {
-        page,
-        limit: LIMIT,
-        ...(filters.category && { category: filters.category }),
-        ...(filters.weight && { weight: filters.weight }),
-        ...(filters.color && { color: filters.color }),
-        ...(filters.minPrice && { minPrice: Number(filters.minPrice) }),
-        ...(filters.maxPrice && { maxPrice: Number(filters.maxPrice) }),
-      };
-
-      const res = await axios.get(`${API_URL}/jigs`, { params });
-
-      const received = Array.isArray(res.data?.jigs) ? res.data.jigs : [];
-
-      setJigs((prev) => (page === 1 ? received : [...prev, ...received]));
-
-      const total = Number(res.data?.total) || 0;
-      setTotalJigs(total);
-      setHasMore(page < Math.ceil(total / LIMIT));
-    } catch (err) {
-      console.error('Error fetching jigs:', err);
-      setJigs(page === 1 ? [] : prev);
-      setHasMore(false);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, page]);
+  /* ---------- RESET PAGINATION ON FILTER CHANGE ---------- */
 
   useEffect(() => {
     setPage(1);
@@ -88,25 +90,53 @@ const JigCategory = () => {
     setHasMore(true);
   }, [filters]);
 
+  /* ---------- FETCH JIGS ---------- */
+
+  const fetchJigs = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const res = await axios.get(`${API_URL}/jigs`, {
+        params: buildParams(),
+      });
+
+      const received = Array.isArray(res.data?.jigs)
+        ? res.data.jigs
+        : [];
+
+      setJigs((prev) =>
+        page === 1 ? received : [...prev, ...received]
+      );
+
+      const total = Number(res.data?.total) || 0;
+      setTotalJigs(total);
+      setHasMore(page < Math.ceil(total / LIMIT));
+    } catch (err) {
+      console.error("Error fetching jigs:", err);
+      setHasMore(false);
+      if (page === 1) setJigs([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [filters, page]);
+
+  /* ---------- TRIGGER FETCH ---------- */
+
   useEffect(() => {
-    if (page >= 1) fetchJigs();
-  }, [fetchJigs, page]);
+    fetchJigs();
+  }, [fetchJigs]);
+
+  /* ---------- HANDLERS ---------- */
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({
       ...prev,
-      [key]: value === '' ? '' : value,
+      [key]: value || "",
     }));
   };
 
   const handleReset = () => {
-    setFilters({
-      category: '',
-      weight: '',
-      color: '',
-      minPrice: '',
-      maxPrice: '',
-    });
+    setFilters(DEFAULT_FILTERS);
   };
 
   const loadMore = () => {
@@ -115,20 +145,26 @@ const JigCategory = () => {
     }
   };
 
-  if (filterOptionsLoading) return <p className="loading-text">Loading filters...</p>;
+  /* ---------- RENDER ---------- */
+
+  if (filterOptionsLoading)
+    return <p className="loading-text">Loading filters...</p>;
 
   return (
     <div className="jig-category-page">
       <div className="layout-container">
-        {/* Left Side – Filters */}
+
+        {/* ---------- FILTERS SIDEBAR ---------- */}
         <aside className="filters-sidebar">
           <h2 className="filters-title">Filters</h2>
 
           <div className="filter-group">
             <label>Category</label>
             <select
-              value={filters.category || ''}
-              onChange={(e) => handleFilterChange('category', e.target.value)}
+              value={filters.category}
+              onChange={(e) =>
+                handleFilterChange("category", e.target.value)
+              }
             >
               <option value="">All Categories</option>
               {categories.map((cat) => (
@@ -142,8 +178,10 @@ const JigCategory = () => {
           <div className="filter-group">
             <label>Weight</label>
             <select
-              value={filters.weight || ''}
-              onChange={(e) => handleFilterChange('weight', e.target.value)}
+              value={filters.weight}
+              onChange={(e) =>
+                handleFilterChange("weight", e.target.value)
+              }
             >
               <option value="">All Weights</option>
               {weights.map((w) => (
@@ -157,8 +195,10 @@ const JigCategory = () => {
           <div className="filter-group">
             <label>Color</label>
             <select
-              value={filters.color || ''}
-              onChange={(e) => handleFilterChange('color', e.target.value)}
+              value={filters.color}
+              onChange={(e) =>
+                handleFilterChange("color", e.target.value)
+              }
             >
               <option value="">All Colors</option>
               {colors.map((c) => (
@@ -175,15 +215,19 @@ const JigCategory = () => {
               <input
                 type="number"
                 placeholder="Min"
-                value={filters.minPrice || ''}
-                onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                value={filters.minPrice}
+                onChange={(e) =>
+                  handleFilterChange("minPrice", e.target.value)
+                }
               />
               <span>–</span>
               <input
                 type="number"
                 placeholder="Max"
-                value={filters.maxPrice || ''}
-                onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                value={filters.maxPrice}
+                onChange={(e) =>
+                  handleFilterChange("maxPrice", e.target.value)
+                }
               />
             </div>
           </div>
@@ -193,19 +237,23 @@ const JigCategory = () => {
           </button>
         </aside>
 
-        {/* Main Area */}
+        {/* ---------- PRODUCTS ---------- */}
         <main className="products-main">
           {!loading && jigs.length > 0 && (
             <p className="jig-count">
-              Showing <strong>{jigs.length}</strong> of <strong>{totalJigs}</strong>
-              {jigs.length === totalJigs && totalJigs > 0 && ' (all)'}
+              Showing <strong>{jigs.length}</strong> of{" "}
+              <strong>{totalJigs}</strong>
             </p>
           )}
 
-          {loading && page === 1 && <p className="loading-text">Loading products...</p>}
+          {loading && page === 1 && (
+            <p className="loading-text">Loading products...</p>
+          )}
 
           {jigs.length === 0 && !loading && (
-            <p className="loading-text">No products match the selected filters.</p>
+            <p className="loading-text">
+              No products match the selected filters.
+            </p>
           )}
 
           <div className="jig-grid">
@@ -225,9 +273,8 @@ const JigCategory = () => {
               <button
                 className="load-more-btn"
                 onClick={loadMore}
-                disabled={loading}
               >
-                {loading ? 'Loading...' : 'Load More'}
+                Load More
               </button>
             </div>
           )}

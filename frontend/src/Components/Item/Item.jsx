@@ -21,7 +21,10 @@ const Item = ({ id, name, price, colors }) => {
     colors?.[0]?.images?.[0]?.url;
 
 
-  const slug = name.toLowerCase().replace(/\s+/g, "-");
+  const slug = name
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-+|-+$/g, '');
 
 
   return (
@@ -59,7 +62,7 @@ const Item = ({ id, name, price, colors }) => {
               key={c.color?._id}
               onClick={() => !outOfStock && setSelectedColorId(c.color?._id)}
               disabled={outOfStock}
-              className={`color-dot ${isSelected ? "selected" : ""}`}
+              className={`color-dot-item ${isSelected ? "selected" : ""}`}
               style={{
                 backgroundColor: c.color?.slug || "#ccc",
                 opacity: outOfStock ? 0.5 : 1,

@@ -15,7 +15,7 @@ const App = () => {
       <Route path="/" element={<Homepage />} />
       <Route path="/alljigs" element={<JigCategory />} />
 
-      <Route path="/jig/:id/:slug" element={<JigPage />} />
+      <Route path="/jig/:id/:slug?" element={<JigPage />} />
 
       <Route path="/cart" element={<Cart />} />
       <Route path="/login" element={<Login />} />

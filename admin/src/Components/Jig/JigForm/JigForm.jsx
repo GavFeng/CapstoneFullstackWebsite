@@ -343,7 +343,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
   };
 
 
-  /* ==================== JSX ==================== */
+  /* ----------  JSX ----------  */
   return (
     <div className="add-jig-container">
       <h2>{mode === "add" ? "Add New Jig" : "Edit Jig"}</h2>

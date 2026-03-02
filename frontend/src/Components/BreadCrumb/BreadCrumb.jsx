@@ -9,19 +9,32 @@ const Breadcrumb = ({ jig }) => {
     <nav className="breadcrumb">
       <Link to="/">Home</Link>
       <span className="separator">›</span>
+
       <Link to="/alljigs">Shop</Link>
       <span className="separator">›</span>
+
       {jig.category && (
         <>
-          {jig.category.name}
+          <Link to={`/alljigs?category=${jig.category._id}`}>
+            {jig.category.name}
+          </Link>
+
           <span className="separator">›</span>
-          {jig.weight.label}
+
+          <Link
+            to={`/alljigs?weight=${jig.weight._id}`}
+          >
+            {jig.weight.label}
+          </Link>
+
           <span className="separator">›</span>
         </>
       )}
+
       <span className="current">{jig.name}</span>
     </nav>
   )
 }
+
 
 export default Breadcrumb

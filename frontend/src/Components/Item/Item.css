@@ -58,7 +58,7 @@
   margin-top: 12px;
 }
 
-.color-dot {
+.color-dot-item {
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -68,11 +68,11 @@
   transition: all 0.2s ease;
 }
 
-.color-dot:hover {
+.color-dot-item:hover {
   transform: scale(1.1);
 }
 
-.color-dot.selected {
+.color-dot-item.selected {
   box-shadow: 0 0 0 2px #4b5563;
 }
 

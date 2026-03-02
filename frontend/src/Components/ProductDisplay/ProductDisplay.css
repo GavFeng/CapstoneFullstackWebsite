@@ -84,7 +84,12 @@
   color: #555;
 }
 
-.color-selector h3 {
+.page-color-selector {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-color-selector h3 {
   margin: 1.5rem 0 0.75rem;
   font-size: 1.2rem;
 }

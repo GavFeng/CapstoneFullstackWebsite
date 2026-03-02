@@ -99,7 +99,7 @@ const ProductDisplay = ({ jig }) => {
           <div className="short-description">{jig.description}</div>
         )}
 
-        <div className="color-selector">
+        <div className="page-color-selector">
           <h3>Select Color</h3>
           <div className="color-dots">
             {variants.length === 0 ? (

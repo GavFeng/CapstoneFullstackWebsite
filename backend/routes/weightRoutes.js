@@ -3,6 +3,7 @@ const express = require("express");
 const {
   createWeight,
   getWeights,
+  getWeightByLabel,
   checkWeightLabel,
   getWeightById,
   deleteWeight,
@@ -15,6 +16,8 @@ const router = express.Router();
 router.post("/", createWeight);
 
 router.get("/", getWeights);
+
+router.get("/label/:label", getWeightByLabel);
 
 router.get("/check-label", checkWeightLabel);
 
