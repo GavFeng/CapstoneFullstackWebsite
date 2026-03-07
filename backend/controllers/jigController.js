@@ -116,19 +116,123 @@ exports.getJigs = async (req, res) => {
   }
 };
 
-// Viewing a Jig in DB
-exports.getJigById = async (req, res) => {
+
+//Check if JigName already Exists
+exports.checkJigName = async (req, res) => {
   try {
-    const { id } = req.params;
-    const jig = await Jig.findById(id)
+    const name = req.query.name?.trim().toLowerCase();
+    if (!name) return res.json({ exists: false });
+
+    const existingJig = await Jig.findOne({ name });
+    res.json({ exists: !!existingJig });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ exists: false, message: err.message });
+  }
+};
+
+// Top 10 by total sold
+exports.getTopPopularJigs = async (req, res) => {
+  try {
+    const limit = Number(req.query.limit) || 10;
+
+    const popularJigs = await Jig.aggregate([
+      {
+        $addFields: {
+          totalSold: {
+            $sum: "$colors.sold"
+          }
+        }
+      },
+      {
+        $sort: { totalSold: -1 }
+      },
+      {
+        $limit: limit
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category"
+        }
+      },
+      { $unwind: { path: "$category", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "weights",
+          localField: "weight",
+          foreignField: "_id",
+          as: "weight"
+        }
+      },
+      { $unwind: { path: "$weight", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "colors",
+          localField: "colors.color",
+          foreignField: "_id",
+          as: "colors.color"
+        }
+      }
+    ]);
+
+    res.json(popularJigs);
+  } catch (err) {
+    console.error("getTopPopularJigs error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Newest 10 jigs
+exports.getNewestJigs = async (req, res) => {
+  try {
+    const limit = Number(req.query.limit) || 10;
+
+    const newestJigs = await Jig.find()
+      .sort({ createdAt: -1 })
+      .limit(limit)
       .populate("category")
       .populate("weight")
       .populate("colors.color", "name slug");
-    
-    if (!jig) return res.status(404).json({message: "Jig Not Found"});
+
+    res.json(newestJigs);
+  } catch (err) {
+    console.error("getNewestJigs error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+// Viewing a Jig in DB
+exports.getJigById = async (req, res) => {
+  try {
+    const { idOrSlug } = req.params;
+
+    let jig;
+
+    // Try ObjectId 
+    if (mongoose.isValidObjectId(idOrSlug)) {
+      jig = await Jig.findById(idOrSlug)
+        .populate("category")
+        .populate("weight")
+        .populate("colors.color", "name slug");
+    }
+
+    // If Id Fail try slug
+    if (!jig) {
+      jig = await Jig.findOne({ slug: idOrSlug })
+        .populate("category")
+        .populate("weight")
+        .populate("colors.color", "name slug");
+    }
+
+    if (!jig) return res.status(404).json({ message: "Jig Not Found" });
+
     res.status(200).json(jig);
   } catch (err) {
-    res.status(500).json({message: err.message});
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -350,18 +454,6 @@ exports.patchJig = async (req, res) => {
   }
 };
 
-exports.checkJigName = async (req, res) => {
-  try {
-    const name = req.query.name?.trim().toLowerCase();
-    if (!name) return res.json({ exists: false });
-
-    const existingJig = await Jig.findOne({ name });
-    res.json({ exists: !!existingJig });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ exists: false, message: err.message });
-  }
-};
 
 exports.updateInventory = async (req, res) => {
   try {

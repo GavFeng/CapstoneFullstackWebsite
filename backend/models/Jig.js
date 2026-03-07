@@ -33,6 +33,13 @@ const jigSchema = new mongoose.Schema({
     lowercase: true,
     minLength: 1,
   },
+  slug: {
+    type: String,
+    unique: true,
+    sparse: true,
+    lowercase: true,
+    trim: true,
+  },
   description: { 
     type: String,
     required: true,
@@ -63,7 +70,18 @@ const jigSchema = new mongoose.Schema({
     }
   },
 }, { 
-  timestamps: true 
+  timestamps: true
 });
+
+jigSchema.pre('save', function () {
+  if (this.isModified('name') || !this.slug) {
+    this.slug = this.name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+});
+
 
 module.exports = mongoose.model("Jig", jigSchema);

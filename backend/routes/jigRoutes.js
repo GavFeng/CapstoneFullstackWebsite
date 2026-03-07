@@ -4,6 +4,8 @@ const {
   createJig,
   getJigs,
   checkJigName,
+  getTopPopularJigs,
+  getNewestJigs,
   getJigById,
   deleteJig,
   deleteColor,
@@ -20,7 +22,11 @@ router.get("/", getJigs);
 
 router.get("/check-name", checkJigName);
 
-router.get("/:id", getJigById);
+router.get("/top-popular", getTopPopularJigs);
+
+router.get("/newest", getNewestJigs);
+
+router.get("/:idOrSlug", getJigById);
 
 router.delete("/:id", deleteJig);
 
