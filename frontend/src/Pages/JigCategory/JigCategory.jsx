@@ -168,7 +168,7 @@ const JigCategory = () => {
             >
               <option value="">All Categories</option>
               {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
+                <option key={cat._id} value={cat.slug || cat._id}>
                   {cat.name}
                 </option>
               ))}
@@ -185,7 +185,7 @@ const JigCategory = () => {
             >
               <option value="">All Weights</option>
               {weights.map((w) => (
-                <option key={w._id} value={w._id}>
+                <option key={w._id} value={w.slug || w._id}>
                   {w.label}
                 </option>
               ))}

@@ -1,8 +1,14 @@
 import React from 'react'
 
+import NewJigs from '../../Components/CarouselJigs/NewJigs';
+import PopularJigs from '../../Components/CarouselJigs/PopularJigs';
+
 const Homepage = () => {
   return (
-    <div>Homepage</div>
+    <div> 
+      <NewJigs />
+      <PopularJigs />
+    </div>
   )
 }
 

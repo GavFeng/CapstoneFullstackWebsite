@@ -4,12 +4,13 @@ const {
   createJig,
   getJigs,
   checkJigName,
-  getTopPopularJigs,
+  getPopularJigs,
   getNewestJigs,
   getJigById,
   deleteJig,
   deleteColor,
   patchJig,
+  getRelatedJigs,
   updateInventory,
   updateSold,
 } = require("../controllers/jigController");
@@ -22,7 +23,7 @@ router.get("/", getJigs);
 
 router.get("/check-name", checkJigName);
 
-router.get("/top-popular", getTopPopularJigs);
+router.get("/popular", getPopularJigs);
 
 router.get("/newest", getNewestJigs);
 
@@ -31,6 +32,8 @@ router.get("/:idOrSlug", getJigById);
 router.delete("/:id", deleteJig);
 
 router.patch("/:id", patchJig);
+
+router.get('/related/:id', getRelatedJigs);
 
 router.delete("/:id/colors/:colorId", deleteColor);
 

@@ -70,13 +70,19 @@ exports.getJigs = async (req, res) => {
 
     if (category) {
       if (mongoose.isValidObjectId(category)) {
-        query.category = new mongoose.Types.ObjectId(category);
+        query.category = category;
+      } else {
+        const cat = await Category.findOne({ slug: category });
+        if (cat) query.category = cat._id;
       }
     }
 
     if (weight) {
       if (mongoose.isValidObjectId(weight)) {
-        query.weight = new mongoose.Types.ObjectId(weight);
+        query.weight = weight;
+      } else {
+        const w = await Weight.findOne({ slug: weight });
+        if (w) query.weight = w._id;
       }
     }
 
@@ -131,56 +137,27 @@ exports.checkJigName = async (req, res) => {
   }
 };
 
-// Top 10 by total sold
-exports.getTopPopularJigs = async (req, res) => {
+// Best Selling Jigs
+exports.getPopularJigs = async (req, res) => {
   try {
     const limit = Number(req.query.limit) || 10;
 
-    const popularJigs = await Jig.aggregate([
-      {
-        $addFields: {
-          totalSold: {
-            $sum: "$colors.sold"
-          }
-        }
-      },
-      {
-        $sort: { totalSold: -1 }
-      },
-      {
-        $limit: limit
-      },
-      {
-        $lookup: {
-          from: "categories",
-          localField: "category",
-          foreignField: "_id",
-          as: "category"
-        }
-      },
-      { $unwind: { path: "$category", preserveNullAndEmptyArrays: true } },
-      {
-        $lookup: {
-          from: "weights",
-          localField: "weight",
-          foreignField: "_id",
-          as: "weight"
-        }
-      },
-      { $unwind: { path: "$weight", preserveNullAndEmptyArrays: true } },
-      {
-        $lookup: {
-          from: "colors",
-          localField: "colors.color",
-          foreignField: "_id",
-          as: "colors.color"
-        }
-      }
-    ]);
+    const jigs = await Jig.find()
+      .populate("category")
+      .populate("weight")
+      .populate("colors.color", "name slug");
+
+    const popularJigs = jigs
+      .map(jig => {
+        const totalSold = jig.colors.reduce((sum, c) => sum + (c.sold || 0), 0);
+        return { ...jig.toObject(), totalSold };
+      })
+      .sort((a, b) => b.totalSold - a.totalSold)
+      .slice(0, limit);
 
     res.json(popularJigs);
   } catch (err) {
-    console.error("getTopPopularJigs error:", err);
+    console.error("getPopularJigs error:", err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -454,6 +431,37 @@ exports.patchJig = async (req, res) => {
   }
 };
 
+// Get related jigs by same weight + category (Minus Self)
+exports.getRelatedJigs = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const limit = Number(req.query.limit) || 8;
+
+    const currentJig = await Jig.findById(id)
+      .select('weight category')
+      .lean();
+
+    if (!currentJig) {
+      return res.status(404).json({ message: 'Jig not found' });
+    }
+
+    const related = await Jig.find({
+      _id: { $ne: id },
+      weight: currentJig.weight,
+      category: currentJig.category
+    })
+      .populate('category', 'name slug')
+      .populate('weight', 'name')
+      .populate('colors.color', 'name slug')
+      .limit(limit)
+      .lean();
+
+    res.json(related);
+  } catch (err) {
+    console.error('getRelatedJigs error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 exports.updateInventory = async (req, res) => {
   try {

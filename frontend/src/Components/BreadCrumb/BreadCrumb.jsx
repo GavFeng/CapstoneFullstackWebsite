@@ -15,14 +15,14 @@ const Breadcrumb = ({ jig }) => {
 
       {jig.category && (
         <>
-          <Link to={`/alljigs?category=${jig.category._id}`}>
+          <Link to={`/alljigs?category=${jig.category.slug || jig.category._id}`}>
             {jig.category.name}
           </Link>
 
           <span className="separator">›</span>
 
           <Link
-            to={`/alljigs?weight=${jig.weight._id}`}
+            to={`/alljigs?weight=${jig.weight.slug || jig.weight.id}`}
           >
             {jig.weight.label}
           </Link>

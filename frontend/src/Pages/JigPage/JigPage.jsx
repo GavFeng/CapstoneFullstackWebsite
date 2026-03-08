@@ -4,6 +4,7 @@ import axios from 'axios';
 import Breadcrumb from '../../Components/BreadCrumb/BreadCrumb';
 import ProductDisplay from '../../Components/ProductDisplay/ProductDisplay';
 import DescriptionBox from '../../Components/DescriptionBox/DescriptionBox';
+import RelatedProducts from '../../Components/CarouselJigs/RelatedProducts';
 
 const API_URL = 'http://localhost:4000/api';
 
@@ -45,7 +46,7 @@ const JigPage = () => {
       <Breadcrumb jig={jig} />
       <ProductDisplay jig={jig} />
       <DescriptionBox jig={jig} />
-      {/* <RelatedProducts jig={jig} /> */}
+      <RelatedProducts jig={jig} />
     </div>
   );
 };

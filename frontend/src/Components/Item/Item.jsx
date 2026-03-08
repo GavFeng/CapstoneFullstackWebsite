@@ -31,7 +31,7 @@ const Item = ({ id, name, price, colors }) => {
     <div className="item-card">
 
       <div className="item-image-container">
-        <Link to={`/jig/${id}/${slug}`}>
+        <Link to={`/jig/${slug || id}`}>
           <img
             src={imageUrl}
             alt={name}

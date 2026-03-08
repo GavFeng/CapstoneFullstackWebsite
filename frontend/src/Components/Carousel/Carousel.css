@@ -1,0 +1,125 @@
+.carousel-container {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: 2.5rem auto;
+  padding: 0 1rem;
+}
+
+.carousel-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.carousel-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.carousel-underline {
+  width: 6rem;
+  height: 4px;
+  margin: 0.75rem auto 0;
+  background-color: #374151;
+  border-radius: 9999px;
+}
+
+.carousel-wrapper {
+  position: relative;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  background: rgba(229, 231, 235, 0.92);
+  border: none;
+  border-radius: 50%;
+  font-size: 1.75rem;
+  color: #374151;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: all 0.18s ease;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-arrow:hover {
+  background: #e5e7eb;
+  transform: translateY(-50%) scale(1.07);
+}
+
+.carousel-arrow-left {
+  left: 12px;
+}
+
+.carousel-arrow-right {
+  right: 12px;
+}
+
+.carousel-scroll {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1.5rem;
+  padding: 1.5rem 2.5rem;           /* breathing room on sides */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  min-height: 380px;                 /* prevents jump when arrows appear/disappear */
+}
+
+.carousel-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-item-wrapper {
+  flex: 0 0 auto;
+  width: 260px;
+  min-width: 260px;
+}
+
+.carousel-scroll:not(.overflowing) {
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .carousel-arrow-left {
+    left: -16px;
+  }
+  .carousel-arrow-right {
+    right: -16px;
+  }
+  .carousel-scroll {
+    padding: 1.5rem 3.5rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .carousel-item-wrapper {
+    width: 280px;
+    min-width: 280px;
+  }
+}
+
+@media (min-width: 768px) {
+  .carousel-item-wrapper {
+    width: 300px;
+    min-width: 300px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .carousel-item-wrapper {
+    width: 320px;
+    min-width: 320px;
+  }
+  .carousel-container {
+    padding: 0 2rem;
+  }
+}
