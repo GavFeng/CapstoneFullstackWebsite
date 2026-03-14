@@ -93,7 +93,7 @@ const Carousel = ({ title, items, ItemComponent }) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Carousel;
+export default Carousel

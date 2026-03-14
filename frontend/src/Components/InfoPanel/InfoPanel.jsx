@@ -34,7 +34,7 @@ const InfoPanel = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default InfoPanel;
+export default InfoPanel
