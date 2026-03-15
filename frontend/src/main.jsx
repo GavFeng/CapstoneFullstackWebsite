@@ -6,8 +6,8 @@ import {JigContextProvider} from './Context/JigContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <JigContextProvider>
-      <App />
-    </JigContextProvider>
+      <JigContextProvider>
+        <App />
+      </JigContextProvider>
   </StrictMode>,
 )

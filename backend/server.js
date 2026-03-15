@@ -7,7 +7,7 @@ const jigRoutes = require("./routes/jigRoutes");
 const colorRoutes = require("./routes/colorRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const weightRoutes = require("./routes/weightRoutes");
-
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -27,6 +27,7 @@ app.use("/api/jigs", jigRoutes);
 app.use("/api/colors", colorRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/weights", weightRoutes);
+app.use("/api/users", userRoutes);
 
 // Connect to DB + Start Server
 connectDB().then(() => {
