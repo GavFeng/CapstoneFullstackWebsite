@@ -1,11 +1,19 @@
-import React, { createContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useState, useEffect, useMemo, useContext} from 'react';
 import axios from 'axios';
+import debounce from 'lodash/debounce';
+import { useAuth } from './AuthContext';
 
 export const JigContext = createContext(null);
 
 const API_URL = 'http://localhost:4000/api';
 
 export const JigContextProvider = ({ children }) => {
+
+  const { user, loading: authLoading } = useAuth();
+
+  const isAuthenticated = !!user;                  
+  const token = localStorage.getItem('token');
+
   const [jigs, setJigs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cartItems, setCartItems] = useState({});
@@ -32,6 +40,45 @@ export const JigContextProvider = ({ children }) => {
     fetchJigs();
   }, []);
 
+  useEffect(() => {
+    if (!isAuthenticated || authLoading) return;
+
+    const loadServerCart = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/cart`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const serverCart = res.data;
+        const newCart = {};
+
+        serverCart.items?.forEach((item) => {
+          const jigId = item.jig?._id || item.jig;
+          const colorId = item.color?._id || item.color;
+          const key = `${jigId}-${colorId}`;
+
+          newCart[key] = {
+            jigId,
+            colorId,
+            quantity: item.quantity,
+          };
+        });
+
+        setCartItems(newCart);
+      } catch (err) {
+        console.error('Failed to load server cart:', err);
+      }
+    };
+
+    loadServerCart();
+  }, [isAuthenticated, authLoading, token]);
+
+  useEffect(() => {
+    if (!isAuthenticated && !authLoading) {
+      setCartItems({});
+    }
+  }, [isAuthenticated, authLoading]);
+
   const getCartKey = (jigId, colorId) => `${jigId}-${colorId}`;
 
   const getAvailableStock = (jigId, colorId) => {
@@ -41,32 +88,53 @@ export const JigContextProvider = ({ children }) => {
     return variant?.stock ?? 0;
   };
 
+  const syncItem = async (jigId, colorId, quantity) => {
+    if (!isAuthenticated || !token) return;
+
+    try {
+      await axios.post(
+        `${API_URL}/cart/item`,
+        { jig: jigId, color: colorId, quantity },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error('Cart item sync failed:', err);
+      // Optional: toast notification or revert logic here later
+    }
+  };
+
+  const debouncedSyncQuantity = useMemo(
+    () =>
+      debounce((jigId, colorId, qty) => {
+        syncItem(jigId, colorId, qty);
+      }, 700),
+    [isAuthenticated, token]
+  );
+
   const addToCart = (jigId, colorId, quantity = 1) => {
-    const key = getCartKey(jigId, colorId);
-    const currentQty = cartItems[key]?.quantity || 0;
-    const available = getAvailableStock(jigId, colorId);
+    setCartItems((prev) => {
+      const key = getCartKey(jigId, colorId);
+      const current = prev[key]?.quantity || 0;
+      const available = getAvailableStock(jigId, colorId);
+      const newQty = Math.min(current + Math.max(0, quantity), available);
 
-    const newQty = Math.min(
-      currentQty + Math.max(0, quantity),
-      available
-    );
-
-    if (newQty === 0) {
-      setCartItems(prev => {
+      if (newQty === 0) {
         const { [key]: _, ...rest } = prev;
         return rest;
-      });
-      return;
-    }
+      }
 
-    setCartItems(prev => ({
-      ...prev,
-      [key]: {
-        jigId,
-        colorId,
-        quantity: newQty,
-      },
-    }));
+      const updated = {
+        ...prev,
+        [key]: { jigId, colorId, quantity: newQty },
+      };
+
+      // optimistic → sync
+      if (isAuthenticated) {
+        syncItem(jigId, colorId, newQty);
+      }
+
+      return updated;
+    });
   };
 
   const removeFromCart = (jigId, colorId) => {
@@ -74,32 +142,45 @@ export const JigContextProvider = ({ children }) => {
   };
 
   const removeAllFromCart = (jigId, colorId) => {
-    const key = getCartKey(jigId, colorId);
-    setCartItems(prev => {
+    setCartItems((prev) => {
+      const key = getCartKey(jigId, colorId);
       const { [key]: _, ...rest } = prev;
       return rest;
     });
+
+    if (isAuthenticated) {
+      axios
+        .delete(`${API_URL}/cart/item`, {
+          data: { jig: jigId, color: colorId },
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .catch((err) => console.error("Remove failed", err));
+    }
   };
 
   const setCartQuantity = (jigId, colorId, newQuantity) => {
-    const key = getCartKey(jigId, colorId);
-    const available = getAvailableStock(jigId, colorId);
-    const qty = Math.max(0, Number(newQuantity) || 0);
-    const safeQty = Math.min(qty, available);
+    setCartItems((prev) => {
+      const key = getCartKey(jigId, colorId);
+      const available = getAvailableStock(jigId, colorId);
+      const qty = Math.max(0, Number(newQuantity) || 0);
+      const safeQty = Math.min(qty, available);
 
-    setCartItems(prev => {
+      let updated;
       if (safeQty === 0) {
         const { [key]: _, ...rest } = prev;
-        return rest;
+        updated = rest;
+      } else {
+        updated = {
+          ...prev,
+          [key]: { jigId, colorId, quantity: safeQty },
+        };
       }
-      return {
-        ...prev,
-        [key]: {
-          jigId,
-          colorId,
-          quantity: safeQty,
-        },
-      };
+
+      if (isAuthenticated) {
+        debouncedSyncQuantity(jigId, colorId, safeQty);
+      }
+
+      return updated;
     });
   };
 
@@ -116,7 +197,7 @@ export const JigContextProvider = ({ children }) => {
 
   const value = {
     jigs,
-    loading,
+    loading: loading || authLoading,
     cartItems,
     addToCart,
     removeFromCart,
