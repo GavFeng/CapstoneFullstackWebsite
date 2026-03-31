@@ -99,7 +99,7 @@ export const JigContextProvider = ({ children }) => {
       );
     } catch (err) {
       console.error('Cart item sync failed:', err);
-      // Optional: toast notification or revert logic here later
+      // toast notification maybe added later here
     }
   };
 

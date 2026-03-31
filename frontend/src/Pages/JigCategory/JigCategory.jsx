@@ -58,8 +58,9 @@ const JigCategory = () => {
     ...(filters.maxPrice && { maxPrice: Number(filters.maxPrice) }),
   });
 
-  /* ---------- FETCH FILTER OPTIONS (ONCE) ---------- */
+  /* ---------- EFFECTS ---------- */
 
+  // Fetch Filter Options 1 Time
   useEffect(() => {
     const fetchOptions = async () => {
       try {
@@ -82,8 +83,7 @@ const JigCategory = () => {
     fetchOptions();
   }, []);
 
-  /* ---------- RESET PAGINATION ON FILTER CHANGE ---------- */
-
+  // Reset Page on Filter Change
   useEffect(() => {
     setPage(1);
     setJigs([]);

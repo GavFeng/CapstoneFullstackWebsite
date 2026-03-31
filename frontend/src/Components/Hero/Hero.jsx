@@ -3,6 +3,7 @@ import "./Hero.css";
 import { Link } from "react-router-dom";
 import heroImage from '../../Assets/blue_14.jpg';
 
+{/* Hero Compontent for Home Page */}
 const Hero = () => {
   return (
     <section className="hero">

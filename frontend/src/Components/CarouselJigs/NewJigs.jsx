@@ -3,15 +3,24 @@ import Carousel from '../Carousel/Carousel';
 import Item from '../Item/Item';
 import axios from 'axios';
 
+/* ---------- API ---------- */
 const API_URL = "http://localhost:4000/api";
 
 const NewestJigs = () => {
+
+  /* ---------- STATE ---------- */
+  
+  // Stores fetched jig data
   const [newJigs, setNewJigs] = useState([]);
+
+  // Tracks loading state for UI feedback
   const [loading, setLoading] = useState(true);
 
+  /* ---------- EFFECT ---------- */
   useEffect(() => {
     const fetchNewest = async () => {
       try {
+        // Fetch top 10 newest jigs 
         const res = await axios.get(`${API_URL}/jigs/newest?limit=10`);
         setNewJigs(res.data);
       } catch (err) {
@@ -23,7 +32,9 @@ const NewestJigs = () => {
 
     fetchNewest();
   }, []);
-
+  
+  /* ----------  JSX ----------  */
+  // Show loading while data is being fetched
   if (loading) return <div className="text-center py-12">Loading new jigs...</div>;
 
   return (

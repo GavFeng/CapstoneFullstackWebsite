@@ -3,21 +3,32 @@ import axios from 'axios';
 import Carousel from '../Carousel/Carousel';
 import Item from '../Item/Item';
 
-
+/* ---------- API ---------- */
 const API_URL = "http://localhost:4000/api";
 
 const RelatedProducts = ({ jig }) => {
+
+  /* ---------- STATE ---------- */
+
+  // Stores fetched jig data
   const [related, setRelated] = useState([]);
+
+  // Tracks loading state for UI feedback
   const [loading, setLoading] = useState(true);
+
+  // Tracks error state for UI feedback
   const [error, setError] = useState(null);
 
+  /* ---------- EFFECT ---------- */
   useEffect(() => {
+    // Guard: Check if required jig data exists before making request
     if (!jig?._id || !jig?.weight?._id || !jig?.category?._id) {
       setRelated([]);
       setLoading(false);
       return;
     }
 
+    // Prevent state updates if component unmounts or dependencies change
     let isCurrent = true;
 
     const fetchRelated = async () => {
@@ -25,27 +36,33 @@ const RelatedProducts = ({ jig }) => {
         setLoading(true);
         setError(null);
 
-        const res = await axios.get(`${API_URL}/jigs/related/${jig._id}`, {
-          params: { limit: 8 },
-        });
+        // Fetch 8 related jigs based on current jig ID
+        const res = await axios.get(
+          `${API_URL}/jigs/related/${jig._id}`,
+          { params: { limit: 8 } }
+        );
 
         const data = res.data;
 
-        if (isCurrent) {
-          if (Array.isArray(data)) {
-            setRelated(data);
-          } else {
-            console.warn('Related endpoint did not return an array:', data);
-            setRelated([]);
+        if (!isCurrent) return;
 
-          }
+        // Ensure API returns expected array format
+        if (Array.isArray(data)) {
+          setRelated(data);
+        } else {
+          console.warn("Related endpoint did not return an array:", data);
+          setRelated([]);
         }
+
       } catch (err) {
-        console.error('Error fetching related jigs:', err);
-        if (isCurrent) {
-          setError('Could not load related products');
-          setRelated([]); 
-        }
+        console.error("Error fetching related jigs:", err);
+
+        if (!isCurrent) return;
+
+        // Set user-facing error message
+        setError("Could not load related products");
+        setRelated([]);
+
       } finally {
         if (isCurrent) {
           setLoading(false);
@@ -55,18 +72,22 @@ const RelatedProducts = ({ jig }) => {
 
     fetchRelated();
 
+    // Cleanup: mark request as stale to avoid race conditions
     return () => {
       isCurrent = false;
     };
+
   }, [jig?._id, jig?.weight?._id, jig?.category?._id]);
 
-  if (loading) {
-    return <div className="text-center py-8">Loading related jigs…</div>;
-  }
 
-  if (error || related.length === 0) {
-    return null;
-  }
+  /* ----------  JSX ----------  */
+
+  // Show loading while data is being fetched
+  if (loading) return <div className="text-center py-8">Loading related jigs…</div>;
+  
+  // return null if there is an error
+  if (error || related.length === 0) return null;
+  
 
   return (
     <Carousel
@@ -75,6 +96,6 @@ const RelatedProducts = ({ jig }) => {
       ItemComponent={Item}
     />
   );
-};
+}
 
-export default RelatedProducts;
+export default RelatedProducts

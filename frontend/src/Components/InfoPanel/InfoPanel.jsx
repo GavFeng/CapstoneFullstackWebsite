@@ -1,5 +1,6 @@
 import "./InfoPanel.css";
 
+{/* Info Compontent for Home Page */}
 const InfoPanel = () => {
   return (
     <section className="squid-info">
