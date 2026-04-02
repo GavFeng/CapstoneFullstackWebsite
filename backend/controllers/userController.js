@@ -2,9 +2,9 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
 
-const generateToken = (id, role) => {
+const generateToken = (id, accountType) => {
   return jwt.sign(
-    { id, role },
+    { id, accountType },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
@@ -22,7 +22,9 @@ exports.registerUser = async (req, res) => {
 
     if (existingUser) {
       return res.status(400).json({
-        message: "User already exists"
+        message: existingUser.email === email
+          ? "Email already in use"
+          : "Username already taken"
       });
     }
 
@@ -39,7 +41,7 @@ exports.registerUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.accountType
+        accountType: user.accountType
       }
     });
 
@@ -54,7 +56,7 @@ exports.loginUser = async (req, res) => {
 
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(400).json({
@@ -76,7 +78,7 @@ exports.loginUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.accountType
+        accountType: user.accountType
       }
     });
 
@@ -88,7 +90,7 @@ exports.loginUser = async (req, res) => {
 // Get a User
 exports.getCurrentUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(req.user._id);
     res.json(user);
   } catch (err) {
     res.status(500).json({
@@ -100,7 +102,7 @@ exports.getCurrentUser = async (req, res) => {
 // Get the Users
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find().select("-password");
+    const users = await User.find();
     res.json(users);
   } catch (err) {
     res.status(500).json({
