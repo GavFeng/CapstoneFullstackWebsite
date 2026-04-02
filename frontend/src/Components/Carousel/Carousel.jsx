@@ -6,10 +6,7 @@ const Carousel = ({ title, items, ItemComponent }) => {
 
   /* ---------- STATE ---------- */
 
-  // horizontal scroll ref
   const scrollRef = useRef(null);
-
-  // Controls if left/right carousel arrows are visible
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
@@ -20,7 +17,6 @@ const Carousel = ({ title, items, ItemComponent }) => {
     const el = scrollRef.current;
     if (!el) return;
 
-    // Initial check if enough items to overflow
     updateOverflowState();
 
     // Recalculate when window resizes
@@ -58,12 +54,9 @@ const Carousel = ({ title, items, ItemComponent }) => {
   const updateOverflowState = () => {
     const el = scrollRef.current;
     if (!el) return;
-
+    
     const isOverflowing = el.scrollWidth > el.clientWidth + 1;
-
-    // Different class for styling when NOT overflow
     el.classList.toggle("overflowing", !isOverflowing);
-
     checkScroll();
   };
 

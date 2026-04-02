@@ -10,13 +10,8 @@ const RelatedProducts = ({ jig }) => {
 
   /* ---------- STATE ---------- */
 
-  // Stores fetched jig data
   const [related, setRelated] = useState([]);
-
-  // Tracks loading state for UI feedback
   const [loading, setLoading] = useState(true);
-
-  // Tracks error state for UI feedback
   const [error, setError] = useState(null);
 
   /* ---------- EFFECT ---------- */
@@ -81,11 +76,7 @@ const RelatedProducts = ({ jig }) => {
 
 
   /* ----------  JSX ----------  */
-
-  // Show loading while data is being fetched
   if (loading) return <div className="text-center py-8">Loading related jigs…</div>;
-  
-  // return null if there is an error
   if (error || related.length === 0) return null;
   
 

@@ -14,9 +14,7 @@ const CartItems = () => {
     cartTotal = 0,
   } = useContext(JigContext);
 
-  /* ---------- STATE ---------- */
 
-  // Convert cart object -> array for rendering
   const cartArray = Object.values(cartItems);
 
   /* ---------- HELPERS ---------- */

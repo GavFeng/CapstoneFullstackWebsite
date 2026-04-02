@@ -27,14 +27,12 @@ const Item = ({ id, name, price, colors }) => {
     c => c.color?._id === selectedColorId
   );
 
-  // Determine which image to display:
-  // 1. Selected color image
-  // 2. Fallback to first available image
+  // Determine which image to display
   const imageUrl =
     selectedColorObj?.images?.[0]?.url ||
     colors?.[0]?.images?.[0]?.url;
 
-  // Generate URL-friendly slug for product page routing
+  // Generate URL-friendly slug
   const slug = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')

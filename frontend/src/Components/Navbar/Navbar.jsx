@@ -9,20 +9,12 @@ import { useAuth } from '../../Context/AuthContext';
 const Navbar = () => {
 
   /* ---------- STATE ---------- */
-
-  // Cart item count from global context
   const { totalItems = 0 } = useContext(JigContext);
-
-  // Auth state (user info, loading state, logout function)
   const { user, loading, logout } = useAuth();
-
-  // Controls visibility of profile dropdown menu
   const [menuOpen, setMenuOpen] = useState(false);
 
 
   /* ---------- LINKS ---------- */
-
-  // Navigation links
   const navLinks = [
     { label: 'Home', to: '/' },
     { label: 'All', to: '/alljigs' },
@@ -30,7 +22,6 @@ const Navbar = () => {
 
 
   /* ---------- HELPERS ---------- */
-
   // Generate user initials for avatar
   const getInitials = (name) => {
     if (!name) return '';

@@ -10,10 +10,7 @@ const NewestJigs = () => {
 
   /* ---------- STATE ---------- */
   
-  // Stores fetched jig data
   const [newJigs, setNewJigs] = useState([]);
-
-  // Tracks loading state for UI feedback
   const [loading, setLoading] = useState(true);
 
   /* ---------- EFFECT ---------- */
@@ -34,7 +31,6 @@ const NewestJigs = () => {
   }, []);
   
   /* ----------  JSX ----------  */
-  // Show loading while data is being fetched
   if (loading) return <div className="text-center py-12">Loading new jigs...</div>;
 
   return (

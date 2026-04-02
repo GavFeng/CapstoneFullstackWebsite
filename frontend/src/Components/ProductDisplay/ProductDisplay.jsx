@@ -5,51 +5,31 @@ import './ProductDisplay.css';
 const ProductDisplay = ({ jig }) => {
 
   /* ---------- CONTEXT ---------- */
-
-  // Access cart action from global context
   const { addToCart } = useContext(JigContext);
 
   /* ---------- STATE ---------- */
-
-  // Tracks which color variant is currently selected
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
-
-  // Quantity user wants to add to cart
   const [quantity, setQuantity] = useState(1);
 
-  // All available variants (colors)
   const variants = jig?.colors || [];
-
-  // Currently selected variant object
   const selectedVariant = variants[selectedVariantIndex] || null;
-
-  // Main product image
   const mainImage =
     selectedVariant?.images?.[0]?.url || '';
-
-  // Up to 4 thumbnail images for preview
   const thumbnails =
     selectedVariant?.images?.slice(0, 4) || [];
-
-  // Stock info for selected variant
   const stock = selectedVariant?.stock ?? 0;
-
-  // Determines if current variant is unavailable
   const isOutOfStock = stock === 0;
 
 
   /* ---------- HELPERS ---------- */
-
   // Find first available variant (used for auto-selection)
   const firstInStockIndex = useMemo(
     () => variants.findIndex(v => (v.stock ?? 0) > 0),
     [variants]
   );
 
-
   /* ---------- EFFECTS ---------- */
-
-  // Auto-switch to first in-stock variant if default selection is out of stock
+  // Use first in-stock variant if default selection is out of stock
   React.useEffect(() => {
     if (
       firstInStockIndex !== -1 &&
@@ -104,7 +84,6 @@ const ProductDisplay = ({ jig }) => {
 
 
   /* ---------- JSX ---------- */
-
   return (
     <div className="product-display">
 
@@ -191,8 +170,6 @@ const ProductDisplay = ({ jig }) => {
                   <button
                     key={variant._id || index}
                     type="button"
-
-                    // Accessibility label for screen readers
                     aria-label={`Select ${colorObj?.name || 'color'} – ${
                       outOfStock
                         ? 'out of stock'
