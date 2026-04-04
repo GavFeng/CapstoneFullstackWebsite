@@ -1,0 +1,32 @@
+.checkout-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+}
+
+.checkout-section {
+  margin-bottom: 20px;
+}
+
+.checkout-section label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.checkout-summary {
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.place-order-btn {
+  width: 100%;
+  padding: 12px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.checkout-message {
+  margin-top: 10px;
+}

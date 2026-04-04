@@ -62,6 +62,24 @@ exports.addOrUpdateCartItem = async (req, res) => {
   }
 };
 
+exports.clearCart = async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ user: req.user._id });
+
+    if (!cart) {
+      return res.json({ items: [] });
+    }
+
+    cart.items = [];
+    cart.updatedAt = Date.now();
+    await cart.save();
+
+    res.json({ items: [] });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to clear cart" });
+  }
+};
+
 exports.removeCartItem = async (req, res) => {
   const { jig, color } = req.body;
 
@@ -84,6 +102,35 @@ exports.removeCartItem = async (req, res) => {
     res.json(cart);
   } catch (err) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.removePurchasedItems = async (req, res) => {
+  const { items } = req.body; // [{ jig, color }]
+
+  try {
+    const cart = await Cart.findOne({ user: req.user._id });
+    if (!cart) return res.json({ items: [] });
+
+    cart.items = cart.items.filter((cartItem) => {
+      return !items.some(
+        (i) =>
+          i.jig === cartItem.jig.toString() &&
+          i.color === cartItem.color.toString()
+      );
+    });
+
+    cart.updatedAt = Date.now();
+    await cart.save();
+
+    await cart.populate([
+      { path: "items.jig", select: "name price" },
+      { path: "items.color", select: "name" },
+    ]);
+
+    res.json(cart);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to remove purchased items" });
   }
 };
 

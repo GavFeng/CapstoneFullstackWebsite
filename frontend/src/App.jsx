@@ -7,6 +7,7 @@ import Cart from './Pages/Cart/Cart'
 import Login from './Pages/LoginSignup/Login'
 import JigPage from './Pages/JigPage/JigPage'
 import Signup from './Pages/LoginSignup/Signup'
+import Checkout from './Pages/Checkout/Checkout'
 import { AuthProvider } from './Context/AuthContext'
 import {JigContextProvider} from './Context/JigContext.jsx'
 
@@ -23,6 +24,7 @@ const App = () => {
             <Route path="/jig/:id/:slug?" element={<JigPage />} />
 
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 

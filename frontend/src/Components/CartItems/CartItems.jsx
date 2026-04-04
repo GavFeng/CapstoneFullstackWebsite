@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { JigContext } from "../../Context/JigContext";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./CartItems.css";
 
 const CartItems = () => {
@@ -14,6 +14,7 @@ const CartItems = () => {
     cartTotal = 0,
   } = useContext(JigContext);
 
+  const navigate = useNavigate();
 
   const cartArray = Object.values(cartItems);
 
@@ -270,7 +271,10 @@ const CartItems = () => {
           <span>${cartTotal.toFixed(2)}</span>
         </div>
 
-        <button className="checkout-btn">
+        <button 
+          className="checkout-btn"
+          onClick={() => navigate("/checkout")}
+        >
           Proceed to Checkout
         </button>
       </div>

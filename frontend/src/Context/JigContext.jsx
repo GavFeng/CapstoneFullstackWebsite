@@ -184,6 +184,45 @@ export const JigContextProvider = ({ children }) => {
     });
   };
 
+  const clearCart = async () => {
+    setCartItems({});
+
+    if (isAuthenticated) {
+      try {
+        await axios.delete(`${API_URL}/cart`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (err) {
+        console.error("Failed to clear cart:", err);
+      }
+    }
+  };
+
+  const removePurchasedItems = async (purchasedItems) => {
+    setCartItems((prev) => {
+      const updated = { ...prev };
+
+      purchasedItems.forEach((item) => {
+        const key = `${item.jig}-${item.color}`;
+        delete updated[key];
+      });
+
+      return updated;
+    });
+
+    if (isAuthenticated) {
+      try {
+        await axios.post(
+          `${API_URL}/cart/remove-purchased`,
+          { items: purchasedItems },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.error("Failed to sync purchased removal:", err);
+      }
+    }
+  };
+
   const cartTotal = useMemo(() => {
     return Object.values(cartItems).reduce((sum, entry) => {
       const jig = jigs.find(j => j._id === entry.jigId);
@@ -203,6 +242,8 @@ export const JigContextProvider = ({ children }) => {
     removeFromCart,
     removeAllFromCart,
     setCartQuantity,
+    clearCart,
+    removePurchasedItems,
     cartTotal,
     totalItems,
   };

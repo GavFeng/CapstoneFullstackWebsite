@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Jig = require("../models/Jig");
 const User = require("../models/User");
 const Category = require("../models/Category");
@@ -6,42 +7,96 @@ const Color = require("../models/Color");
 const Order = require("../models/Order");
 
 exports.createOrder = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const {
       items,
-      totalAmount,
       deliveryMethod,
       shippingAddress,
       pickupDetails,
     } = req.body;
 
     if (!items || items.length === 0) {
-      return res.status(400).json({ message: "No order items" });
+      throw new Error("No order items");
     }
 
-    if (deliveryMethod === "shipping" && !shippingAddress) {
-      return res.status(400).json({ message: "Shipping address required" });
+    let calculatedTotal = 0;
+    const validatedItems = [];
+
+    for (const item of items) {
+      const jig = await Jig.findById(item.jig).session(session);
+
+      if (!jig) throw new Error("Jig not found");
+
+      const variant = jig.colors.find(
+        (v) => v.color.toString() === item.color
+      );
+
+      if (!variant) throw new Error("Color not found");
+
+      // ATOMIC STOCK UPDATE (prevents race conditions)
+      const updateResult = await Jig.updateOne(
+        { _id: item.jig },
+        {
+          $inc: {
+            "colors.$[elem].stock": -item.quantity,
+            "colors.$[elem].sold": item.quantity,
+          },
+        },
+        {
+          arrayFilters: [
+            {
+              "elem.color": item.color,
+              "elem.stock": { $gte: item.quantity },
+            },
+          ],
+          session,
+        }
+      );
+      
+      if (updateResult.modifiedCount === 0) {
+        throw new Error(`Not enough stock for ${jig.name}`);
+      }
+
+      const price = jig.price;
+      calculatedTotal += price * item.quantity;
+
+      validatedItems.push({
+        jig: item.jig,
+        color: item.color,
+        quantity: item.quantity,
+        price,
+      });
     }
 
-    if (deliveryMethod === "pickup" && !pickupDetails) {
-      return res.status(400).json({ message: "Pickup details required" });
-    }
+    const order = await Order.create(
+      [
+        {
+          user: req.user._id,
+          items: validatedItems,
+          totalAmount: calculatedTotal,
+          deliveryMethod,
+          shippingAddress:
+            deliveryMethod === "shipping" ? shippingAddress : undefined,
+          pickupDetails:
+            deliveryMethod === "pickup" ? pickupDetails : undefined,
+        },
+      ],
+      { session }
+    );
 
-    const order = await Order.create({
-      user: req.user._id,
-      items,
-      totalAmount,
-      deliveryMethod,
-      shippingAddress:
-        deliveryMethod === "shipping" ? shippingAddress : undefined,
-      pickupDetails:
-        deliveryMethod === "pickup" ? pickupDetails : undefined,
-    });
+    await session.commitTransaction();
+    session.endSession();
 
-    res.status(201).json(order);
+    res.status(201).json(order[0]);
 
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    await session.abortTransaction();
+    session.endSession();
+
+    res.status(400).json({ message: error.message });
   }
 };
 

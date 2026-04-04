@@ -3,7 +3,9 @@ const express = require("express");
 const {
   getCart,
   addOrUpdateCartItem,
+  clearCart,
   removeCartItem,
+  removePurchasedItems,
   updateCart,
   mergeCart,
 } = require("../controllers/cartController");
@@ -17,7 +19,11 @@ router.get("/", authMiddleware, getCart);
 
 router.post("/item", authMiddleware, addOrUpdateCartItem);
 
+router.delete("/", authMiddleware, clearCart);
+
 router.delete("/item", authMiddleware, removeCartItem);
+
+router.post("/remove-purchased", authMiddleware, removePurchasedItems);
 
 router.put("/", authMiddleware, updateCart);
 
