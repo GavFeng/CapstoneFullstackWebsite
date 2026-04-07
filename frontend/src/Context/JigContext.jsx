@@ -279,11 +279,15 @@ export const JigContextProvider = ({ children }) => {
   };
 
   const clearCart = async () => {
-    setCartItems({});
+    setCartItems({}); 
     if (isAuthenticated) {
-      await axios.delete(`${API_URL}/cart`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      try {
+        await axios.delete(`${API_URL}/cart`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (err) {
+        console.error("Failed to clear cart:", err);
+      }
     }
   };
 
@@ -295,12 +299,19 @@ export const JigContextProvider = ({ children }) => {
     });
 
     if (isAuthenticated) {
-      await axios.post(`${API_URL}/cart/remove-purchased`, { items }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      try {
+        const res = await axios.post(`${API_URL}/cart/remove-purchased`, { items }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (res.data.savedItems) {
+          setSavedItems(res.data.savedItems);
+        }
+      } catch (err) {
+        console.error("Failed to sync after purchase:", err);
+      }
     }
   };
-
   /* ---------------- TOTALS ---------------- */
   const cartTotal = useMemo(() => {
     return Object.values(cartItems).reduce((sum, item) => {
