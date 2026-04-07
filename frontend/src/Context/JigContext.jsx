@@ -43,6 +43,7 @@ export const JigContextProvider = ({ children }) => {
       setJigs(prev =>
         prev.map(j => (j._id === jigId ? res.data : j))
       );
+      return res.data;
     } catch (err) {
       console.error(err);
     }

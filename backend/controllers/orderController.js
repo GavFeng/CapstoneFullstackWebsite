@@ -26,6 +26,11 @@ exports.createOrder = async (req, res) => {
     const validatedItems = [];
 
     for (const item of items) {
+      const jig = await Jig.findById(item.jig).session(session);
+      
+      if (!jig) {
+        throw new Error(`Item with ID ${item.jig} not found`);
+      }
 
       const updateResult = await Jig.updateOne(
         {
@@ -46,17 +51,14 @@ exports.createOrder = async (req, res) => {
         { session }
       );
 
+      // 3. Now jig.name is safely initialized
       if (updateResult.modifiedCount === 0) {
         const err = new Error(`Not enough stock for ${jig.name}`);
         err.code = "OUT_OF_STOCK";
         throw err;
       }
 
-      // ONLY fetch after success (optional)
-      const jig = await Jig.findById(item.jig).session(session);
-
       const price = jig.price;
-
       calculatedTotal += price * item.quantity;
 
       validatedItems.push({

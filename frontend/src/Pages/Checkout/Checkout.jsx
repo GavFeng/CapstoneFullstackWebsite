@@ -12,7 +12,8 @@ const Checkout = () => {
     removePurchasedItems,
     refreshJigs,
     setCartQuantity,
-    getAvailableStock
+    getAvailableStock,
+    refreshSingleJig
   } = useContext(JigContext);
   
   const { token } = useAuth();
@@ -28,7 +29,7 @@ const Checkout = () => {
     setSelectedItems(Object.values(cartItems));
   }, [cartItems]);
 
-  // Logic: Identify out of stock items
+
   const outOfStockWarnings = useMemo(() => {
     return Object.values(cartItems).filter((entry) => {
       const available = getAvailableStock?.(entry.jigId, entry.colorId) ?? 0;
@@ -55,57 +56,67 @@ const Checkout = () => {
     }, 0);
   }, [selectedItems, jigs]);
 
-  const handleSubmit = async () => {
-    if (!location || !pickupDate) return setMessage("Please select pickup location and date");
-    if (selectedItems.length === 0) return setMessage("No items selected");
-    if (outOfStockWarnings.length > 0) return setMessage("Please adjust out-of-stock items first.");
+const handleSubmit = async () => {
+  try {
+    setLoading(true);
+    setMessage("");
 
-    try {
-      setLoading(true);
-      setMessage("");
+    const uniqueJigIds = [...new Set(selectedItems.map((item) => item.jigId))];
+    
+    const freshJigs = await Promise.all(uniqueJigIds.map((id) => refreshSingleJig(id)));
 
-      const items = selectedItems.map((item) => ({
-        jig: item.jigId,
-        color: item.colorId,
-        quantity: item.quantity,
-      }));
+    const itemsWithIssues = selectedItems.filter((item) => {
+      const latestJig = freshJigs.find(fj => fj._id === item.jigId);
+      if (!latestJig) return true;
 
-      const orderData = {
-        items,
-        totalAmount: selectedTotal,
-        deliveryMethod: "pickup",
-        pickupDetails: { location, pickupDate },
-      };
+      const colorData = latestJig.colors.find(c => c.color === item.colorId);
+      const available = colorData ? colorData.stock : 0;
+      
+      return item.quantity > available;
+    });
 
-      await api.post("/order", orderData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (selectedItems.length === Object.values(cartItems).length) {
-        clearCart();
-      } else {
-        removePurchasedItems(items);
-      }
-
-      setMessage("Order placed successfully!");
-    } catch (err) {
-      const code = err.response?.data?.code;
-      if (code === "OUT_OF_STOCK") {
-        setMessage("Stock levels changed. Cart updated.");
-        await refreshJigs();
-        selectedItems.forEach((item) => {
-          const available = getAvailableStock?.(item.jigId, item.colorId) ?? 0;
-          if (item.quantity > available && available > 0) {
-            setCartQuantity(item.jigId, item.colorId, available);
-          }
-        });
-      } else {
-        setMessage(err.response?.data?.message || "Error placing order");
-      }
-    } finally {
+    if (itemsWithIssues.length > 0) {
+      setMessage("Stock levels just changed. Please review your selection.");
       setLoading(false);
+      return; 
     }
-  };
+
+    const items = selectedItems.map((item) => ({
+      jig: item.jigId,
+      color: item.colorId,
+      quantity: item.quantity,
+    }));
+
+    const orderData = {
+      items,
+      totalAmount: selectedTotal,
+      deliveryMethod: "pickup",
+      pickupDetails: { location, pickupDate },
+    };
+
+    const res = await api.post("/order", orderData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (selectedItems.length === Object.values(cartItems).length) {
+      clearCart();
+    } else {
+      removePurchasedItems(items);
+    }
+    setMessage("Order placed successfully!");
+
+  } catch (err) {
+    const errorData = err.response?.data;
+    if (errorData?.code === "OUT_OF_STOCK") {
+      setMessage(errorData.message);
+      await refreshJigs(); 
+    } else {
+      setMessage(errorData?.message || "Error placing order");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="checkout-page-wrapper">
