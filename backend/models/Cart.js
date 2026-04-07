@@ -27,6 +27,7 @@ const cartSchema = new mongoose.Schema({
     unique: true,
   },
   items: [cartItemSchema],
+  savedItems: [cartItemSchema],
   updatedAt: {
     type: Date,
     default: Date.now,

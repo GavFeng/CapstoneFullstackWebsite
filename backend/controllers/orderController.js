@@ -26,41 +26,37 @@ exports.createOrder = async (req, res) => {
     const validatedItems = [];
 
     for (const item of items) {
-      const jig = await Jig.findById(item.jig).session(session);
 
-      if (!jig) throw new Error("Jig not found");
-
-      const variant = jig.colors.find(
-        (v) => v.color.toString() === item.color
-      );
-
-      if (!variant) throw new Error("Color not found");
-
-      // ATOMIC STOCK UPDATE (prevents race conditions)
       const updateResult = await Jig.updateOne(
-        { _id: item.jig },
         {
-          $inc: {
-            "colors.$[elem].stock": -item.quantity,
-            "colors.$[elem].sold": item.quantity,
+          _id: item.jig,
+          colors: {
+            $elemMatch: {
+              color: item.color,
+              stock: { $gte: item.quantity },
+            },
           },
         },
         {
-          arrayFilters: [
-            {
-              "elem.color": item.color,
-              "elem.stock": { $gte: item.quantity },
-            },
-          ],
-          session,
-        }
+          $inc: {
+            "colors.$.stock": -item.quantity,
+            "colors.$.sold": item.quantity,
+          },
+        },
+        { session }
       );
-      
+
       if (updateResult.modifiedCount === 0) {
-        throw new Error(`Not enough stock for ${jig.name}`);
+        const err = new Error(`Not enough stock for ${jig.name}`);
+        err.code = "OUT_OF_STOCK";
+        throw err;
       }
 
+      // ONLY fetch after success (optional)
+      const jig = await Jig.findById(item.jig).session(session);
+
       const price = jig.price;
+
       calculatedTotal += price * item.quantity;
 
       validatedItems.push({
@@ -96,7 +92,10 @@ exports.createOrder = async (req, res) => {
     await session.abortTransaction();
     session.endSession();
 
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ 
+      message: error.message,
+      code: error.code || "GENERAL_ERROR"
+    });
   }
 };
 

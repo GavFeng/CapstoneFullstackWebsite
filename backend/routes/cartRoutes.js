@@ -8,12 +8,16 @@ const {
   removePurchasedItems,
   updateCart,
   mergeCart,
+  saveForLater,
+  moveToCart,
+  removeSavedItem
 } = require("../controllers/cartController");
 
 
 const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
+
 
 router.get("/", authMiddleware, getCart);
 
@@ -27,6 +31,12 @@ router.post("/remove-purchased", authMiddleware, removePurchasedItems);
 
 router.put("/", authMiddleware, updateCart);
 
-router.get("/merge", authMiddleware, mergeCart);
+router.post("/merge", authMiddleware, mergeCart);
+
+router.post('/save-for-later', authMiddleware, saveForLater);
+
+router.post('/move-to-cart', authMiddleware, moveToCart);
+
+router.delete('/saved-item', authMiddleware, removeSavedItem);
 
 module.exports = router;

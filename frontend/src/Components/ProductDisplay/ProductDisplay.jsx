@@ -72,7 +72,7 @@ const ProductDisplay = ({ jig }) => {
   };
 
   // Add selected variant + quantity to cart
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (isOutOfStock || !selectedVariant || quantity < 1) return;
 
     addToCart(

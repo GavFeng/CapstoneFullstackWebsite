@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useMemo, useContext} from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import debounce from 'lodash/debounce';
 import { useAuth } from './AuthContext';
@@ -8,89 +8,187 @@ export const JigContext = createContext(null);
 const API_URL = 'http://localhost:4000/api';
 
 export const JigContextProvider = ({ children }) => {
-
   const { user, loading: authLoading } = useAuth();
 
-  const isAuthenticated = !!user;                  
+  const isAuthenticated = !!user;
   const token = localStorage.getItem('token');
 
   const [jigs, setJigs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cartItems, setCartItems] = useState({});
+  const [savedItems, setSavedItems] = useState([]);
+
+  /* ---------------- FETCH JIGS ---------------- */
+  const fetchJigs = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_URL}/jigs`);
+      setJigs(res.data.jigs || res.data || []);
+    } catch (err) {
+      console.error('Failed to load jigs:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchJigs = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`${API_URL}/jigs`);
-        const received = Array.isArray(res.data?.jigs)
-          ? res.data.jigs
-          : Array.isArray(res.data)
-            ? res.data
-            : [];
-        setJigs(received);
-      } catch (err) {
-        console.error('Failed to load jigs:', err);
-        setJigs([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchJigs();
   }, []);
 
+  const refreshJigs = fetchJigs;
+
+  const refreshSingleJig = async (jigId) => {
+    try {
+      const res = await axios.get(`${API_URL}/jigs/${jigId}`);
+      setJigs(prev =>
+        prev.map(j => (j._id === jigId ? res.data : j))
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /* ---------------- LOAD CART & SAVED ITEMS ---------------- */
   useEffect(() => {
     if (!isAuthenticated || authLoading) return;
 
-    const loadServerCart = async () => {
+    const loadCart = async () => {
       try {
         const res = await axios.get(`${API_URL}/cart`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const serverCart = res.data;
         const newCart = {};
-
-        serverCart.items?.forEach((item) => {
+        res.data.items?.forEach((item) => {
           const jigId = item.jig?._id || item.jig;
           const colorId = item.color?._id || item.color;
-          const key = `${jigId}-${colorId}`;
-
-          newCart[key] = {
-            jigId,
-            colorId,
-            quantity: item.quantity,
+          newCart[`${jigId}-${colorId}`] = { 
+            jigId, 
+            colorId, 
+            quantity: item.quantity 
           };
         });
 
         setCartItems(newCart);
+        setSavedItems(res.data.savedItems || []);
       } catch (err) {
-        console.error('Failed to load server cart:', err);
+        console.error('Failed to load cart:', err);
       }
     };
-
-    loadServerCart();
+    loadCart();
   }, [isAuthenticated, authLoading, token]);
 
   useEffect(() => {
     if (!isAuthenticated && !authLoading) {
       setCartItems({});
+      setSavedItems([]);
     }
   }, [isAuthenticated, authLoading]);
 
-  const getCartKey = (jigId, colorId) => `${jigId}-${colorId}`;
+  /* ---------------- HELPERS ---------------- */
+  const getKey = (jigId, colorId) => `${jigId}-${colorId}`;
 
   const getAvailableStock = (jigId, colorId) => {
     const jig = jigs.find(j => j._id === jigId);
-    if (!jig) return 0;
-    const variant = jig.colors?.find(v => v.color._id === colorId);
+    const variant = jig?.colors?.find(v => v.color._id === colorId);
     return variant?.stock ?? 0;
   };
 
-  const syncItem = async (jigId, colorId, quantity) => {
-    if (!isAuthenticated || !token) return;
+  /* ---------------- SAVED ITEMS ACTIONS ---------------- */
+  const saveForLater = async (jigId, colorId) => {
+    if (!isAuthenticated) return;
+    const key = getKey(jigId, colorId);
+    const itemToSave = cartItems[key];
+    if (!itemToSave) return;
 
+    try {
+      const res = await axios.post(
+        `${API_URL}/cart/save-for-later`,
+        { jig: jigId, color: colorId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // 1. Remove from Cart
+      setCartItems(prev => {
+        const { [key]: _, ...rest } = prev;
+        return rest;
+      });
+
+      // 2. Add to Saved Items immediately from server response
+      setSavedItems(res.data.savedItems || []); 
+    } catch (err) {
+      console.error('Save for later failed:', err);
+    }
+  };
+
+  const moveToCart = async (jigId, colorId, quantity = 1) => {
+    if (!isAuthenticated) return;
+
+    try {
+      const res = await axios.post(
+        `${API_URL}/cart/move-to-cart`,
+        { jig: jigId, color: colorId, quantity },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // 1. Update Saved Items from response
+      setSavedItems(res.data.savedItems || []);
+
+      // 2. Add to Cart state locally
+      const key = getKey(jigId, colorId);
+      setCartItems(prev => ({
+        ...prev,
+        [key]: { jigId, colorId, quantity }
+      }));
+    } catch (err) {
+      console.error('Move to cart failed:', err);
+    }
+  };
+
+  const removeSavedItem = async (jigId, colorId) => {
+    if (!isAuthenticated) return;
+
+    try {
+      await axios.delete(`${API_URL}/cart/saved-item`, {
+        data: { jig: jigId, color: colorId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Remove from local state
+      setSavedItems(prev => 
+        prev.filter(item => 
+          !((item.jig?._id || item.jig) === jigId && 
+            (item.color?._id || item.color) === colorId)
+        )
+      );
+    } catch (err) {
+      console.error('Remove saved item failed:', err);
+    }
+  };
+
+  /* ---------------- AUTO CLAMP CART ---------------- */
+  useEffect(() => {
+    setCartItems(prev => {
+      const updated = { ...prev };
+      let changed = false;
+
+      Object.values(prev).forEach(item => {
+        const available = getAvailableStock(item.jigId, item.colorId);
+        if (available === 0) {
+          // Keep item but maybe show warning in UI
+        } else if (item.quantity > available) {
+          updated[getKey(item.jigId, item.colorId)].quantity = available;
+          changed = true;
+        }
+      });
+
+      return changed ? updated : prev;
+    });
+  }, [jigs]);
+
+  /* ---------------- SYNC ---------------- */
+  const syncItem = async (jigId, colorId, quantity) => {
+    if (!isAuthenticated) return;
     try {
       await axios.post(
         `${API_URL}/cart/item`,
@@ -98,27 +196,31 @@ export const JigContextProvider = ({ children }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (err) {
-      console.error('Cart item sync failed:', err);
-      // toast notification maybe added later here
+      console.error('Sync failed:', err);
     }
   };
 
-  const debouncedSyncQuantity = useMemo(
-    () =>
-      debounce((jigId, colorId, qty) => {
-        syncItem(jigId, colorId, qty);
-      }, 700),
+  const debouncedSync = useMemo(
+    () => debounce(syncItem, 500),
     [isAuthenticated, token]
   );
 
-  const addToCart = (jigId, colorId, quantity = 1) => {
-    setCartItems((prev) => {
-      const key = getCartKey(jigId, colorId);
-      const current = prev[key]?.quantity || 0;
-      const available = getAvailableStock(jigId, colorId);
-      const newQty = Math.min(current + Math.max(0, quantity), available);
+  /* ---------------- CART ACTIONS ---------------- */
+  const addToCart = async (jigId, colorId, qty = 1) => {
+    const key = getKey(jigId, colorId);
+    let available = getAvailableStock(jigId, colorId);
 
-      if (newQty === 0) {
+    if (available === 0) {
+      await refreshSingleJig(jigId);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      available = getAvailableStock(jigId, colorId);
+    }
+
+    setCartItems((prev) => {
+      const current = prev[key]?.quantity || 0;
+      const newQty = Math.min(current + qty, available || 0);
+
+      if (newQty <= 0) {
         const { [key]: _, ...rest } = prev;
         return rest;
       }
@@ -128,42 +230,16 @@ export const JigContextProvider = ({ children }) => {
         [key]: { jigId, colorId, quantity: newQty },
       };
 
-      // optimistic → sync
-      if (isAuthenticated) {
-        syncItem(jigId, colorId, newQty);
-      }
-
+      syncItem(jigId, colorId, newQty);
       return updated;
     });
   };
 
-  const removeFromCart = (jigId, colorId) => {
-    addToCart(jigId, colorId, -1);
-  };
-
-  const removeAllFromCart = (jigId, colorId) => {
-    setCartItems((prev) => {
-      const key = getCartKey(jigId, colorId);
-      const { [key]: _, ...rest } = prev;
-      return rest;
-    });
-
-    if (isAuthenticated) {
-      axios
-        .delete(`${API_URL}/cart/item`, {
-          data: { jig: jigId, color: colorId },
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .catch((err) => console.error("Remove failed", err));
-    }
-  };
-
-  const setCartQuantity = (jigId, colorId, newQuantity) => {
-    setCartItems((prev) => {
-      const key = getCartKey(jigId, colorId);
+  const setCartQuantity = (jigId, colorId, qty) => {
+    setCartItems(prev => {
+      const key = getKey(jigId, colorId);
       const available = getAvailableStock(jigId, colorId);
-      const qty = Math.max(0, Number(newQuantity) || 0);
-      const safeQty = Math.min(qty, available);
+      const safeQty = Math.min(Math.max(0, qty), available);
 
       let updated;
       if (safeQty === 0) {
@@ -176,79 +252,87 @@ export const JigContextProvider = ({ children }) => {
         };
       }
 
-      if (isAuthenticated) {
-        debouncedSyncQuantity(jigId, colorId, safeQty);
-      }
-
+      debouncedSync(jigId, colorId, safeQty);
       return updated;
     });
+  };
+
+  const removeAllFromCart = (jigId, colorId) => {
+    setCartItems(prev => {
+      const key = getKey(jigId, colorId);
+      const { [key]: _, ...rest } = prev;
+      return rest;
+    });
+
+    if (isAuthenticated) {
+      axios.delete(`${API_URL}/cart/item`, {
+        data: { jig: jigId, color: colorId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    }
   };
 
   const clearCart = async () => {
     setCartItems({});
-
+    setSavedItems([]);
     if (isAuthenticated) {
-      try {
-        await axios.delete(`${API_URL}/cart`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } catch (err) {
-        console.error("Failed to clear cart:", err);
-      }
+      await axios.delete(`${API_URL}/cart`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
     }
   };
 
-  const removePurchasedItems = async (purchasedItems) => {
-    setCartItems((prev) => {
+  const removePurchasedItems = async (items) => {
+    setCartItems(prev => {
       const updated = { ...prev };
-
-      purchasedItems.forEach((item) => {
-        const key = `${item.jig}-${item.color}`;
-        delete updated[key];
-      });
-
+      items.forEach(i => delete updated[`${i.jig}-${i.color}`]);
       return updated;
     });
 
     if (isAuthenticated) {
-      try {
-        await axios.post(
-          `${API_URL}/cart/remove-purchased`,
-          { items: purchasedItems },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      } catch (err) {
-        console.error("Failed to sync purchased removal:", err);
-      }
+      await axios.post(`${API_URL}/cart/remove-purchased`, { items }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
     }
   };
 
+  /* ---------------- TOTALS ---------------- */
   const cartTotal = useMemo(() => {
-    return Object.values(cartItems).reduce((sum, entry) => {
-      const jig = jigs.find(j => j._id === entry.jigId);
-      return jig ? sum + jig.price * entry.quantity : sum;
+    return Object.values(cartItems).reduce((sum, item) => {
+      const jig = jigs.find(j => j._id === item.jigId);
+      return jig ? sum + jig.price * item.quantity : sum;
     }, 0);
   }, [cartItems, jigs]);
 
   const totalItems = useMemo(() => {
-    return Object.values(cartItems).reduce((sum, item) => sum + item.quantity, 0);
+    return Object.values(cartItems).reduce((sum, i) => sum + i.quantity, 0);
   }, [cartItems]);
 
-  const value = {
-    jigs,
-    loading: loading || authLoading,
-    cartItems,
-    addToCart,
-    removeFromCart,
-    removeAllFromCart,
-    setCartQuantity,
-    clearCart,
-    removePurchasedItems,
-    cartTotal,
-    totalItems,
-  };
-
-  return <JigContext.Provider value={value}>{children}</JigContext.Provider>;
+  return (
+    <JigContext.Provider
+      value={{
+        jigs,
+        loading: loading || authLoading,
+        cartItems,
+        savedItems,
+        addToCart,
+        setCartQuantity,
+        removeAllFromCart,
+        clearCart,
+        removePurchasedItems,
+        saveForLater,
+        moveToCart,
+        removeSavedItem,
+        cartTotal,
+        totalItems,
+        refreshJigs,
+        refreshSingleJig,
+        getAvailableStock,
+      }}
+    >
+      {children}
+    </JigContext.Provider>
+  );
 };
 
 export default JigContextProvider;
