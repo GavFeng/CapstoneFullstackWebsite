@@ -40,10 +40,13 @@ export const JigContextProvider = ({ children }) => {
   const refreshSingleJig = async (jigId) => {
     try {
       const res = await axios.get(`${API_URL}/jigs/${jigId}`);
+      const freshData = res.data.jig || res.data; 
+
       setJigs(prev =>
-        prev.map(j => (j._id === jigId ? res.data : j))
+        prev.map(j => (j._id === jigId ? freshData : j))
       );
-      return res.data;
+    
+      return freshData;
     } catch (err) {
       console.error(err);
     }
@@ -90,11 +93,13 @@ export const JigContextProvider = ({ children }) => {
   const getKey = (jigId, colorId) => `${jigId}-${colorId}`;
 
   const getAvailableStock = (jigId, colorId) => {
-    const jig = jigs.find(j => j._id === jigId);
-    const variant = jig?.colors?.find(v => v.color._id === colorId);
+    const jig = jigs.find(j => String(j._id) === String(jigId));
+    const variant = jig?.colors?.find(v => {
+      const serverColorId = v.color?._id || v.color;
+      return String(serverColorId) === String(colorId);
+    });
     return variant?.stock ?? 0;
   };
-
   /* ---------------- SAVED ITEMS ACTIONS ---------------- */
   const saveForLater = async (jigId, colorId) => {
     if (!isAuthenticated) return;
@@ -275,7 +280,6 @@ export const JigContextProvider = ({ children }) => {
 
   const clearCart = async () => {
     setCartItems({});
-    setSavedItems([]);
     if (isAuthenticated) {
       await axios.delete(`${API_URL}/cart`, {
         headers: { Authorization: `Bearer ${token}` },

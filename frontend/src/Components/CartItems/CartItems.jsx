@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { JigContext } from "../../Context/JigContext";
 import { useNavigate, Link } from "react-router-dom";
 import "./CartItems.css";
@@ -20,6 +20,11 @@ const CartItems = () => {
 
   const navigate = useNavigate();
   const cartArray = Object.values(cartItems);
+
+
+  useEffect(() => {
+    refreshJigs();
+  }, []);
 
   /* ---------- HELPERS ---------- */
   const getJigData = (entry) => {

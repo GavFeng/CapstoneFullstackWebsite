@@ -56,6 +56,11 @@ const Checkout = () => {
     }, 0);
   }, [selectedItems, jigs]);
 
+  const freshOutOfStock = selectedItems.filter((item) => {
+    const available = getAvailableStock?.(item.jigId, item.colorId) ?? 0;
+    return item.quantity > available;
+  });
+
 const handleSubmit = async () => {
   try {
     setLoading(true);
@@ -63,22 +68,33 @@ const handleSubmit = async () => {
 
     const uniqueJigIds = [...new Set(selectedItems.map((item) => item.jigId))];
     
-    const freshJigs = await Promise.all(uniqueJigIds.map((id) => refreshSingleJig(id)));
+    const freshJigsFromServer = await Promise.all(
+      uniqueJigIds.map((id) => refreshSingleJig(id))
+    );
 
-    const itemsWithIssues = selectedItems.filter((item) => {
-      const latestJig = freshJigs.find(fj => fj._id === item.jigId);
-      if (!latestJig) return true;
+  const itemsWithIssues = selectedItems.filter((selectedItem) => {
+    const freshJig = freshJigsFromServer.find(fj => String(fj?._id) === String(selectedItem.jigId));
+    
+    if (!freshJig) return true;
 
-      const colorData = latestJig.colors.find(c => c.color === item.colorId);
-      const available = colorData ? colorData.stock : 0;
-      
-      return item.quantity > available;
+    const colorData = freshJig.colors.find(c => {
+      const colorIdFromServer = c.color?._id; 
+      return String(colorIdFromServer) === String(selectedItem.colorId);
     });
+
+    if (!colorData) {
+      return true; 
+    }
+    const available = Number(colorData.stock || 0);
+    const requested = Number(selectedItem.quantity);
+
+    return requested > available;
+  });
 
     if (itemsWithIssues.length > 0) {
       setMessage("Stock levels just changed. Please review your selection.");
       setLoading(false);
-      return; 
+      return;
     }
 
     const items = selectedItems.map((item) => ({
@@ -104,7 +120,6 @@ const handleSubmit = async () => {
       removePurchasedItems(items);
     }
     setMessage("Order placed successfully!");
-
   } catch (err) {
     const errorData = err.response?.data;
     if (errorData?.code === "OUT_OF_STOCK") {
