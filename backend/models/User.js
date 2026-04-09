@@ -22,6 +22,17 @@ const UserSchema = new mongoose.Schema({
     trim: true,
     match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"]
   },
+  phone: {
+    type: String,
+    trim: true,
+    default: "",
+    validate: {
+      validator: function(v) {
+        return v === "" || /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid phone number!`
+    }
+  },
   password: {
     type: String,
     required: true,

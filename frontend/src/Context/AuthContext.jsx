@@ -64,12 +64,23 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateProfile = async (userData) => {
+    try {
+      const { data } = await api.put("/users/profile", userData);
+      setUser(data); 
+      return data;
+    } catch (err) {
+      throw err?.response?.data?.message || "Update failed";
+    }
+  };
+
   const value = {
     user,
     loading,
     login,
     register,
     logout,
+    updateProfile,
     isAdmin: user?.accountType === "admin",
   };
 

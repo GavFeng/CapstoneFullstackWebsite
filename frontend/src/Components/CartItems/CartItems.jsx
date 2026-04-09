@@ -122,14 +122,14 @@ const CartItems = () => {
 
   /* ---------- JSX ---------- */
   
-  // if (cartArray.length === 0 && savedItems.length === 0) {
-  //   return (
-  //     <div className="cart-empty">
-  //       <h2>Your cart is empty</h2>
-  //       <p>Start shopping to add items!</p>
-  //     </div>
-  //   );
-  // }
+  if (cartArray.length === 0 && savedItems.length === 0) {
+    return (
+      <div className="cart-empty">
+        <h2>Your cart is empty</h2>
+        <p>Start shopping to add items!</p>
+      </div>
+    );
+  }
 
 return (
     <div className="cart-container">
@@ -166,7 +166,7 @@ return (
 
               <div className="cart-item-name">
                 <p className="name">{jig.name}</p>
-                <span className="color-name" style={{ color: colorObj?.slug || "#666" }}>
+                <span className="name" style={{ color: colorObj?.slug || "#666" }}>
                   {colorObj?.name || "Unknown color"}
                 </span>
                   {availableStock === 0 ? (

@@ -4,7 +4,8 @@ const {
   registerUser,
   loginUser,
   getCurrentUser,
-  getUsers
+  getUsers,
+  updateProfile
 } = require("../controllers/userController");
 
 const router = express.Router();
@@ -16,6 +17,6 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/me", authMiddleware, getCurrentUser);
 router.get("/users", authMiddleware, adminMiddleware, getUsers);
-
+router.put("/profile", authMiddleware, updateProfile);
 
 module.exports = router;

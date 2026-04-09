@@ -1,0 +1,29 @@
+.main-layout {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.profile-page {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.content-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: whitesmoke;
+  padding: 24px 32px;
+}
+
+@media (max-width: 768px) {
+  .content-area {
+    padding-bottom: 70px; 
+  }
+}
