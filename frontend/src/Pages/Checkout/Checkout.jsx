@@ -164,30 +164,45 @@ const handleSubmit = async () => {
 
         <div className="checkout-items">
           <h2>Select Items to Purchase</h2>
-          {Object.values(cartItems).map((entry) => {
-            const jig = jigs.find(j => j._id === entry.jigId);
-            if (!jig) return null;
+            {Object.values(cartItems).map((entry) => {
+              const jig = jigs.find(j => j._id === entry.jigId);
+              if (!jig) return null;
 
-            const available = getAvailableStock?.(entry.jigId, entry.colorId) ?? 0;
-            const isOutOfStock = entry.quantity > available || available === 0;
-            const isSelected = selectedItems.some(i => i.jigId === entry.jigId && i.colorId === entry.colorId);
+              const colorMatch = jig.colors?.find(c => 
+                String(c.color?._id ) === String(entry.colorId)
+              );
 
-            return (
-              <div key={`${entry.jigId}-${entry.colorId}`} className={`checkout-item ${isOutOfStock ? 'out-of-stock' : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => toggleItem(entry)}
-                  disabled={isOutOfStock}
-                />
-                <span className="item-name">{jig.name}</span>
-                <span className="item-price">
-                  x{entry.quantity} (${(jig.price * entry.quantity).toFixed(2)})
-                  {isOutOfStock && <span className="oos-label"> (Out of Stock)</span>}
-                </span>
-              </div>
-            );
-          })}
+              const displayColorName = colorMatch?.color?.name;
+
+              const available = getAvailableStock?.(entry.jigId, entry.colorId) ?? 0;
+              const isOutOfStock = entry.quantity > available || available === 0;
+              const isSelected = selectedItems.some(i => i.jigId === entry.jigId && i.colorId === entry.colorId);
+
+              return (
+                <div key={`${entry.jigId}-${entry.colorId}`} className={`checkout-item ${isOutOfStock ? 'out-of-stock' : ''}`}>
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => toggleItem(entry)}
+                    disabled={isOutOfStock}
+                  />
+                  
+                  {/* 2. UPDATE DISPLAY HERE */}
+                  <span className="jig-name">{jig.name}</span>
+                  <span 
+                    className="color-tag" 
+                    style={{ color: displayColorName || "#666" }}
+                  >
+                    {displayColorName}
+                  </span>
+
+                  <span className="item-price">
+                    x {entry.quantity} (${(jig.price * entry.quantity).toFixed(2)})
+                    {isOutOfStock && <span className="oos-label"> (Out of Stock)</span>}
+                  </span>
+                </div>
+              );
+            })}
         </div>
 
         <div className="checkout-summary">

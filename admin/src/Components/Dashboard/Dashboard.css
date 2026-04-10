@@ -35,6 +35,12 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+.phone-text {
+  margin-top: 2px;
+  color: #555;
+  font-weight: 500;
+}
+
 .admin-order-card {
   background: white;
   border: 1px solid #ddd;
@@ -69,6 +75,7 @@
   color: #666;
   margin: 2px 0;
 }
+
 
 .admin-actions {
   display: flex;
