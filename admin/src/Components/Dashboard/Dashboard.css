@@ -1,161 +1,87 @@
-.dashboard {
-  display: grid;
-  grid-template-columns: 3fr 4fr;
-  gap: 24px;
-  padding: 24px;
-  background: #f5f7fa;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-
-.dashb-left {
-  background: #ffffff;
-  border-radius: 10px;
+.admin-orders-container {
+  max-width: 1100px;
+  margin: 2rem auto;
   padding: 20px;
-  overflow-y: auto;
+  font-family: sans-serif;
 }
 
-.dashb-left > p {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 16px 0 8px;
-  color: #333;
-}
-
-.dashb-left ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.dashb-left li {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
-  background: #fafafa;
-}
-
-.dashb-left li strong {
-  display: block;
-  font-size: 0.95rem;
-  margin-bottom: 4px;
-}
-
-.dashb-left li div {
-  font-size: 0.85rem;
-  color: #555;
-}
-
-.dashb-right {
+.admin-header {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
 }
 
-.dashb-stock {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+.admin-tabs {
+  display: flex;
+  background: #f0f0f0;
+  padding: 5px;
+  border-radius: 8px;
 }
 
-.dashb-stock > div {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 16px;
-  border: 1px solid #e5e7eb;
-}
-
-.dashb-stock p {
+.admin-tabs button {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
   font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 0.95rem;
+  background: transparent;
 }
 
-.dashb-stock ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.admin-tabs button.active {
+  background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.dashb-stock li {
+.admin-order-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.order-id-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.card-body {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: 20px;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.subtext {
   font-size: 0.85rem;
-  padding: 6px 0;
-  border-bottom: 1px solid #f0f0f0;
+  color: #666;
+  margin: 2px 0;
 }
 
-.dashb-stock li:last-child {
-  border-bottom: none;
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
 }
 
-@media (max-width: 1024px) {
-  .dashboard {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 20px;
-  }
+.btn-ready { background: #3182ce; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+.btn-complete { background: #38a169; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+.btn-cancel { background: white; border: 1px solid #e53e3e; color: #e53e3e; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
 
-  .dashb-stock {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard {
-    padding: 16px;
-    gap: 20px;
-  }
-
-  .dashb-left {
-    padding: 16px;
-  }
-
-  .dashb-right {
-    gap: 20px;
-  }
-
-  .dashb-stock {
-    gap: 16px;
-  }
-
-  .dashb-left li,
-  .dashb-stock > div {
-    padding: 14px;
-  }
-
-  .dashb-left > p,
-  .dashb-stock p {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 16px;
-  }
-
-  .dashb-left {
-    padding: 16px;
-  }
-
-  .dashb-right {
-    gap: 20px;
-  }
-
-  .dashb-stock {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .dashb-left li,
-  .dashb-stock > div {
-    padding: 14px;
-  }
-
-  .dashb-left > p,
-  .dashb-stock p {
-    font-size: 1rem;
-  }
-}
+/* Badges */
+.badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+.badge.pending { background: #feebc8; color: #9c4221; }
+.badge.ready { background: #c6f6d5; color: #22543d; }
+.badge.paid { background: #e6fffa; color: #234e52; }

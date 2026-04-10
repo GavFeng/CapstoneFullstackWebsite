@@ -16,7 +16,7 @@ const admin = require("../middleware/adminMiddleware");
 
 router.post("/", protect, createOrder);
 
-router.get("/", protect, admin, getAllOrders);
+router.get("/all-orders", protect, admin, getAllOrders);
 
 router.get("/my-orders", protect, getUserOrders);
 

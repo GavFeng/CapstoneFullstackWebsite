@@ -115,7 +115,7 @@ exports.updateProfile = async (req, res) => {
   try {
     const { name, phone, username } = req.body;
     
-    // Using req.user._id because the middleware attached the user object
+
     const user = await User.findById(req.user._id);
 
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -125,8 +125,6 @@ exports.updateProfile = async (req, res) => {
     if (phone) user.phone = phone;
     if (username) user.username = username;
 
-    // Save the user (this triggers the .pre('save') hook, 
-    // but that hook has a check to ignore hashing if password isn't modified)
     const updatedUser = await user.save();
 
     res.json({

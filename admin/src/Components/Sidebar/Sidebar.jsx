@@ -6,10 +6,11 @@ const Sidebar = () => {
     {label: 'Dashboard', to: '/home'},
     {label: 'Add', to: '/addjig'},
     {label: 'View All', to: '/jig'},
+     {label: 'Manage Stock', to: '/manage-stock'},
     {label: 'Analytics', to: '/analytic'},
-    {label: 'Add Category', to: '/addcategory'},
-    {label: 'Add Weight', to: '/addweight'},
-    {label: 'Add Color', to: '/addcolor'},
+    {label: 'Add Category', to: '/add-category'},
+    {label: 'Add Weight', to: '/add-weight'},
+    {label: 'Add Color', to: '/add-color'},
   ]
 
   return (

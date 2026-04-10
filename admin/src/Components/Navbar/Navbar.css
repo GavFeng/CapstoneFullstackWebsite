@@ -31,6 +31,75 @@
     width: 75px;
 }
 
+/* Ensure the right side is aligned */
+.nav-right {
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+}
+
+.nav-profile-wrapper {
+  position: relative;
+}
+
+/* The Initials Circle */
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #0d9488; /* Matching your teal theme */
+  color: white;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+  background-color: #0f766e;
+}
+
+/* Dropdown Menu */
+.profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 50px; /* Sits below the navbar */
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  width: 140px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+/* Specific styling for Sign Out button to make it clear */
+.signout-btn {
+  color: #dc2626;
+  font-weight: 600;
+}
+
 @media (max-width: 1024px) {
     .navbar {
         padding: 12px 30px;

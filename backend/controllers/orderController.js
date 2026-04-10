@@ -102,11 +102,20 @@ exports.createOrder = async (req, res) => {
 };
 
 exports.getAllOrders = async (req, res) => {
-  const orders = await Order.find()
-    .populate("user", "name email")
-    .sort({ createdAt: -1 });
+  try {
+    const orders = await Order.find()
+      .populate("user", "name email")
+      .populate("items.jig") 
+      .sort({ createdAt: -1 });
 
-  res.json(orders);
+    res.json(orders);
+  } catch (error) {
+    console.error("Admin Fetch Error:", error);
+    res.status(500).json({ 
+      message: "Failed to fetch orders", 
+      error: error.message 
+    });
+  }
 };
 
 exports.getUserOrders = async (req, res) => {
