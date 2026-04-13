@@ -45,7 +45,6 @@ const Login = ({ setToken }) => {
     <div className="admin-login-container">
       <form onSubmit={handleLogin} className="admin-login-card">
         <h1>Admin Portal</h1>
-        <p>Please sign in to manage orders</p>
         
         <div className="input-group">
           <label>Email</label>

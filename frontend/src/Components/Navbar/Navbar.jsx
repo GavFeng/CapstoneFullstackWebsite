@@ -114,6 +114,10 @@ const Navbar = () => {
                     Profile
                   </Link>
 
+                  <Link to="/profile/my-orders" className="dropdown-item">
+                    My Orders
+                  </Link>
+
                   <Link
                     to="/login"
                     state={{ message: "Successfully logged out" }}

@@ -23,12 +23,42 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [selectedLocationId, setSelectedLocationId] = useState("");
+  const [selectedSlotId, setSelectedSlotId] = useState("");
 
   // Sync selected items with cart
   useEffect(() => {
     setSelectedItems(Object.values(cartItems));
   }, [cartItems]);
+  
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const { data } = await api.get("/locations");
+        setLocations(data);
+      } catch (err) {
+        console.error("Error fetching locations", err);
+      }
+    };
+    fetchLocations();
+  }, []);
 
+  useEffect(() => {
+    if (selectedLocationId) {
+      const fetchSlots = async () => {
+        try {
+          const { data } = await api.get(`/timeSlots?locationId=${selectedLocationId}`);
+          console.log("Fetched Slots for location:", selectedLocationId, data); // ADD THIS
+          setAvailableSlots(data);
+        } catch (err) {
+          console.error("Error fetching slots", err);
+        }
+      };
+      fetchSlots();
+    }
+  }, [selectedLocationId]);
 
   const outOfStockWarnings = useMemo(() => {
     return Object.values(cartItems).filter((entry) => {
@@ -56,6 +86,13 @@ const Checkout = () => {
     }, 0);
   }, [selectedItems, jigs]);
 
+  const selectedLocationData = useMemo(() => {
+    return locations.find(loc => loc._id === selectedLocationId);
+  }, [selectedLocationId, locations]);
+
+  const selectedSlotData = useMemo(() => {
+    return availableSlots.find(slot => slot._id === selectedSlotId);
+  }, [selectedSlotId, availableSlots]);
   const freshOutOfStock = selectedItems.filter((item) => {
     const available = getAvailableStock?.(item.jigId, item.colorId) ?? 0;
     return item.quantity > available;
@@ -107,7 +144,10 @@ const handleSubmit = async () => {
       items,
       totalAmount: selectedTotal,
       deliveryMethod: "pickup",
-      pickupDetails: { location, pickupDate },
+      pickupDetails: { 
+        location: selectedLocationId, 
+        timeSlot: selectedSlotId 
+      },
     };
 
     const res = await api.post("/order", orderData, {
@@ -146,21 +186,71 @@ const handleSubmit = async () => {
 
         <div className="checkout-section">
           <label>Pickup Location</label>
-          <select value={location} onChange={(e) => setLocation(e.target.value)}>
+          <select value={selectedLocationId} onChange={(e) => setSelectedLocationId(e.target.value)}>
             <option value="">Select Location</option>
-            <option value="Seattle Store">Seattle Store</option>
-            <option value="Warehouse">Warehouse</option>
+            {locations.map(loc => (
+              <option key={loc._id} value={loc._id}>{loc.name}</option>
+            ))}
           </select>
+          {selectedLocationData && (
+            <div className="location-info-card">
+              <div className="info-header">
+                <span className="icon">📍</span>
+                <strong>{selectedLocationData.name}</strong>
+              </div>
+              <div className="info-body">
+                <p>{selectedLocationData.address}</p>
+                <p>{selectedLocationData.city}, {selectedLocationData.state} {selectedLocationData.zip}</p>
+                {selectedLocationData.phone && (
+                  <p className="phone-info">📞 {selectedLocationData.phone}</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="checkout-section">
-          <label>Pickup Date & Time</label>
-          <input
-            type="datetime-local"
-            value={pickupDate}
-            onChange={(e) => setPickupDate(e.target.value)}
-          />
-        </div>
+      {/* TIME SLOT SELECTION */}
+      <div className="checkout-section">
+        <label className="section-label">2. Pickup Time</label>
+        <select
+          className="slot-select"
+          value={selectedSlotId}
+          onChange={(e) => setSelectedSlotId(e.target.value)}
+          disabled={!selectedLocationId}
+        >
+          <option value="">{selectedLocationId ? "Select a time window" : "Select location first"}</option>
+          {availableSlots.map(slot => (
+            <option key={slot._id} value={slot._id}>
+              {new Date(slot.startTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} | {new Date(slot.startTime).getHours()}:00 - {new Date(slot.endTime).getHours()}:00
+            </option>
+          ))}
+        </select>
+
+        {selectedSlotData && (
+          <div className="time-info-card">
+            <div className="info-header">
+              <span className="icon">⏰</span>
+              <strong>Scheduled Pickup</strong>
+            </div>
+            <div className="info-body">
+              <p className="highlight-text">
+                {new Date(selectedSlotData.startTime).toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+              <p>
+                Between <strong>{new Date(selectedSlotData.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</strong> and <strong>{new Date(selectedSlotData.endTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</strong>
+              </p>
+              <p className="timezone-text">
+                Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_', ' ')}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
 
         <div className="checkout-items">
           <h2>Select Items to Purchase</h2>
@@ -228,4 +318,4 @@ const handleSubmit = async () => {
   );
 }
 
-export default Checkout;
+export default Checkout

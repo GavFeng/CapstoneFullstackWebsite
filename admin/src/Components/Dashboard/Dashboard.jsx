@@ -5,7 +5,7 @@ import './Dashboard.css';
 const Dashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState('active'); // active, ready, or completed
+  const [view, setView] = useState('active');
 
   const fetchAllOrders = async () => {
     try {
@@ -34,13 +34,14 @@ const Dashboard = () => {
   // --- REVISED FILTER LOGIC ---
   const activeOrders = orders.filter(o => o.status === 'pending');
   const readyOrders = orders.filter(o => o.status === 'ready');
-  const completedOrders = orders.filter(o => ['completed', 'cancelled', 'delivered'].includes(o.status));
+  const completedOrders = orders.filter(o => ['completed', 'delivered', 'shipped'].includes(o.status));
+  const cancelledOrders = orders.filter(o => o.status === 'cancelled'); // New Cancelled Filter
 
-  // Determine which list to show based on the 'view' state
   const getFilteredOrders = () => {
     switch (view) {
       case 'ready': return readyOrders;
       case 'completed': return completedOrders;
+      case 'cancelled': return cancelledOrders; // New Case
       default: return activeOrders;
     }
   };
@@ -56,25 +57,18 @@ const Dashboard = () => {
         </div>
         
         <div className="admin-tabs">
-          <button 
-            className={view === 'active' ? 'active' : ''} 
-            onClick={() => setView('active')}
-          >
+          <button className={view === 'active' ? 'active' : ''} onClick={() => setView('active')}>
             To Do ({activeOrders.length})
           </button>
-          
-          <button 
-            className={view === 'ready' ? 'active' : ''} 
-            onClick={() => setView('ready')}
-          >
+          <button className={view === 'ready' ? 'active' : ''} onClick={() => setView('ready')}>
             Ready ({readyOrders.length})
           </button>
-          
-          <button 
-            className={view === 'completed' ? 'active' : ''} 
-            onClick={() => setView('completed')}
-          >
+          <button className={view === 'completed' ? 'active' : ''} onClick={() => setView('completed')}>
             History ({completedOrders.length})
+          </button>
+          {/* New Cancelled Tab */}
+          <button className={view === 'cancelled' ? 'active' : ''} onClick={() => setView('cancelled')}>
+            Cancelled ({cancelledOrders.length})
           </button>
         </div>
       </header>
@@ -100,9 +94,7 @@ const Dashboard = () => {
                   <strong>Customer</strong>
                   <p>{order.user?.name || 'Guest'}</p>
                   <p className="subtext">{order.user?.email}</p>
-                  {order.user?.phone && (
-                    <p className="subtext phone-text">📞 {order.user.phone}</p>
-                  )}
+                  {order.user?.phone && <p className="subtext phone-text">📞 {order.user.phone}</p>}
                 </div>
 
                 <div className="items-box">
@@ -112,46 +104,60 @@ const Dashboard = () => {
                       {item.quantity}x {item.jig?.name}{" "}
                       <span 
                         className="admin-color-tag"
-                        style={{ 
-                          color: item.color?.name || "#666", 
-                          fontWeight: 'bold' 
-                        }}
+                        style={{ color: item.color?.name || "#666", fontWeight: 'bold' }}
                       >
                         ({item.color?.name || "Standard"})
                       </span>
                     </div>
                   ))}
                 </div>
+
                 <div className="delivery-box">
                   <strong>{order.deliveryMethod === 'shipping' ? '🚚 Shipping' : '🏠 Pickup'}</strong>
                   {order.deliveryMethod === 'shipping' ? (
-                    <p className="subtext">{order.shippingAddress?.street}, {order.shippingAddress?.city}</p>
+                    <div className="subtext">
+                      <p>{order.shippingAddress?.street}</p>
+                      <p>{order.shippingAddress?.city}, {order.shippingAddress?.state}</p>
+                    </div>
                   ) : (
-                    <p className="subtext">Location: {order.pickupDetails?.location}</p>
+                    <div className="subtext">
+                      <p><strong>{order.pickupDetails?.locationNameSnapshot}</strong></p>
+                      <p>{order.pickupDetails?.addressSnapshot}</p>
+                      <p>{order.pickupDetails?.citySnapshot}, {order.pickupDetails?.stateSnapshot} {order.pickupDetails?.zipSnapshot}</p>
+                      <p>{order.pickupDetails?.timeSlotSnapshot}</p>
+                      {order.pickupDetails?.pickupCode && (
+                        <p className="admin-pickup-code">Code: {order.pickupDetails.pickupCode}</p>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
 
               <div className="admin-actions">
-                {/* Pending -> Ready */}
                 {order.status === 'pending' && (
                   <button className="btn-ready" onClick={() => handleStatusUpdate(order._id, 'ready')}>
                     Mark as Ready
                   </button>
                 )}
                 
-                {/* Ready -> Completed */}
                 {order.status === 'ready' && (
                   <button className="btn-complete" onClick={() => handleStatusUpdate(order._id, 'completed')}>
                     Finalize Order
                   </button>
                 )}
                 
-                {/* Cancel option for anything not already finalized */}
-                {order.status !== 'completed' && order.status !== 'cancelled' && (
+                {/* Cancel button only shows if order is not already cancelled or completed */}
+                {['pending', 'ready'].includes(order.status) && (
                   <button className="btn-cancel" onClick={() => handleStatusUpdate(order._id, 'cancelled')}>
-                    Cancel
+                    Cancel Order
                   </button>
+                )}
+
+                {/* Option to "Restore" a cancelled order back to pending if clicked by mistake */}
+                {order.status === 'cancelled' && (
+                   <button className="btn-ready" onClick={() => handleStatusUpdate(order._id, 'pending')}>
+                   Restore Order
+                 </button>
                 )}
               </div>
             </div>

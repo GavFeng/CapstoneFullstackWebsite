@@ -10,6 +10,8 @@ const weightRoutes = require("./routes/weightRoutes");
 const userRoutes = require("./routes/userRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const locationRoutes = require("./routes/locationRoutes");
+const timeSlotRoutes = require("./routes/timeSlotRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -32,6 +34,8 @@ app.use("/api/weights", weightRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/order", orderRoutes);
+app.use("/api/locations", locationRoutes);
+app.use("/api/timeSlots", timeSlotRoutes);
 
 // Connect to DB + Start Server
 connectDB().then(() => {

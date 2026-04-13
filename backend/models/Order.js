@@ -51,8 +51,17 @@ const orderSchema = new mongoose.Schema({
     country: String,
   },
   pickupDetails: {
-    location: String,
-    pickupDate: Date,
+    location: { type: mongoose.Schema.Types.ObjectId, ref: "Location" },
+    timeSlot: { type: mongoose.Schema.Types.ObjectId, ref: "TimeSlot" }, // Reference
+    
+    // Snapshots for history
+    locationNameSnapshot: String,
+    timeSlotSnapshot: String,
+    addressSnapshot: String,
+    citySnapshot: String,
+    stateSnapshot: String,
+    zipSnapshot: String,
+    phoneSnapshot: String,
     pickupCode: String,
   },
   status: {
