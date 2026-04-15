@@ -81,3 +81,19 @@ exports.checkCategoryName = async (req, res) => {
     res.status(500).json({ exists: false });
   }
 };
+
+// Update a Category
+exports.updateCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedCategory = await Category.findByIdAndUpdate(
+      id, 
+      req.body, 
+      { new: true, runValidators: true }
+    );
+    if (!updatedCategory) return res.status(404).json({ message: "Not Found" });
+    res.json(updatedCategory);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

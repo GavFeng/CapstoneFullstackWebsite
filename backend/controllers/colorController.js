@@ -63,3 +63,19 @@ exports.checkColorName = async (req, res) => {
     res.status(500).json({ exists: false });
   }
 };
+
+// Update a Color
+exports.updateColor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedColor = await Color.findByIdAndUpdate(
+      id, 
+      req.body, 
+      { new: true, runValidators: true }
+    );
+    if (!updatedColor) return res.status(404).json({ message: "Not Found" });
+    res.json(updatedColor);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

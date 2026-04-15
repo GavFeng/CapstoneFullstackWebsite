@@ -6,7 +6,7 @@ const {
   checkColorName,
   getColorById,
   deleteColor,
-
+  updateColor
 
 } = require("../controllers/colorController");
 
@@ -21,6 +21,8 @@ router.get("/check-name", checkColorName);
 router.get("/:id", getColorById);
 
 router.delete("/:id", deleteColor);
+
+router.put("/:id", updateColor);
 
 
 module.exports = router;
