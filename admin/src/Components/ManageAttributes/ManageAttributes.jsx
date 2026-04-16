@@ -186,7 +186,7 @@ return (
       )}
       {/* ... header and form ... */}
       <form onSubmit={handleSubmit} className="attribute-form">
-        <div className="input-group">
+        <div className="input-group-manage">
           {fields.map((field) => (
             <input
               key={field.name}

@@ -37,12 +37,12 @@
   border-bottom: 1px solid var(--border);
 }
 
-.input-group {
+.input-group-manage {
   display: flex;
   gap: 8px;
 }
 
-.input-group input {
+.input-group-manage input {
   flex: 1;
   padding: 10px;
   border: 1px solid var(--border);

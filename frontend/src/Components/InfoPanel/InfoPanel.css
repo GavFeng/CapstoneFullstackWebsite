@@ -10,7 +10,7 @@
   color: white;
 }
 
-.info-grid {
+.info-grid-squid {
   display: flex;
   justify-content: center;
   gap: 30px;

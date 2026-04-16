@@ -195,6 +195,17 @@
   border-top: 2px solid #eee;
 }
 
+.saved-item-mini {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1.25rem;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  width: 99%;
+}
+
 .saved-items-mini-section,
 .cart-summary {
   flex: 1;
@@ -211,17 +222,6 @@
   display: grid;
   grid-template-columns: 1fr; 
   gap: 1rem;
-}
-
-.saved-item-mini {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-  padding: 1.25rem;
-  background: #fafafa;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  width: 100%;
 }
 
 .mini-img {

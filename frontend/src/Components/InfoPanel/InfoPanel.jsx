@@ -6,7 +6,7 @@ const InfoPanel = () => {
     <section className="squid-info">
       <h2>Squid Fishing in Seattle</h2>
 
-      <div className="info-grid">
+      <div className="info-grid-squid">
         <div className="info-card">
           <h3>Best Season</h3>
           <p>
