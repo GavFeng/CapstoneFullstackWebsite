@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
+import api from '../Services/Api';
 import debounce from 'lodash/debounce';
 import { useAuth } from './AuthContext';
 import { JigContext } from './JigContext';
 
 
-const API_URL = 'http://localhost:4000/api';
 
 export const JigContextProvider = ({ children }) => {
   const { user, loading: authLoading } = useAuth();
@@ -22,7 +21,7 @@ export const JigContextProvider = ({ children }) => {
   const fetchJigs = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_URL}/jigs`);
+      const res = await api.get(`jigs`);
       setJigs(res.data.jigs || res.data || []);
     } catch (err) {
       console.error('Failed to load jigs:', err);
@@ -39,7 +38,7 @@ export const JigContextProvider = ({ children }) => {
 
   const refreshSingleJig = async (jigId) => {
     try {
-      const res = await axios.get(`${API_URL}/jigs/${jigId}`);
+      const res = await api.get(`jigs/${jigId}`);
       const freshData = res.data.jig || res.data; 
 
       setJigs(prev =>
@@ -58,9 +57,7 @@ export const JigContextProvider = ({ children }) => {
 
     const loadCart = async () => {
       try {
-        const res = await axios.get(`${API_URL}/cart`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get(`cart`);
 
         const newCart = {};
         res.data.items?.forEach((item) => {
@@ -108,10 +105,9 @@ export const JigContextProvider = ({ children }) => {
     if (!itemToSave) return;
 
     try {
-      const res = await axios.post(
-        `${API_URL}/cart/save-for-later`,
+      const res = await api.post(
+        `cart/save-for-later`,
         { jig: jigId, color: colorId },
-        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // 1. Remove from Cart
@@ -131,10 +127,9 @@ export const JigContextProvider = ({ children }) => {
     if (!isAuthenticated) return;
 
     try {
-      const res = await axios.post(
-        `${API_URL}/cart/move-to-cart`,
+      const res = await api.post(
+        `cart/move-to-cart`,
         { jig: jigId, color: colorId, quantity },
-        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // 1. Update Saved Items from response
@@ -155,9 +150,8 @@ export const JigContextProvider = ({ children }) => {
     if (!isAuthenticated) return;
 
     try {
-      await axios.delete(`${API_URL}/cart/saved-item`, {
+      await api.delete(`cart/saved-item`, {
         data: { jig: jigId, color: colorId },
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       // Remove from local state
@@ -196,10 +190,9 @@ export const JigContextProvider = ({ children }) => {
   const syncItem = async (jigId, colorId, quantity) => {
     if (!isAuthenticated) return;
     try {
-      await axios.post(
-        `${API_URL}/cart/item`,
+      await api.post(
+        `cart/item`,
         { jig: jigId, color: colorId, quantity },
-        { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (err) {
       console.error('Sync failed:', err);
@@ -271,9 +264,8 @@ export const JigContextProvider = ({ children }) => {
     });
 
     if (isAuthenticated) {
-      axios.delete(`${API_URL}/cart/item`, {
+      api.delete(`cart/item`, {
         data: { jig: jigId, color: colorId },
-        headers: { Authorization: `Bearer ${token}` },
       });
     }
   };
@@ -282,9 +274,7 @@ export const JigContextProvider = ({ children }) => {
     setCartItems({}); 
     if (isAuthenticated) {
       try {
-        await axios.delete(`${API_URL}/cart`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await api.delete(`cart`);
       } catch (err) {
         console.error("Failed to clear cart:", err);
       }
@@ -300,9 +290,7 @@ export const JigContextProvider = ({ children }) => {
 
     if (isAuthenticated) {
       try {
-        const res = await axios.post(`${API_URL}/cart/remove-purchased`, { items }, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.post(`cart/remove-purchased`, { items });
         
         if (res.data.savedItems) {
           setSavedItems(res.data.savedItems);

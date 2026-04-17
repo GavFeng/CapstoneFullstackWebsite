@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../../Services/Api";
 import Item from "../../Components/Item/Item";
 import "./JigCategory.css";
 
-const API_URL = "http://localhost:4000/api";
 const LIMIT = 12;
 
 const DEFAULT_FILTERS = {
@@ -65,9 +64,9 @@ const JigCategory = () => {
     const fetchOptions = async () => {
       try {
         const [catRes, weightRes, colorRes] = await Promise.all([
-          axios.get(`${API_URL}/categories`),
-          axios.get(`${API_URL}/weights`),
-          axios.get(`${API_URL}/colors`),
+          api.get(`categories`),
+          api.get(`weights`),
+          api.get(`colors`),
         ]);
 
         setCategories(catRes.data);
@@ -96,7 +95,7 @@ const JigCategory = () => {
     setLoading(true);
 
     try {
-      const res = await axios.get(`${API_URL}/jigs`, {
+      const res = await api.get(`jigs`, {
         params: buildParams(),
       });
 

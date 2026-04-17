@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../Services/api";
 import "./ManageAttributes.css";
 
 const fractionToDecimal = (str) => {
@@ -36,7 +36,7 @@ const ManageAttributes = ({ title, endpoint, checkEndpoint, fields, itemName }) 
         ? { label: data.label, value: data.value } 
         : { name: data.name };
 
-      const res = await axios.get(checkEndpoint, { params });
+      const res = await api.get(checkEndpoint, { params });
 
       if (res.data.exists) {
 
@@ -63,7 +63,7 @@ const ManageAttributes = ({ title, endpoint, checkEndpoint, fields, itemName }) 
 
   const fetchItems = async () => {
     try {
-      const res = await axios.get(endpoint);
+      const res = await api.get(endpoint);
       setItems(res.data);
     } catch (err) { console.error(err); }
   };
@@ -120,7 +120,7 @@ const handleSubmit = async (e) => {
 
       if (payload.value) payload.value = Number(payload.value);
       
-      await axios.post(endpoint, payload);
+      await api.post(endpoint, payload);
       setFormData({});
       e.target.reset();
       fetchItems();
@@ -147,7 +147,7 @@ const handleSubmit = async (e) => {
 
     try {
       if (type === "DELETE") {
-        await axios.delete(`${endpoint}/${id}`);
+        await api.delete(`${endpoint}/${id}`);
       } else if (type === "UPDATE") {
         const validationError = await validateExistence(editData, true, items.find(i => i._id === id));
         if (validationError) {
@@ -161,7 +161,7 @@ const handleSubmit = async (e) => {
           payload.slug = payload.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
         }
 
-        await axios.put(`${endpoint}/${id}`, payload);
+        await api.put(`${endpoint}/${id}`, payload);
         setEditingId(null);
       }
       fetchItems();

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../../Services/api";
 import "./SoldEditorModal.css";
 
 const SoldEditorModal = ({ jigId, jigName, colors, onClose, onSuccess }) => {
@@ -45,8 +45,8 @@ const SoldEditorModal = ({ jigId, jigName, colors, onClose, onSuccess }) => {
         cleanedUpdates[colorId] = value;
       }
 
-      const res = await axios.patch(
-        `http://localhost:4000/api/jigs/${jigId}/colors/sold`,
+      const res = await api.patch(
+        `jigs/${jigId}/colors/sold`,
         { soldUpdates: cleanedUpdates }
       );
 

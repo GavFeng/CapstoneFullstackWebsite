@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import Carousel from '../Carousel/Carousel';
 import Item from '../Item/Item';
-import axios from 'axios';
+import api from '../../Services/Api';
 
-/* ---------- API ---------- */
-const API_URL = "http://localhost:4000/api";
 
 const PopularJigs = () => {
 
@@ -20,7 +18,7 @@ const PopularJigs = () => {
     const fetchPopular = async () => {
       try {
         // Fetch top 12 newest jigs 
-        const res = await axios.get(`${API_URL}/jigs/popular?limit=12`); 
+        const res = await api.get(`jigs/popular?limit=12`); 
         setPopularJigs(res.data);
       } catch (err) {
         console.error(err);

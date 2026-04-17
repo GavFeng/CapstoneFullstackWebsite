@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
-import axios from "axios";
+import api from '../../../Services/api';
 import "./DeleteJig.css";
-
-const API_URL = "http://localhost:4000/api";
 
 const DeleteJig = ({ jigId, jigName, onDeleteSuccess }) => {
   const [open, setOpen] = useState(false);
@@ -18,7 +16,7 @@ const DeleteJig = ({ jigId, jigName, onDeleteSuccess }) => {
 
     try {
       setLoading(true);
-      await axios.delete(`${API_URL}/jigs/${jigId}`);
+      await api.delete(`jigs/${jigId}`);
 
       onDeleteSuccess(jigId);
       setOpen(false);

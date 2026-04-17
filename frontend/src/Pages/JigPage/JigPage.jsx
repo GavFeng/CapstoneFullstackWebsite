@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { JigContext } from "../../Context/JigContext";
-import axios from 'axios';
+import api from '../../Services/Api';
 import Breadcrumb from '../../Components/BreadCrumb/BreadCrumb';
 import ProductDisplay from '../../Components/ProductDisplay/ProductDisplay';
 import DescriptionBox from '../../Components/DescriptionBox/DescriptionBox';
 import RelatedProducts from '../../Components/CarouselJigs/RelatedProducts';
-
-const API_URL = 'http://localhost:4000/api';
 
 const JigPage = () => {
   const { refreshSingleJig } = useContext(JigContext);
@@ -22,7 +20,7 @@ const JigPage = () => {
     const fetchJig = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${API_URL}/jigs/${id}`);
+        const res = await api.get(`jigs/${id}`);
         setJig(res.data);
       } catch (err) {
         console.error(err);

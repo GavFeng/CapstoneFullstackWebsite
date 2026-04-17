@@ -150,9 +150,7 @@ const handleSubmit = async () => {
       },
     };
 
-    const res = await api.post("/order", orderData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await api.post("/order", orderData);
 
     if (selectedItems.length === Object.values(cartItems).length) {
       clearCart();

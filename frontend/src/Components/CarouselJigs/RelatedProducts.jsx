@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../Services/Api';
 import Carousel from '../Carousel/Carousel';
 import Item from '../Item/Item';
 
-/* ---------- API ---------- */
-const API_URL = "http://localhost:4000/api";
 
 const RelatedProducts = ({ jig }) => {
 
@@ -32,8 +30,8 @@ const RelatedProducts = ({ jig }) => {
         setError(null);
 
         // Fetch 8 related jigs based on current jig ID
-        const res = await axios.get(
-          `${API_URL}/jigs/related/${jig._id}`,
+        const res = await api.get(
+          `jigs/related/${jig._id}`,
           { params: { limit: 8 } }
         );
 

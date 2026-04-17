@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
+import api from '../../../Services/api';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -12,8 +12,6 @@ import {
 
 
 import './ViewJigs.css';
-
-const API_URL = 'http://localhost:4000/api';
 
 const ViewJigs = () => {
   const navigate = useNavigate();
@@ -49,9 +47,9 @@ const ViewJigs = () => {
     const fetchOptions = async () => {
       try {
         const [catRes, weightRes, colorRes] = await Promise.all([
-          axios.get(`${API_URL}/categories`),
-          axios.get(`${API_URL}/weights`),
-          axios.get(`${API_URL}/colors`),
+          api.get(`categories`),
+          api.get(`weights`),
+          api.get(`colors`),
         ]);
 
         setCategories(catRes.data);
@@ -82,7 +80,7 @@ const fetchJigs = useCallback(async () => {
       ...(filters.maxPrice && { maxPrice: Number(filters.maxPrice) }),
     };
 
-    const res = await axios.get(`${API_URL}/jigs`, { params });
+    const res = await api.get(`jigs`, { params });
 
     const receivedJigs = Array.isArray(res.data?.jigs) ? res.data.jigs : [];
 

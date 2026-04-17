@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../../Services/api";
 import '../ViewJigs/ViewJigs.css';
 
 const InventoryEditor = ({ jigId, colorId, stock, sold = 0, onUpdate }) => {
@@ -13,8 +13,8 @@ const InventoryEditor = ({ jigId, colorId, stock, sold = 0, onUpdate }) => {
   const updateStock = async (action, value = 1) => {
     setLoading(true);
     try {
-      const res = await axios.patch(
-        `http://localhost:4000/api/jigs/${jigId}/colors/${colorId}/stock`,
+      const res = await api.patch(
+        `jigs/${jigId}/colors/${colorId}/stock`,
         { action, stock: value }
       );
 

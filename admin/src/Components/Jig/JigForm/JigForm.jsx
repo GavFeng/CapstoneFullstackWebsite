@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../Services/api";
 import './JigForm.css';
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -11,9 +11,6 @@ import {
   AddOptionModal,
   ImagePopup
 } from "../components";
-
-const API_URL = "http://localhost:4000/api";
-
 
 const JigForm = ({ mode: initialMode = "add" }) => {
 
@@ -70,9 +67,9 @@ const JigForm = ({ mode: initialMode = "add" }) => {
     const fetchData = async () => {
       try {
         const [catRes, weightRes, colorRes] = await Promise.all([
-          axios.get(`${API_URL}/categories`),
-          axios.get(`${API_URL}/weights`),
-          axios.get(`${API_URL}/colors`),
+          api.get(`categories`),
+          api.get(`weights`),
+          api.get(`colors`),
         ]);
 
         setCategories(catRes.data);
@@ -88,7 +85,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
 
   useEffect(() => {
     if (mode === "edit" && jigId) {
-      axios.get(`${API_URL}/jigs/${jigId}`).then(res => {
+      api.get(`jigs/${jigId}`).then(res => {
         const jig = res.data;
         setOriginalData(jig);
         setFormData({
@@ -134,7 +131,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
     if (!name) return false;
 
     try {
-      const res = await axios.get(`${API_URL}/jigs/check-name`, {
+      const res = await api.get(`jigs/check-name`, {
         params: { name },
       });
 
@@ -175,21 +172,21 @@ const JigForm = ({ mode: initialMode = "add" }) => {
   };
 
   const checkCategoryDuplicate = async (name) => {
-    const res = await axios.get(`${API_URL}/categories/check-name`, {
+    const res = await api.get(`categories/check-name`, {
       params: { name },
     });
     return res.data.exists;
   };
 
   const checkWeightDuplicate = async (label, value) => {
-    const res = await axios.get(`${API_URL}/weights/check-label`, {
+    const res = await api.get(`weights/check-label`, {
       params: { label, value },
     });
     return res.data.exists;
   };
 
   const checkColorDuplicate = async (name) => {
-    const res = await axios.get(`${API_URL}/colors/check-name`, {
+    const res = await api.get(`colors/check-name`, {
       params: { name },
     });
     return res.data.exists;
@@ -256,7 +253,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
             const form = new FormData();
             form.append("image", imgObj.file);
 
-            const res = await axios.post(`${API_URL}/uploadImage`, form, {
+            const res = await api.post(`uploadImage`, form, {
               headers: { "Content-Type": "multipart/form-data" },
             });
 
@@ -292,7 +289,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
       };
 
       if (mode === "add") {
-        await axios.post(`${API_URL}/jigs`, jigPayload);
+        await api.post(`jigs`, jigPayload);
         setMessage("Jig created successfully!");
         setFormData({
           name: "",
@@ -321,7 +318,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
         });
 
         if (Object.keys(patchPayload).length > 0) {
-          await axios.patch(`${API_URL}/jigs/${jigId}`, patchPayload);
+          await api.patch(`jigs/${jigId}`, patchPayload);
           setMessage("Jig updated successfully!");
         } else {
           setMessage("No changes to update.");
@@ -545,7 +542,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
               return;
             }
 
-            const res = await axios.post(`${API_URL}/categories`, {
+            const res = await api.post(`categories`, {
               name: newCategory.trim(),
             });
 
@@ -581,7 +578,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
               return;
             }
 
-            const res = await axios.post(`${API_URL}/weights`, {
+            const res = await api.post(`weights`, {
               label: newWeight.label.trim(),
               value: Number(newWeight.value),
             });
@@ -617,7 +614,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
               return;
             }
 
-            const res = await axios.post(`${API_URL}/colors`, {
+            const res = await api.post(`colors`, {
               name: newColor.trim(),
               slug: newColor.toLowerCase().replace(/\s+/g, "-"),
             });
