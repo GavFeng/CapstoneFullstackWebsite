@@ -68,6 +68,23 @@ exports.getAvailableSlots = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.getAllUpcomingSlots = async (req, res) => {
+  try {
+    const slots = await TimeSlot.find({
+      isActive: true,
+      startTime: { $gt: new Date() }
+    })
+    .populate('location', 'name') 
+    .sort({ startTime: 1 })
+    .limit(10);
+    
+    res.json(slots);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 exports.deleteTimeSlot = async (req, res) => {
   try {
     await TimeSlot.findByIdAndDelete(req.params.id);
@@ -76,4 +93,5 @@ exports.deleteTimeSlot = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 

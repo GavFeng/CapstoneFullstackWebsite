@@ -67,7 +67,7 @@ const ViewJigs = () => {
 
 const fetchJigs = useCallback(async () => {
   setLoading(true);
-  const LIMIT = 10; // <--------------- Change Limit Here
+  const LIMIT = 12; // <--------------- Change Limit Here
 
   try {
     const params = {

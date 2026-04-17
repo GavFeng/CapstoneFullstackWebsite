@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../../Services/api";
 import "./ManageTimeSlots.css";
 
-const ManageTimeSlots = ({ location, endpoint }) => {
+const ManageTimeSlots = ({ location, endpoint, onUpdate }) => {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("individual");
@@ -18,6 +18,47 @@ const ManageTimeSlots = ({ location, endpoint }) => {
     { label: "S", value: 0 }, { label: "M", value: 1 }, { label: "T", value: 2 },
     { label: "W", value: 3 }, { label: "T", value: 4 }, { label: "F", value: 5 }, { label: "S", value: 6 }
   ];
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const isTimeBefore = (start, end) => {
+    return start < end;
+  };
+
+  const handleSingleDateChange = (e) => {
+    setSingleSlot({ ...singleSlot, date: e.target.value });
+  };
+
+  const handleRecurDateChange = (field, value) => {
+    setRecurData(prev => {
+      let newData = { ...prev, [field]: value };
+      
+      if (field === 'startDate' && newData.endDate < value) {
+        newData.endDate = value;
+      }
+      return newData;
+    });
+  };
+
+  const handleTimeChange = (mode, field, value) => {
+    const setter = mode === 'single' ? setSingleSlot : setRecurData;
+    const data = mode === 'single' ? singleSlot : recurData;
+
+    setter(prev => {
+      let newData = { ...prev, [field]: value };
+
+      if (field === 'startTime' && value >= prev.endTime) {
+        const [hours, minutes] = value.split(':');
+        const nextHour = (parseInt(hours) + 1).toString().padStart(2, '0');
+        newData.endTime = `${nextHour}:${minutes}`;
+      } 
+      else if (field === 'endTime' && value <= prev.startTime) {
+        return prev; // Ignore the change
+      }
+
+      return newData;
+    });
+  };
 
   const fetchSlots = async () => {
     try {
@@ -72,6 +113,7 @@ const ManageTimeSlots = ({ location, endpoint }) => {
 
     try {
       await api.post(endpoint, { location: location._id, slots: generatedSlots });
+      if (onUpdate) onUpdate();
       setStatusMessage({ text: `Successfully created ${generatedSlots.length} slot(s)!`, type: "success" });
       fetchSlots();
     } catch (err) {
@@ -84,6 +126,7 @@ const ManageTimeSlots = ({ location, endpoint }) => {
   const executeDelete = async () => {
     try {
       await api.delete(`${endpoint}/${modal.id}`);
+      if (onUpdate) onUpdate();
       setStatusMessage({ text: "Slot deleted successfully", type: "success" });
       fetchSlots();
     } catch (err) {
@@ -115,10 +158,36 @@ const ManageTimeSlots = ({ location, endpoint }) => {
         {activeTab === "individual" ? (
           <div className="form-section fade-in">
             <label>Pickup Date</label>
-            <input type="date" required value={singleSlot.date} onChange={e => setSingleSlot({...singleSlot, date: e.target.value})} onClick={(e) => e.target.showPicker()}/>
+            <input 
+              type="date" 
+              required 
+              min={today}
+              value={singleSlot.date} 
+              onChange={handleSingleDateChange} 
+              onClick={(e) => e.target.showPicker()}
+            />
             <div className="form-row-slot">
-              <div className="input-half"><label>Start</label><input type="time" required value={singleSlot.startTime} onChange={e => setSingleSlot({...singleSlot, startTime: e.target.value})} onClick={(e) => e.target.showPicker()}/></div>
-              <div className="input-half"><label>End</label><input type="time" required value={singleSlot.endTime} onChange={e => setSingleSlot({...singleSlot, endTime: e.target.value})} onClick={(e) => e.target.showPicker()}/></div>
+              <div className="input-half">
+                <label>Start</label>
+                <input 
+                  type="time" 
+                  required 
+                  value={singleSlot.startTime} 
+                  onChange={(e) => handleTimeChange('single', 'startTime', e.target.value)} 
+                  onClick={(e) => e.target.showPicker()}
+                />
+              </div>
+              <div className="input-half">
+                <label>End</label>
+                <input 
+                  type="time" 
+                  required 
+                  min={singleSlot.startTime}
+                  value={singleSlot.endTime} 
+                  onChange={(e) => handleTimeChange('single', 'endTime', e.target.value)} 
+                  onClick={(e) => e.target.showPicker()}
+                />
+              </div>
               <div className="input-half"><label>Order Cap</label><input type="number" value={singleSlot.capacity} onChange={e => setSingleSlot({...singleSlot, capacity: e.target.value})} /></div>
             </div>
           </div>
@@ -126,14 +195,41 @@ const ManageTimeSlots = ({ location, endpoint }) => {
           <div className="form-section fade-in">
             <label>Date Range</label>
             <div className="form-row-slot">
-              <input type="date" required value={recurData.startDate} onChange={e => setRecurData({...recurData, startDate: e.target.value})} onClick={(e) => e.target.showPicker()}/>
+              <input 
+                type="date" 
+                required 
+                min={today} 
+                value={recurData.startDate} 
+                onChange={e => handleRecurDateChange('startDate', e.target.value)} 
+                onClick={(e) => e.target.showPicker()}
+              />
               <span className="connector">to</span>
-              <input type="date" required value={recurData.endDate} onChange={e => setRecurData({...recurData, endDate: e.target.value})} onClick={(e) => e.target.showPicker()}/>
+              <input 
+                type="date" 
+                required 
+                min={recurData.startDate || today} // Force second date ahead of first
+                value={recurData.endDate} 
+                onChange={e => handleRecurDateChange('endDate', e.target.value)} 
+                onClick={(e) => e.target.showPicker()}
+              />
             </div>
             <label>Time & Capacity</label>
             <div className="form-row-slot">
-              <input type="time" required value={recurData.startTime} onChange={e => setRecurData({...recurData, startTime: e.target.value})} onClick={(e) => e.target.showPicker()}/>
-              <input type="time" required value={recurData.endTime} onChange={e => setRecurData({...recurData, endTime: e.target.value})} onClick={(e) => e.target.showPicker()}/>
+              <input 
+                type="time" 
+                required 
+                value={recurData.startTime} 
+                onChange={(e) => handleTimeChange('recur', 'startTime', e.target.value)} 
+                onClick={(e) => e.target.showPicker()}
+              />
+              <input 
+                type="time" 
+                required 
+                min={recurData.startTime} 
+                value={recurData.endTime} 
+                onChange={(e) => handleTimeChange('recur', 'endTime', e.target.value)} 
+                onClick={(e) => e.target.showPicker()}
+              />
               <input type="number" placeholder="Cap" value={recurData.capacity} onChange={e => setRecurData({...recurData, capacity: e.target.value})} />
             </div>
             <label>Repeat on Days</label>

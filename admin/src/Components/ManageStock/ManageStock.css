@@ -1,0 +1,142 @@
+.manage-stock-page {
+  padding: 30px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.stock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.refresh-btn {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover { background: #eee; }
+
+.stock-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.stock-card-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+.card-title-area {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scrollable-list {
+  padding: 10px 20px;
+  overflow-y: auto;
+}
+
+/* Restock Row Styles */
+.restock-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.item-meta strong {
+  display: block;
+  font-size: 1.05rem;
+  color: #2d3436;
+}
+
+.item-sub-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #636e72;
+  margin-top: 4px;
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Seller Card Styles */
+.seller-card {
+  padding: 15px;
+  background: #fdfdfd;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.seller-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.total-sold-pill {
+  background: #e1f5fe;
+  color: #0288d1;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.color-sold-breakdown {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.mini-sold-row {
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.alert-text { color: #d63031; }
+.success-text { color: #00b894; }
+
+.count-badge {
+  background: #dfe6e9;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 1000px) {
+  .stock-grid { grid-template-columns: 1fr; }
+}

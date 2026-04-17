@@ -79,10 +79,13 @@ const Dashboard = () => {
         ) : (
           getFilteredOrders().map(order => (
             <div key={order._id} className={`admin-order-card ${order.status}`}>
-              <div className="card-header">
+              <div className="card-header-dashboard">
                 <div className="order-id-group">
                   <h3>#{order._id.slice(-6).toUpperCase()}</h3>
                   <span className={`badge ${order.status}`}>{order.status}</span>
+                </div>
+                <div className="order-date-time">
+                  <span>{order.pickupDetails?.timeSlotSnapshot}</span>
                 </div>
                 <div className="payment-status">
                    Payment: <span className={`badge ${order.paymentStatus}`}>{order.paymentStatus}</span>
@@ -124,7 +127,7 @@ const Dashboard = () => {
                       <p><strong>{order.pickupDetails?.locationNameSnapshot}</strong></p>
                       <p>{order.pickupDetails?.addressSnapshot}</p>
                       <p>{order.pickupDetails?.citySnapshot}, {order.pickupDetails?.stateSnapshot} {order.pickupDetails?.zipSnapshot}</p>
-                      <p>{order.pickupDetails?.timeSlotSnapshot}</p>
+                      {/*<p>{order.pickupDetails?.timeSlotSnapshot}</p> */}
                       {order.pickupDetails?.pickupCode && (
                         <p className="admin-pickup-code">Code: {order.pickupDetails.pickupCode}</p>
                       )}
