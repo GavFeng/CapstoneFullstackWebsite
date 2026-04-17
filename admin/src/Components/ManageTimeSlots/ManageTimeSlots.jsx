@@ -5,16 +5,14 @@ import "./ManageTimeSlots.css";
 const ManageTimeSlots = ({ location, endpoint }) => {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("individual");
   
-  // Recurring Form State
-  const [recurData, setRecurData] = useState({
-    startDate: "",
-    endDate: "",
-    startTime: "09:00",
-    endTime: "10:00",
-    days: [], // [1, 3, 5] for Mon, Wed, Fri
-    capacity: 5
-  });
+  // Custom Popup/Modal State
+  const [modal, setModal] = useState({ show: false, type: null, id: null, message: "" });
+  const [statusMessage, setStatusMessage] = useState({ text: "", type: "" });
+
+  const [singleSlot, setSingleSlot] = useState({ date: "", startTime: "09:00", endTime: "10:00", capacity: 5 });
+  const [recurData, setRecurData] = useState({ startDate: "", endDate: "", startTime: "09:00", endTime: "10:00", days: [], capacity: 5 });
 
   const weekDays = [
     { label: "S", value: 0 }, { label: "M", value: 1 }, { label: "T", value: 2 },
@@ -30,6 +28,14 @@ const ManageTimeSlots = ({ location, endpoint }) => {
 
   useEffect(() => { fetchSlots(); }, [location]);
 
+  // Auto-clear status messages
+  useEffect(() => {
+    if (statusMessage.text) {
+      const timer = setTimeout(() => setStatusMessage({ text: "", type: "" }), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [statusMessage]);
+
   const toggleDay = (day) => {
     setRecurData(prev => ({
       ...prev,
@@ -40,87 +46,146 @@ const ManageTimeSlots = ({ location, endpoint }) => {
   const handleCreateSlots = async (e) => {
     e.preventDefault();
     setLoading(true);
+    let generatedSlots = [];
 
-    // Best Recurring Logic: Generate dates between Start and End
-    const generatedSlots = [];
-    let current = new Date(recurData.startDate + "T00:00:00");
-    const end = new Date(recurData.endDate + "T23:59:59");
-
-    while (current <= end) {
-      if (recurData.days.includes(current.getDay())) {
-        const startTimestamp = `${current.toISOString().split('T')[0]}T${recurData.startTime}:00`;
-        const endTimestamp = `${current.toISOString().split('T')[0]}T${recurData.endTime}:00`;
-        
-        generatedSlots.push({
-          startTime: startTimestamp,
-          endTime: endTimestamp,
-          capacity: recurData.capacity
-        });
+    if (activeTab === "individual") {
+      generatedSlots.push({
+        startTime: `${singleSlot.date}T${singleSlot.startTime}:00`,
+        endTime: `${singleSlot.date}T${singleSlot.endTime}:00`,
+        capacity: singleSlot.capacity
+      });
+    } else {
+      let current = new Date(recurData.startDate + "T00:00:00");
+      const end = new Date(recurData.endDate + "T23:59:59");
+      while (current <= end) {
+        if (recurData.days.includes(current.getDay())) {
+          const dateStr = current.toISOString().split('T')[0];
+          generatedSlots.push({
+            startTime: `${dateStr}T${recurData.startTime}:00`,
+            endTime: `${dateStr}T${recurData.endTime}:00`,
+            capacity: recurData.capacity
+          });
+        }
+        current.setDate(current.getDate() + 1);
       }
-      current.setDate(current.getDate() + 1);
     }
 
     try {
-      await api.post(endpoint, {
-        location: location._id,
-        slots: generatedSlots
-      });
-      alert(`Created ${generatedSlots.length} slots!`);
+      await api.post(endpoint, { location: location._id, slots: generatedSlots });
+      setStatusMessage({ text: `Successfully created ${generatedSlots.length} slot(s)!`, type: "success" });
       fetchSlots();
     } catch (err) {
-      alert(err.response?.data?.message || "Overlap detected");
+      setStatusMessage({ text: err.response?.data?.message || "Overlap detected", type: "error" });
     } finally {
       setLoading(false);
     }
   };
 
+  const executeDelete = async () => {
+    try {
+      await api.delete(`${endpoint}/${modal.id}`);
+      setStatusMessage({ text: "Slot deleted successfully", type: "success" });
+      fetchSlots();
+    } catch (err) {
+      setStatusMessage({ text: "Failed to delete slot", type: "error" });
+    }
+    setModal({ show: false, type: null, id: null, message: "" });
+  };
+
   return (
     <div className="slots-manager-card">
-      <h3>Manage Slots for {location.name}</h3>
-      
-      <form className="recurring-form" onSubmit={handleCreateSlots}>
-        <div className="form-row">
-          <input type="date" required value={recurData.startDate} onChange={e => setRecurData({...recurData, startDate: e.target.value})} />
-          <span>to</span>
-          <input type="date" required value={recurData.endDate} onChange={e => setRecurData({...recurData, endDate: e.target.value})} />
-        </div>
-
-        <div className="form-row">
-          <input type="time" required value={recurData.startTime} onChange={e => setRecurData({...recurData, startTime: e.target.value})} />
-          <input type="time" required value={recurData.endTime} onChange={e => setRecurData({...recurData, endTime: e.target.value})} />
-          <input type="number" placeholder="Cap" value={recurData.capacity} onChange={e => setRecurData({...recurData, capacity: e.target.value})} />
-        </div>
-
-        <div className="days-picker">
-          {weekDays.map(day => (
-            <button 
-              key={day.value} 
-              type="button"
-              className={recurData.days.includes(day.value) ? "active" : ""}
-              onClick={() => toggleDay(day.value)}
-            >
-              {day.label}
+      <div className="card-header-time">
+        <h3>Manage Slots: {location.name}</h3>
+        <div className="tab-toggle">
+          {["individual", "recurring"].map(tab => (
+            <button key={tab} className={activeTab === tab ? "active" : ""} onClick={() => setActiveTab(tab)}>
+              {tab.charAt(0).toUpperCase() + tab.slice(1)} Slot
             </button>
           ))}
         </div>
+      </div>
 
-        <button className="btn-generate" disabled={loading || recurData.days.length === 0}>
-          {loading ? "Generating..." : "Generate Recurring Slots"}
+      {statusMessage.text && (
+        <div className={`status-banner ${statusMessage.type} fade-in`}>
+          {statusMessage.type === 'success' ? '✅' : '⚠️'} {statusMessage.text}
+        </div>
+      )}
+      
+      <form className="slot-form" onSubmit={handleCreateSlots}>
+        {activeTab === "individual" ? (
+          <div className="form-section fade-in">
+            <label>Pickup Date</label>
+            <input type="date" required value={singleSlot.date} onChange={e => setSingleSlot({...singleSlot, date: e.target.value})} onClick={(e) => e.target.showPicker()}/>
+            <div className="form-row-slot">
+              <div className="input-half"><label>Start</label><input type="time" required value={singleSlot.startTime} onChange={e => setSingleSlot({...singleSlot, startTime: e.target.value})} onClick={(e) => e.target.showPicker()}/></div>
+              <div className="input-half"><label>End</label><input type="time" required value={singleSlot.endTime} onChange={e => setSingleSlot({...singleSlot, endTime: e.target.value})} onClick={(e) => e.target.showPicker()}/></div>
+              <div className="input-half"><label>Order Cap</label><input type="number" value={singleSlot.capacity} onChange={e => setSingleSlot({...singleSlot, capacity: e.target.value})} /></div>
+            </div>
+          </div>
+        ) : (
+          <div className="form-section fade-in">
+            <label>Date Range</label>
+            <div className="form-row-slot">
+              <input type="date" required value={recurData.startDate} onChange={e => setRecurData({...recurData, startDate: e.target.value})} onClick={(e) => e.target.showPicker()}/>
+              <span className="connector">to</span>
+              <input type="date" required value={recurData.endDate} onChange={e => setRecurData({...recurData, endDate: e.target.value})} onClick={(e) => e.target.showPicker()}/>
+            </div>
+            <label>Time & Capacity</label>
+            <div className="form-row-slot">
+              <input type="time" required value={recurData.startTime} onChange={e => setRecurData({...recurData, startTime: e.target.value})} onClick={(e) => e.target.showPicker()}/>
+              <input type="time" required value={recurData.endTime} onChange={e => setRecurData({...recurData, endTime: e.target.value})} onClick={(e) => e.target.showPicker()}/>
+              <input type="number" placeholder="Cap" value={recurData.capacity} onChange={e => setRecurData({...recurData, capacity: e.target.value})} />
+            </div>
+            <label>Repeat on Days</label>
+            <div className="days-picker">
+              {weekDays.map(day => (
+                <button key={day.value} type="button" className={recurData.days.includes(day.value) ? "active" : ""} onClick={() => toggleDay(day.value)}>
+                  {day.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        <button className="btn-generate" disabled={loading || (activeTab === 'recurring' && recurData.days.length === 0)}>
+          {loading ? "Saving..." : activeTab === 'individual' ? "Add Single Slot" : "Generate Recurring Slots"}
         </button>
       </form>
 
-      <div className="slots-list">
-        {slots.map(slot => (
-          <div key={slot._id} className="slot-item">
-            <span>{new Date(slot.startTime).toLocaleDateString()}</span>
-            <span>{new Date(slot.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-            <span className="cap-pill">{slot.currentBookings} / {slot.capacity}</span>
-            <button onClick={() => api.delete(`${endpoint}/${slot._id}`).then(fetchSlots)}>Delete</button>
-          </div>
-        ))}
+      <div className="slots-list-container">
+        <h4>Existing Slots</h4>
+        <div className="slots-list">
+          {slots.map(slot => (
+            <div key={slot._id} className="slot-item">
+              <div className="slot-date-info">
+                <strong>{new Date(slot.startTime).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}</strong>
+                <span>{new Date(slot.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {new Date(slot.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+              </div>
+              <div className="slot-meta">
+                <span className="cap-pill">{slot.currentBookings} / {slot.capacity}</span>
+                <button className="btn-mini-delete" 
+                  onClick={() => setModal({ show: true, id: slot._id, message: "Are you sure you want to delete this time slot?" })}>
+                ×</button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* Logic-Based Modal Overlay */}
+      {modal.show && (
+        <div className="modal-backdrop">
+          <div className="modal-box fade-in">
+            <div className="modal-header"><h3>Confirm Delete</h3></div>
+            <div className="modal-body"><p>{modal.message}</p></div>
+            <div className="modal-footer">
+              <button className="btn-cancel" onClick={() => setModal({ show: false, id: null, message: "" })}>Cancel</button>
+              <button className="btn-delete-confirm" onClick={executeDelete}>Delete Slot</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-export default ManageTimeSlots
+export default ManageTimeSlots;

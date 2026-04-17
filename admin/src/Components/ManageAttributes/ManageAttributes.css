@@ -210,6 +210,39 @@
   animation: shake 0.4s ease-in-out;
 }
 
+.item-row.selected {
+  background-color: #f0f9ff;
+  border-left: 4px solid #0ea5e9;
+  box-shadow: inset 0 0 0 1px #bae6fd;
+}
+
+.item-row:hover {
+  background-color: #f8fafc;
+}
+
+.location-info-sub {
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+}
+
+.location-info-sub span {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.addr-line {
+  font-weight: 500;
+  color: #475569 !important;
+}
+
+.phone-line {
+  font-size: 0.75rem !important;
+  margin-top: 2px;
+  color: #0ea5e9 !important; 
+}
+
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-5px); }

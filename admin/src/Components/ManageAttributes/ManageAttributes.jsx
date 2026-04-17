@@ -11,7 +11,7 @@ const fractionToDecimal = (str) => {
   return (num / den).toFixed(2);
 };
 
-const ManageAttributes = ({ title, endpoint, checkEndpoint, fields, itemName }) => {
+const ManageAttributes = ({ title, endpoint, checkEndpoint, fields, itemName, onSelect, selectedId, onDelete}) => {
   const [items, setItems] = useState([]);
   const [formData, setFormData] = useState({});
   const [editingId, setEditingId] = useState(null);
@@ -111,11 +111,17 @@ const handleSubmit = async (e) => {
       const payload = { ...formData };
       
       Object.keys(payload).forEach(key => {
-        if (typeof payload[key] === 'string') payload[key] = payload[key].trim();
+        if (typeof payload[key] === 'string') {
+          payload[key] = payload[key].trim();
+          if (payload[key] === "") delete payload[key]; 
+        }
       });
 
       if (!isWeight && payload.name) {
-        payload.slug = payload.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        payload.slug = payload.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
       }
 
       if (payload.value) payload.value = Number(payload.value);
@@ -148,6 +154,7 @@ const handleSubmit = async (e) => {
     try {
       if (type === "DELETE") {
         await api.delete(`${endpoint}/${id}`);
+        if (onDelete) onDelete(id);
       } else if (type === "UPDATE") {
         const validationError = await validateExistence(editData, true, items.find(i => i._id === id));
         if (validationError) {
@@ -206,7 +213,13 @@ return (
       {/* ... items list and modal ... */}
       <div className="item-list">
         {items.map((item) => (
-          <div key={item._id} className={`item-row ${editingId === item._id ? 'is-editing' : ''}`}>
+          <div 
+            key={item._id} 
+            // 2. Add 'selected' class and the onClick handler
+            className={`item-row ${editingId === item._id ? 'is-editing' : ''} ${selectedId === item._id ? 'selected' : ''}`}
+            onClick={() => onSelect && onSelect(item)} 
+            style={{ cursor: onSelect ? 'pointer' : 'default' }}
+          >
             {editingId === item._id ? (
               <div className="edit-mode">
                 {fields.map((field) => (
@@ -216,12 +229,14 @@ return (
                     type={field.type || "text"}
                     value={editData[field.name] || ""}
                     onChange={(e) => setEditData({ ...editData, [field.name]: e.target.value })}
+                    // 3. Prevent clicking input from triggering selection
+                    onClick={(e) => e.stopPropagation()} 
                     onBlur={() => handleBlur(field.name, true)}
                   />
                 ))}
                 <div className="edit-actions">
-                   <button onClick={() => setConfirmModal({show:true, type:'UPDATE', id: item._id, message:'Save changes?'})} className="btn-save">Save</button>
-                  <button onClick={() => setEditingId(null)} className="btn-cancel">Cancel</button>
+                   <button onClick={(e) => { e.stopPropagation(); setConfirmModal({show:true, type:'UPDATE', id: item._id, message:'Save changes?'})}} className="btn-save">Save</button>
+                  <button onClick={(e) => { e.stopPropagation(); setEditingId(null)}} className="btn-cancel">Cancel</button>
                 </div>
               </div>
             ) : (
@@ -229,13 +244,35 @@ return (
                 <div className="item-info">
                   <div className="item-main">
                     <strong>{item.label || item.name}</strong>
-                    {item.value !== undefined && <span className="item-val">{item.value} oz</span>}
+                    {isWeight && item.value !== undefined && (
+                      <span className="item-val">{item.value} oz</span>
+                    )}
+                    {itemName.toLowerCase() === "location" && (
+                      <div className="location-info-sub">
+                        <span className="addr-line">{item.address}</span>
+                        <span className="city-line">{item.city}, {item.state} {item.zip}</span>
+                        {item.phone && <span className="phone-line">📞 {item.phone}</span>}
+                      </div>
+                    )}
                   </div>
-                  <code className="item-slug">/{item.slug}</code>
+
+                    {itemName.toLowerCase() !== "location" && (
+                      <code className="item-slug">/{item.slug}</code>
+                    )}
                 </div>
                 <div className="item-actions">
-                  <button onClick={() => { setEditingId(item._id); setEditData(item); }} className="btn-edit">Edit</button>
-                  <button onClick={() => promptDelete(item._id)} className="btn-delete">Delete</button>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setEditingId(item._id); setEditData(item); }} 
+                    className="btn-edit"
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); promptDelete(item._id); }} 
+                    className="btn-delete"
+                  >
+                    Delete
+                  </button>
                 </div>
               </>
             )}

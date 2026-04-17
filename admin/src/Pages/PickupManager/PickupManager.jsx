@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import ManageAttributes from "../../Components/ManageAttributes/ManageAttributes";
 import ManageTimeSlots from "../../Components/ManageTimeSlots/ManageTimeSlots";
-import api from "../../Services/api";
 import "./PickupManager.css";
 
 const PickupManager = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
+
+  const handleLocationDeleted = (deletedId) => {
+  if (selectedLocation?._id === deletedId) {
+    setSelectedLocation(null);
+  }
+};
 
   return (
     <div className="pickup-manager-container">
@@ -16,16 +21,19 @@ const PickupManager = () => {
           <ManageAttributes 
             title="Pickup Locations"
             itemName="Location"
-            // Use relative paths now
             endpoint="locations" 
             checkEndpoint="locations/check-name"
             fields={[
-              { name: "name", placeholder: "Location Name (ex: Pike Place)" },
-              { name: "address", placeholder: "Address (ex: 85 Pike St)" },
-              { name: "city", placeholder: "City (ex: Seattle)" },
+                { name: "name", placeholder: "Location Name (ex: Pike Place)" },
+                { name: "address", placeholder: "Street Address (ex: 85 Pike St)" },
+                { name: "city", placeholder: "City (ex: Seattle)" },
+                { name: "state", placeholder: "State (ex: WA)" },
+                { name: "zip", placeholder: "Zip Code (ex: 98101)" },
+                { name: "phone", placeholder: "Contact Phone (ex: 206-555-0123)" },
             ]}
             onSelect={(loc) => setSelectedLocation(loc)} 
             selectedId={selectedLocation?._id}
+            onDelete={handleLocationDeleted}
           />
         </section>
 
