@@ -4,8 +4,9 @@ const {
   registerUser,
   loginUser,
   getCurrentUser,
-  getUsers,
-  updateProfile
+  updateProfile,
+  getAllAccounts,
+  registerAdmin
 } = require("../controllers/userController");
 
 const router = express.Router();
@@ -16,7 +17,9 @@ const adminMiddleware = require("../middleware/adminMiddleware");
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/me", authMiddleware, getCurrentUser);
-router.get("/users", authMiddleware, adminMiddleware, getUsers);
 router.put("/profile", authMiddleware, updateProfile);
+
+router.get("/all", authMiddleware, adminMiddleware, getAllAccounts);
+router.post("/create-admin", authMiddleware, adminMiddleware, registerAdmin);
 
 module.exports = router;

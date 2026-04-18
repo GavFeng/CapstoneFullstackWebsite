@@ -9,6 +9,7 @@ import Analytic from '../../Components/Analytic/Analytic'
 import AddCategory from '../../Components/AddCategory/AddCategory'
 import AddWeight from '../../Components/AddWeight/AddWeight'
 import AddColor from '../../Components/AddColor/AddColor'
+import ManageAccounts from '../../Components/ManageAccounts/ManageAccounts'
 import AttributeManager from '../AttributeManager/AttributeManager'
 import PickupManager from '../PickupManager/PickupManager'
 import { Route, Routes, Navigate } from 'react-router-dom'
@@ -32,6 +33,7 @@ const Admin = () => {
           <Route path="/editjig/:id"  element={<JigForm />} />
           <Route path="/manage" element={<AttributeManager />}  />
           <Route path="/manage-pickup" element={<PickupManager />}  />
+          <Route path="/manage-account" element={<ManageAccounts />}  />
         </Routes>
       </main>
     </div>

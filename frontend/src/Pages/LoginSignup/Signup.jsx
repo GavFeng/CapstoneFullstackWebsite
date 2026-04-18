@@ -5,11 +5,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import './LoginSignup.css';
 
 const Signup = () => {
-const [form, setForm] = useState({
+  const [form, setForm] = useState({
     name: '',
     username: '',
     email: '',
     password: '',
+    confirmPassword: '', 
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,22 +19,26 @@ const [form, setForm] = useState({
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value.trim() });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (form.password !== form.confirmPassword) {
+      return setError('Passwords do not match');
+    }
+
     setLoading(true);
 
     try {
       await register(
-        form.name,
-        form.username,
-        form.email,
+        form.name.trim(),
+        form.username.trim(),
+        form.email.trim(),
         form.password
       );
-      // register() already navigates to /dashboard
     } catch (err) {
       setError(err || 'Registration failed. Please try again.');
     } finally {
@@ -94,6 +99,19 @@ const [form, setForm] = useState({
               name="password"
               type="password"
               value={form.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              value={form.confirmPassword}
               onChange={handleChange}
               placeholder="••••••••"
               required

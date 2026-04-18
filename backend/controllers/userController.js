@@ -50,6 +50,38 @@ exports.registerUser = async (req, res) => {
   }
 };
 
+// Create an Admin Account (Admin only)
+exports.registerAdmin = async (req, res) => {
+  try {
+    const { name, username, email, password } = req.body;
+
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const admin = await User.create({
+      name,
+      username,
+      email,
+      password,
+      accountType: "admin"
+    });
+
+    res.status(201).json({
+      message: "Admin account created successfully",
+      user: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        accountType: admin.accountType
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // Login as a User
 exports.loginUser = async (req, res) => {
   try {
@@ -99,15 +131,13 @@ exports.getCurrentUser = async (req, res) => {
   }
 };
 
-// Get the Users
-exports.getUsers = async (req, res) => {
+// Getting the Accounts
+exports.getAllAccounts = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().sort({ createdAt: -1 });
     res.json(users);
   } catch (err) {
-    res.status(500).json({
-      message: err.message
-    });
+    res.status(500).json({ message: err.message });
   }
 };
 

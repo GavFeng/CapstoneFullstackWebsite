@@ -10,6 +10,7 @@ const Sidebar = () => {
     {label: 'Analytics', to: '/analytic'},
     {label: 'Manage Attributes', to: '/manage'},
     {label: 'Manage Pickup', to: '/manage-pickup'},
+    {label: 'Manage Accounts', to: '/manage-account'},
     // {label: 'Add Category', to: '/add-category'},
     // {label: 'Add Weight', to: '/add-weight'},
     // {label: 'Add Color', to: '/add-color'},
