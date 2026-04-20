@@ -130,6 +130,11 @@ const MyOrders = () => {
                     </span>
                   </td>
                   <td>
+                    <span className={`status-badge ${order.status || 'pending'}`}>
+                      {(order.status || 'pending').toUpperCase()}
+                    </span>
+                  </td>
+                  <td>
                     <button className="view-btn" onClick={() => openOrderDetails(order._id)}>
                       View Details
                     </button>

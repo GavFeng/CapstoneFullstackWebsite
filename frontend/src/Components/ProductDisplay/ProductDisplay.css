@@ -248,3 +248,15 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+
+.add-to-cart-btn.added {
+  background-color: #28a745;
+  color: white;
+  cursor: default;
+  border-color: #28a745;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-cart-btn:active {
+  transform: scale(0.98);
+}

@@ -51,9 +51,8 @@ exports.createJig = async (req, res) => {
   }
 };
 
-
-
 // Viewing All Jigs in DB
+// Viewing All Jigs in DB (with Pagination and "All" override)
 exports.getJigs = async (req, res) => {
   try {
     const {
@@ -63,11 +62,13 @@ exports.getJigs = async (req, res) => {
       maxPrice,
       color,
       page = 1,
-      limit = 10
+      limit = 10,
+      all = false // New flag to bypass pagination for Context/Cart
     } = req.query;
 
     const query = {};
 
+    // --- Filter Logic ---
     if (category) {
       if (mongoose.isValidObjectId(category)) {
         query.category = category;
@@ -98,22 +99,27 @@ exports.getJigs = async (req, res) => {
       }
     }
 
-    const skip = (page - 1) * Number(limit);
-
-    const jigs = await Jig.find(query)
+    // --- Execution Logic ---
+    let dbQuery = Jig.find(query)
       .populate("category")
       .populate("weight")
       .populate("colors.color", "name slug")
-      .skip(skip)
-      .limit(Number(limit));
+      .sort({ createdAt: -1 }); // Newest items first
 
+    // Only paginate if all=true is NOT present
+    if (all !== 'true') {
+      const skip = (page - 1) * Number(limit);
+      dbQuery = dbQuery.skip(skip).limit(Number(limit));
+    }
+
+    const jigs = await dbQuery;
     const total = await Jig.countDocuments(query);
 
     res.json({
       jigs: jigs || [],
       total: total || 0,
-      page: Number(page),
-      totalPages: total > 0 ? Math.ceil(total / limit) : 1
+      page: all === 'true' ? 1 : Number(page),
+      totalPages: all === 'true' ? 1 : Math.ceil(total / limit)
     });
 
   } catch (err) {

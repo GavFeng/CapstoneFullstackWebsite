@@ -21,7 +21,7 @@ export const JigContextProvider = ({ children }) => {
   const fetchJigs = async () => {
     try {
       setLoading(true);
-      const res = await api.get(`jigs`);
+      const res = await api.get(`jigs?all=true`);
       setJigs(res.data.jigs || res.data || []);
     } catch (err) {
       console.error('Failed to load jigs:', err);
@@ -207,28 +207,30 @@ export const JigContextProvider = ({ children }) => {
   /* ---------------- CART ACTIONS ---------------- */
   const addToCart = async (jigId, colorId, qty = 1) => {
     const key = getKey(jigId, colorId);
-    let available = getAvailableStock(jigId, colorId);
+    
+    // 1. Try to find it in our existing list
+    let targetJig = jigs.find(j => String(j._id) === String(jigId));
 
-    if (available === 0) {
-      await refreshSingleJig(jigId);
-      await new Promise(resolve => setTimeout(resolve, 100));
-      available = getAvailableStock(jigId, colorId);
+    // 2. If it's NOT in the list (because of pagination), fetch it specifically
+    if (!targetJig) {
+      targetJig = await refreshSingleJig(jigId); 
     }
 
-    setCartItems((prev) => {
+    // 3. Now run your stock check
+    const variant = targetJig?.colors?.find(v => {
+      const vColorId = v.color?._id || v.color;
+      return String(vColorId) === String(colorId);
+    });
+
+    const available = variant?.stock ?? 0;
+
+    if (available <= 0) return; // Still out of stock or not found
+
+    setCartItems(prev => {
       const current = prev[key]?.quantity || 0;
-      const newQty = Math.min(current + qty, available || 0);
-
-      if (newQty <= 0) {
-        const { [key]: _, ...rest } = prev;
-        return rest;
-      }
-
-      const updated = {
-        ...prev,
-        [key]: { jigId, colorId, quantity: newQty },
-      };
-
+      const newQty = Math.min(current + qty, available);
+      
+      const updated = { ...prev, [key]: { jigId, colorId, quantity: newQty } };
       syncItem(jigId, colorId, newQty);
       return updated;
     });
@@ -303,11 +305,10 @@ export const JigContextProvider = ({ children }) => {
   /* ---------------- TOTALS ---------------- */
   const cartTotal = useMemo(() => {
     return Object.values(cartItems).reduce((sum, item) => {
-      const jig = jigs.find(j => j._id === item.jigId);
+      const jig = jigs.find(j => String(j._id) === String(item.jigId));
       return jig ? sum + jig.price * item.quantity : sum;
     }, 0);
   }, [cartItems, jigs]);
-
   const totalItems = useMemo(() => {
     return Object.values(cartItems).reduce((sum, i) => sum + i.quantity, 0);
   }, [cartItems]);

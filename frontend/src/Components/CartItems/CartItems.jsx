@@ -28,10 +28,17 @@ const CartItems = () => {
 
   /* ---------- HELPERS ---------- */
   const getJigData = (entry) => {
-    const jig = jigs.find((j) => j._id === entry.jigId);
+    const jig = jigs.find((j) => String(j._id) === String(entry.jigId));
     if (!jig) return null;
-    const variant = jig.colors.find((v) => v.color._id === entry.colorId);
+
+    const variant = jig.colors.find((v) => {
+      // Check if color is an object with _id or just a string ID
+      const vColorId = v.color?._id || v.color;
+      return String(vColorId) === String(entry.colorId);
+    });
+
     if (!variant) return null;
+
     return {
       jig,
       variant,
@@ -45,10 +52,14 @@ const CartItems = () => {
     const jigId = savedItem.jig?._id || savedItem.jig;
     const colorId = savedItem.color?._id || savedItem.color;
 
-    const jig = jigs.find((j) => j._id === jigId);
+    const jig = jigs.find((j) => String(j._id) === String(jigId));
     if (!jig) return null;
 
-    const variant = jig.colors.find((v) => v.color._id === colorId);
+    const variant = jig.colors.find((v) => {
+      const vColorId = v.color?._id || v.color;
+      return String(vColorId) === String(colorId);
+    });
+
     if (!variant) return null;
 
     return {

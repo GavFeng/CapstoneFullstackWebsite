@@ -10,6 +10,7 @@ const ProductDisplay = ({ jig }) => {
   /* ---------- STATE ---------- */
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [isAdded, setIsAdded] = useState(false);
 
   const variants = jig?.colors || [];
   const selectedVariant = variants[selectedVariantIndex] || null;
@@ -75,11 +76,24 @@ const ProductDisplay = ({ jig }) => {
   const handleAddToCart = async () => {
     if (isOutOfStock || !selectedVariant || quantity < 1) return;
 
+    const colorId = selectedVariant.color?._id || selectedVariant.color;
+
     addToCart(
       jig._id,
-      selectedVariant.color._id,
+      colorId,
       quantity
     );
+
+    console.log({
+      attemptingJig: jig._id,
+      attemptingColor: colorId,
+      availableFound: quantity,
+    });
+    setIsAdded(true);
+
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
   };
 
 
@@ -244,14 +258,18 @@ const ProductDisplay = ({ jig }) => {
         {/* ---------- ADD TO CART ---------- */}
         <button
           className={`add-to-cart-btn ${
-            isOutOfStock || quantity < 1
-              ? 'disabled'
-              : 'active'
+            isOutOfStock || quantity < 1 ? 'disabled' : isAdded ? 'added' : 'active'
           }`}
-          disabled={isOutOfStock || quantity < 1}
+          disabled={isOutOfStock || quantity < 1 || isAdded} // Disable while "Added" to prevent double-clicks
           onClick={handleAddToCart}
         >
-          {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+          {isOutOfStock ? (
+            'Out of Stock'
+          ) : isAdded ? (
+            <>✓ Added to Cart</>
+          ) : (
+            'Add to Cart'
+          )}
         </button>
 
 
