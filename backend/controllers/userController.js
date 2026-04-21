@@ -56,9 +56,10 @@ exports.registerUser = async (req, res) => {
 // Create an Admin Account (Admin only)
 exports.registerAdmin = async (req, res) => {
   try {
-    const { name, username, email, password } = req.body;
+    const { name, username, email, password, phone } = req.body;
 
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    const emailHash = createBlindIndex(email);
+    const existingUser = await User.findOne({ $or: [{ emailIndex: emailHash }, { username }] });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -68,6 +69,7 @@ exports.registerAdmin = async (req, res) => {
       username,
       email,
       password,
+      phone,
       accountType: "admin"
     });
 
@@ -77,6 +79,7 @@ exports.registerAdmin = async (req, res) => {
         id: admin._id,
         name: admin.name,
         email: admin.email,
+        phone: admin.phone,
         accountType: admin.accountType
       }
     });
