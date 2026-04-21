@@ -77,7 +77,7 @@ const MyOrders = () => {
             <p>{citySnapshot}, {stateSnapshot} {zipSnapshot}</p>
             <p><strong>Phone:</strong> {phoneSnapshot}</p>
             <hr className="mini-hr" />
-            <p><strong>Window:</strong> {timeSlotSnapshot}</p>
+            <p><strong>Pickup Time:</strong> {timeSlotSnapshot}</p>
             {pickupCode && (
               <p className="pickup-code"><strong>Code:</strong> {pickupCode}</p>
             )}

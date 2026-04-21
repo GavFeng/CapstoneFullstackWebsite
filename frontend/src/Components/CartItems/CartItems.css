@@ -337,6 +337,28 @@
   transition: 0.2s;
 }
 
+.cart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  margin: 20px auto;
+  max-width: 400px;
+}
+
+.cart-empty h2 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.cart-empty p {
+  color: #666;
+  font-size: 1rem;
+}
+
 .checkout-btn:hover:not(:disabled) { background: #e53935; transform: translateY(-1px); }
 .checkout-btn:disabled { background: #ccc; cursor: not-allowed; }
 

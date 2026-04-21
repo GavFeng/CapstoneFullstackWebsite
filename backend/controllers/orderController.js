@@ -5,9 +5,8 @@ const Order = require("../models/Order");
 const TimeSlot = require("../models/TimeSlot");
 const Location = require("../models/Location");
 
-/**
- * Helper: Formats the Date and Time for the snapshot
- */
+
+// Helper: Formats the Date and Time for the snapshot
 const formatSlotString = (slot) => {
   const dateOptions = { weekday: "long", month: "short", day: "numeric" };
   const datePart = slot.startTime.toLocaleDateString("en-US", dateOptions);
@@ -124,26 +123,57 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// Update order status + Handle TimeSlot cleanup on Cancellation
+// Update order status + TimeSlot
 exports.updateOrderStatus = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const { status } = req.body;
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).session(session);
 
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!order) {
+      await session.abortTransaction();
+      return res.status(404).json({ message: "Order not found" });
+    }
 
     if (status === "cancelled" && order.status !== "cancelled") {
+      
+      for (const item of order.items) {
+        await Jig.updateOne(
+          {
+            _id: item.jig,
+            "colors.color": item.color, // Find the specific color
+          },
+          { 
+            $inc: { 
+              "colors.$.stock": item.quantity,   // Put stock back
+              "colors.$.sold": -item.quantity    // Reduce sold count
+            } 
+          },
+          { session }
+        );
+      }
+
       if (order.deliveryMethod === "pickup" && order.pickupDetails?.timeSlot) {
-        await TimeSlot.findByIdAndUpdate(order.pickupDetails.timeSlot, {
-          $inc: { currentBookings: -1 },
-        });
+        await TimeSlot.findByIdAndUpdate(
+          order.pickupDetails.timeSlot, 
+          { $inc: { currentBookings: -1 } },
+          { session }
+        );
       }
     }
 
     order.status = status || order.status;
-    const updated = await order.save();
+    const updated = await order.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
     res.json(updated);
+
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     res.status(500).json({ message: error.message });
   }
 };

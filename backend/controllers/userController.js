@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
-
+const { createBlindIndex } = require('../utils/crypto');
 
 const generateToken = (id, accountType) => {
   return jwt.sign(
@@ -16,11 +16,14 @@ exports.registerUser = async (req, res) => {
 
     const { name, username, email, password } = req.body;
 
+    const emailHash = createBlindIndex(email);
+
     const existingUser = await User.findOne({
-      $or: [{ email }, { username }]
+      $or: [{ emailIndex: emailHash }, { username }]
     });
 
     if (existingUser) {
+      const isEmailMatch = existingUser.emailIndex === emailHash;
       return res.status(400).json({
         message: existingUser.email === email
           ? "Email already in use"
@@ -88,7 +91,9 @@ exports.loginUser = async (req, res) => {
 
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).select("+password");
+    const emailHash = createBlindIndex(email);
+
+    const user = await User.findOne({ emailIndex: emailHash }).select("+password");
 
     if (!user) {
       return res.status(400).json({

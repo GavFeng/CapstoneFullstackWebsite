@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcryptjs');
+const { encrypt, decrypt, createBlindIndex } = require('../utils/crypto');
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -12,23 +13,34 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true,
     lowercase: true,
-    trim: true
+    trim: true,
   },
   email: {
     type: String,
     required: true,
-    unique: true,
     lowercase: true,
     trim: true,
-    match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"]
+    set: encrypt, 
+    get: decrypt
+  },
+  emailIndex: {
+    type: String,
+    unique: true,
+    select: false
   },
   phone: {
     type: String,
     trim: true,
     default: "",
+    set: encrypt, 
+    get: decrypt,
     validate: {
       validator: function(v) {
-        return v === "" || /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(v);
+        if (!v || v === "") return true;
+
+        const valToValidate = v.includes(':') ? decrypt(v) : v;
+
+        return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(valToValidate);
       },
       message: props => `${props.value} is not a valid phone number!`
     }
@@ -44,17 +56,33 @@ const UserSchema = new mongoose.Schema({
     default: "user",
   }
 }, { 
-  timestamps: true 
+  timestamps: true,
+  toJSON: { getters: true },
+  toObject: { getters: true }
 });
 
 UserSchema.pre('save', async function () {
-  if (!this.isModified('password')) {
-    return;
+  if (this.isModified('password')) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
   }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+
+  // 2. Handle Email Logic
+  if (this.isModified('email')) {
+    const plainEmail = (this.email && this.email.includes(':')) 
+      ? decrypt(this.email) 
+      : this.email;
+
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(plainEmail)) {
+      throw new Error("Please use a valid email address");
+    }
+
+    this.emailIndex = createBlindIndex(plainEmail);
+  }
   
 });
+
 UserSchema.methods.comparePassword = async function(password) {
   return await bcrypt.compare(password, this.password);
 };
