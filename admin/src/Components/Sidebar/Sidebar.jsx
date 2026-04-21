@@ -3,7 +3,7 @@ import './Sidebar.css'
 import { NavLink, Link } from 'react-router-dom'
 const Sidebar = () => {
   const navLinks = [
-    {label: 'Dashboard', to: '/home'},
+    {label: 'Order Dashboard', to: '/home'},
     {label: 'Add', to: '/addjig'},
     {label: 'View All', to: '/jig'},
     {label: 'Manage Stock', to: '/manage-stock'},

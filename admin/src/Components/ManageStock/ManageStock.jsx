@@ -7,7 +7,7 @@ const ManageStock = () => {
   const [jigs, setJigs] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  const STOCK_THRESHOLD = 20; 
+  const STOCK_THRESHOLD = 10; 
 
   const fetchStockData = async () => {
     try {
