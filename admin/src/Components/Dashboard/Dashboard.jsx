@@ -10,14 +10,26 @@ const Dashboard = () => {
   const fetchAllOrders = async () => {
     try {
       const { data } = await api.get("/order/all-orders");
-      setOrders(data);
+      
+      const sortedData = data.sort((a, b) => {
+        const dateA = a.pickupDetails?.timeSlot?.startTime 
+          ? new Date(a.pickupDetails.timeSlot.startTime) 
+          : new Date(a.createdAt);
+          
+        const dateB = b.pickupDetails?.timeSlot?.startTime 
+          ? new Date(b.pickupDetails.timeSlot.startTime) 
+          : new Date(b.createdAt);
+
+        return dateA - dateB;
+      });
+
+      setOrders(sortedData);
     } catch (err) {
       console.error("Error fetching admin orders:", err);
     } finally {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchAllOrders();
   }, []);
@@ -31,18 +43,57 @@ const Dashboard = () => {
     }
   };
 
-  // --- REVISED FILTER LOGIC ---
   const activeOrders = orders.filter(o => o.status === 'pending');
   const readyOrders = orders.filter(o => o.status === 'ready');
   const completedOrders = orders.filter(o => ['completed', 'delivered', 'shipped'].includes(o.status));
-  const cancelledOrders = orders.filter(o => o.status === 'cancelled'); // New Cancelled Filter
+  const cancelledOrders = orders.filter(o => o.status === 'cancelled');
 
   const getFilteredOrders = () => {
     switch (view) {
       case 'ready': return readyOrders;
       case 'completed': return completedOrders;
-      case 'cancelled': return cancelledOrders; // New Case
+      case 'cancelled': return cancelledOrders;
       default: return activeOrders;
+    }
+  };
+
+  const getStatusTimeline = (order) => {
+    const startTime = order.pickupDetails?.timeSlot?.startTime;
+    
+    const formatOptions = { 
+      month: 'short', 
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    };
+
+    const pickupDateStr = startTime 
+      ? new Date(startTime).toLocaleString([], formatOptions) 
+      : order.pickupDetails?.timeSlotSnapshot;
+
+    switch (order.status) {
+      case 'pending':
+        let finishByStr = pickupDateStr;
+        if (startTime) {
+          const finishByDate = new Date(startTime);
+          finishByDate.setHours(finishByDate.getHours() - 2);
+          finishByStr = finishByDate.toLocaleString([], formatOptions);
+        }
+        return { label: 'Finish By:', value: finishByStr, class: 'status-deadline' };
+
+      case 'ready':
+        return { label: 'Pickup At:', value: pickupDateStr, class: 'status-ready' };
+
+      case 'completed':
+      case 'shipped':
+      case 'delivered':
+        return { label: 'Fulfilled:', value: new Date(order.updatedAt).toLocaleString(), class: 'status-fulfilled' };
+
+      case 'cancelled':
+        return { label: 'Cancelled On:', value: new Date(order.updatedAt).toLocaleString(), class: 'status-cancelled' };
+
+      default:
+        return { label: 'Order Date:', value: pickupDateStr, class: '' };
     }
   };
 
@@ -85,7 +136,16 @@ const Dashboard = () => {
                   <span className={`badge ${order.status}`}>{order.status}</span>
                 </div>
                 <div className="order-date-time">
-                  <span>{order.pickupDetails?.timeSlotSnapshot}</span>
+                  {(() => {
+                    const timeline = getStatusTimeline(order);
+                    return (
+                      <div className={`timeline-info ${timeline.class}`}>
+                        <span className="timeline-label">{timeline.label}</span>
+                        {' '}
+                        <span className="timeline-value">{timeline.value}</span>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div className="payment-status">
                    Payment: <span className={`badge ${order.paymentStatus}`}>{order.paymentStatus}</span>
@@ -157,11 +217,11 @@ const Dashboard = () => {
                 )}
 
                 {/* Option to "Restore" a cancelled order back to pending if clicked by mistake */}
-                {order.status === 'cancelled' && (
+                {/* {order.status === 'cancelled' && (
                    <button className="btn-ready" onClick={() => handleStatusUpdate(order._id, 'pending')}>
                    Restore Order
                  </button>
-                )}
+                )} */}
               </div>
             </div>
           ))

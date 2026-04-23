@@ -52,7 +52,6 @@ exports.createJig = async (req, res) => {
 };
 
 // Viewing All Jigs in DB
-// Viewing All Jigs in DB (with Pagination and "All" override)
 exports.getJigs = async (req, res) => {
   try {
     const {
@@ -63,7 +62,7 @@ exports.getJigs = async (req, res) => {
       color,
       page = 1,
       limit = 10,
-      all = false // New flag to bypass pagination for Context/Cart
+      all = false
     } = req.query;
 
     const query = {};
@@ -99,14 +98,13 @@ exports.getJigs = async (req, res) => {
       }
     }
 
-    // --- Execution Logic ---
     let dbQuery = Jig.find(query)
       .populate("category")
       .populate("weight")
       .populate("colors.color", "name slug")
-      .sort({ createdAt: -1 }); // Newest items first
+      .sort({ createdAt: -1 });
 
-    // Only paginate if all=true is NOT present
+    // Only paginate if all !== true
     if (all !== 'true') {
       const skip = (page - 1) * Number(limit);
       dbQuery = dbQuery.skip(skip).limit(Number(limit));

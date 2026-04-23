@@ -5,12 +5,12 @@ const timeSlotSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: "Location", 
     required: true,
-    index: true // Speeds up queries by location
+    index: true
   },
   startTime: {
     type: Date,
     required: true,
-    index: true // Speeds up filtering for future slots
+    index: true
   },
   endTime: {
     type: Date,

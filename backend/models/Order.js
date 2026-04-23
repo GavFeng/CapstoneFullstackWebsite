@@ -52,7 +52,7 @@ const orderSchema = new mongoose.Schema({
   },
   pickupDetails: {
     location: { type: mongoose.Schema.Types.ObjectId, ref: "Location" },
-    timeSlot: { type: mongoose.Schema.Types.ObjectId, ref: "TimeSlot" }, // Reference
+    timeSlot: { type: mongoose.Schema.Types.ObjectId, ref: "TimeSlot" },
     
     // Snapshots for history
     locationNameSnapshot: String,

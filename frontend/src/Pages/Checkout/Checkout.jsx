@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { JigContext } from "../../Context/JigContext";
 import { useAuth } from "../../Context/AuthContext";
 import api from "../../Services/Api";
@@ -15,6 +16,10 @@ const Checkout = () => {
     getAvailableStock,
     refreshSingleJig
   } = useContext(JigContext);
+
+  const navigate = useNavigate();
+
+
   
   const { token } = useAuth();
 
@@ -50,7 +55,7 @@ const Checkout = () => {
       const fetchSlots = async () => {
         try {
           const { data } = await api.get(`/timeSlots?locationId=${selectedLocationId}`);
-          console.log("Fetched Slots for location:", selectedLocationId, data); // ADD THIS
+          console.log("Fetched Slots for location:", selectedLocationId, data);
           setAvailableSlots(data);
         } catch (err) {
           console.error("Error fetching slots", err);
@@ -109,24 +114,24 @@ const handleSubmit = async () => {
       uniqueJigIds.map((id) => refreshSingleJig(id))
     );
 
-  const itemsWithIssues = selectedItems.filter((selectedItem) => {
-    const freshJig = freshJigsFromServer.find(fj => String(fj?._id) === String(selectedItem.jigId));
+    const itemsWithIssues = selectedItems.filter((selectedItem) => {
+      const freshJig = freshJigsFromServer.find(fj => String(fj?._id) === String(selectedItem.jigId));
     
-    if (!freshJig) return true;
+      if (!freshJig) return true;
 
-    const colorData = freshJig.colors.find(c => {
-      const colorIdFromServer = c.color?._id; 
-      return String(colorIdFromServer) === String(selectedItem.colorId);
+      const colorData = freshJig.colors.find(c => {
+        const colorIdFromServer = c.color?._id; 
+        return String(colorIdFromServer) === String(selectedItem.colorId);
+      });
+
+      if (!colorData) {
+        return true; 
+      }
+      const available = Number(colorData.stock || 0);
+      const requested = Number(selectedItem.quantity);
+
+      return requested > available;
     });
-
-    if (!colorData) {
-      return true; 
-    }
-    const available = Number(colorData.stock || 0);
-    const requested = Number(selectedItem.quantity);
-
-    return requested > available;
-  });
 
     if (itemsWithIssues.length > 0) {
       setMessage("Stock levels just changed. Please review your selection.");
@@ -157,7 +162,11 @@ const handleSubmit = async () => {
     } else {
       removePurchasedItems(items);
     }
-    setMessage("Order placed successfully!");
+
+    setMessage("🎉Order placed successfully!");
+    setTimeout(() => {
+      navigate("/profile/my-orders");
+    }, 2000);
   } catch (err) {
     const errorData = err.response?.data;
     if (errorData?.code === "OUT_OF_STOCK") {

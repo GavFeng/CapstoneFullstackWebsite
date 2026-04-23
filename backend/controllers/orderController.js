@@ -185,6 +185,10 @@ exports.getAllOrders = async (req, res) => {
       .populate("user", "name email phone")
       .populate("items.jig")
       .populate("items.color")
+      .populate({
+        path: 'pickupDetails.timeSlot',
+        model: 'TimeSlot'
+      })
       .sort({ createdAt: -1 });
     res.json(orders);
   } catch (error) {
