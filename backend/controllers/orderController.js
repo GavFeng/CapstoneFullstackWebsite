@@ -137,6 +137,10 @@ exports.updateOrderStatus = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    if (status === 'completed') {
+      order.paymentStatus = 'paid';
+    }
+
     if (status === "cancelled" && order.status !== "cancelled") {
       
       for (const item of order.items) {

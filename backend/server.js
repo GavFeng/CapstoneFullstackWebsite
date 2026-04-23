@@ -12,6 +12,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const locationRoutes = require("./routes/locationRoutes");
 const timeSlotRoutes = require("./routes/timeSlotRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -36,6 +37,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/timeSlots", timeSlotRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 // Connect to DB + Start Server
 connectDB().then(() => {

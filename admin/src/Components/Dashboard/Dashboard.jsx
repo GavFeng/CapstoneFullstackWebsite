@@ -6,7 +6,7 @@ const Dashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('active');
-
+  const [confirmAction, setConfirmAction] = useState(null);
   const fetchAllOrders = async () => {
     try {
       const { data } = await api.get("/order/all-orders");
@@ -34,12 +34,20 @@ const Dashboard = () => {
     fetchAllOrders();
   }, []);
 
-  const handleStatusUpdate = async (orderId, newStatus) => {
+  const triggerStatusModal = (orderId, newStatus) => {
+    setConfirmAction({ orderId, newStatus });
+  };
+  
+  const handleStatusUpdate = async () => {
+    if (!confirmAction) return;
+    const { orderId, newStatus } = confirmAction;
     try {
       await api.put(`/order/${orderId}/status`, { status: newStatus });
+      setConfirmAction(null); 
       fetchAllOrders();
     } catch (err) {
-      alert("Failed to update status");
+      console.error("Failed to update status", err);
+      setConfirmAction(null);
     }
   };
 
@@ -198,20 +206,20 @@ const Dashboard = () => {
 
               <div className="admin-actions">
                 {order.status === 'pending' && (
-                  <button className="btn-ready" onClick={() => handleStatusUpdate(order._id, 'ready')}>
+                  <button className="btn-ready" onClick={() => triggerStatusModal(order._id, 'ready')}>
                     Mark as Ready
                   </button>
                 )}
                 
                 {order.status === 'ready' && (
-                  <button className="btn-complete" onClick={() => handleStatusUpdate(order._id, 'completed')}>
+                  <button className="btn-complete" onClick={() => triggerStatusModal(order._id, 'completed')}>
                     Finalize Order
                   </button>
                 )}
                 
                 {/* Cancel button only shows if order is not already cancelled or completed */}
                 {['pending', 'ready'].includes(order.status) && (
-                  <button className="btn-cancel" onClick={() => handleStatusUpdate(order._id, 'cancelled')}>
+                  <button className="btn-cancel" onClick={() => triggerStatusModal(order._id, 'cancelled')}>
                     Cancel Order
                   </button>
                 )}
@@ -227,6 +235,29 @@ const Dashboard = () => {
           ))
         )}
       </div>
+
+      {confirmAction && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Confirm Action</h3>
+            <p>
+              Are you sure you want to change this order to 
+              <strong> {confirmAction.newStatus.toUpperCase()}</strong>?
+            </p>
+            {confirmAction.newStatus === 'completed' && (
+              <p className="modal-warning">This will also mark the payment as PAID.</p>
+            )}
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={() => setConfirmAction(null)}>
+                Cancel
+              </button>
+              <button className="btn-confirm" onClick={handleStatusUpdate}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
