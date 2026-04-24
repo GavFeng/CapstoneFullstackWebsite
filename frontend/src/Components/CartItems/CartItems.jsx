@@ -1,9 +1,11 @@
 import React, { useContext, useEffect } from "react";
 import { JigContext } from "../../Context/JigContext";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./CartItems.css";
 
 const CartItems = () => {
+  const { t } = useTranslation();
   const {
     jigs = [],
     cartItems = {},
@@ -136,8 +138,8 @@ const CartItems = () => {
   if (cartArray.length === 0 && savedItems.length === 0) {
     return (
       <div className="cart-empty">
-        <h2>Your cart is empty</h2>
-        <p>Start shopping to add items!</p>
+        <h2>{t('cart.emptyTitle')}</h2>
+        <p>{t('cart.emptySubtitle')}</p>
       </div>
     );
   }
@@ -146,17 +148,17 @@ return (
     <div className="cart-container">
       {/* Header */}
       <div className="cart-header mobile-only">
-        <h1>Cart</h1>
+        <h1>{t('cart.title')}</h1>
         <div className="underline"></div>
       </div>
 
       {/* Desktop Table Header */}
       <div className="cart-header desktop-only">
-        <div>Product</div>
+        <div>{t('cart.product')}</div>
         <div></div>
-        <div>Price</div>
-        <div>Quantity</div>
-        <div>Total</div>
+        <div>{t('cart.price')}</div>
+        <div>{t('cart.quantity')}</div>
+        <div>{t('cart.total')}</div>
         <div></div>
       </div>
 
@@ -178,12 +180,12 @@ return (
               <div className="cart-item-name">
                 <p className="name">{jig.name}</p>
                 <span className="name" style={{ color: colorObj?.slug || "#666" }}>
-                  {colorObj?.name || "Unknown color"}
+                  {colorObj?.name || t('product.defaultColor')}
                 </span>
                   {availableStock === 0 ? (
-                    <p className="stock-warning out">Out of Stock</p>
+                    <p className="stock-warning out">{t('product.outOfStock')}</p>
                   ) : availableStock <= 5 ? (
-                    <p className="stock-warning low">Only {availableStock} left</p>
+                    <p className="stock-warning low">{t('product.lowStock', { count: availableStock })}</p>
                   ) : null}
               </div>
 
@@ -224,7 +226,7 @@ return (
                 <button
                   onClick={() => saveForLater(entry.jigId, entry.colorId)}
                   className="icon-btn tooltip-container"
-                  data-tooltip="Save for Later"
+                  data-tooltip={t('cart.saveForLater')}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
@@ -244,7 +246,7 @@ return (
         <div className="saved-items-mini-section">
           {savedItems.length > 0 && (
             <>
-              <h2>Saved for Later ({savedItems.length})</h2>
+              <h2>{t('cart.savedTitle', { count: savedItems.length })}</h2>
               <div className="saved-items-mini-list">
                 {savedItems.map((savedItem) => {
                   const data = getSavedJigData(savedItem);
@@ -266,9 +268,9 @@ return (
                         </div>
                         <p className="mini-price">${jig.price.toFixed(2)}</p>
                           {availableStock === 0 ? (
-                            <p className="mini-stock-warning out">Out of Stock</p>
+                            <p className="mini-stock-warning out">{t('product.outOfStock')}</p>
                           ) : availableStock <= 5 ? (
-                            <p className="mini-stock-warning low">Only {availableStock} left</p>
+                            <p className="mini-stock-warning low">{t('product.lowStock', { count: availableStock })}</p>
                           ) : null}
                         <div className="mini-actions">
                           <button 
@@ -276,9 +278,9 @@ return (
                             className="move-link"
                             disabled={availableStock === 0}
                           >
-                            Move to Cart
+                            {t('cart.moveToCart')}
                           </button>
-                          <button onClick={() => removeSavedItem(jigId, colorId)} className="remove-link">Remove</button>
+                          <button onClick={() => removeSavedItem(jigId, colorId)} className="remove-link">{t('cart.remove')}</button>
                         </div>
                       </div>
                     </div>
@@ -292,28 +294,28 @@ return (
         {/* SUMMARY SECTION */}
         {cartArray.length > 0 && (
           <div className="cart-summary">
-            <h2>Cart Total</h2>
+            <h2>{t('cart.summaryTitle')}</h2>
             <div className="summary-row">
-              <span>Subtotal</span>
+              <span>{t('cart.subtotal')}</span>
               <span>${cartTotal.toFixed(2)}</span>
             </div>
             <div className="summary-row">
-              <span>Shipping</span>
-              <span>Free</span>
+              <span>{t('cart.shipping')}</span>
+              <span>{t('cart.free')}</span>
             </div>
             <div className="summary-row total">
-              <span>Total</span>
+              <span>{t('cart.total')}</span>
               <span>${cartTotal.toFixed(2)}</span>
             </div>
 
             {hasInvalidItems && (
               <div className="checkout-warning">
-                Stock levels have changed. Please update quantity.
+                {t('cart.stockWarning')}
               </div>
             )}
 
             <button className="checkout-btn" onClick={handleCheckout} disabled={hasInvalidItems}>
-              Proceed to Checkout
+              {t('cart.checkout')}
             </button>
           </div>
         )}

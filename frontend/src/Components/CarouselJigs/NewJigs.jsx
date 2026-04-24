@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import Carousel from '../Carousel/Carousel';
 import Item from '../Item/Item';
 import api from '../../Services/Api';
+import { useTranslation } from 'react-i18next';
 
 const NewestJigs = () => {
+
+  const { t } = useTranslation();
 
   /* ---------- STATE ---------- */
   
@@ -28,11 +31,11 @@ const NewestJigs = () => {
   }, []);
   
   /* ----------  JSX ----------  */
-  if (loading) return <div className="text-center py-12">Loading new jigs...</div>;
+  if (loading) return <div className="text-center py-12">{t('common.loadingNew')}</div>;
 
   return (
     <Carousel 
-      title="New Jigs" 
+      title="home.newJigsTitle"
       items={newJigs} 
       ItemComponent={Item} 
     />

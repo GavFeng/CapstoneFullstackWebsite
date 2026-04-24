@@ -1,36 +1,32 @@
 import "./InfoPanel.css";
+import { useTranslation } from "react-i18next";
 
-{/* Info Compontent for Home Page */}
 const InfoPanel = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="squid-info">
-      <h2>Squid Fishing in Seattle</h2>
+      <h2>{t('info.title')}</h2>
 
       <div className="info-grid-squid">
         <div className="info-card">
-          <h3>Best Season</h3>
+          <h3>{t('info.season.label')}</h3>
           <p>
-            Squid are found in Puget Sound year-round, but the best fishing is
-            typically from <strong>October through January</strong> when squid
-            move into shallow water and are easier to catch from piers.
+            {t('info.season.text_part1')} <strong>{t('info.season.bold')}</strong> {t('info.season.text_part2')}
           </p>
         </div>
 
         <div className="info-card">
-          <h3>Best Time</h3>
+          <h3>{t('info.time.label')}</h3>
           <p>
-            Squid feed mostly <strong>after dark</strong> and are strongly
-            attracted to light. Fishing near illuminated docks during
-            <strong> high tide</strong> often produces the best results.
+            {t('info.time.text_part1')} <strong>{t('info.time.bold1')}</strong> {t('info.time.text_part2')} <strong>{t('info.time.bold2')}</strong> {t('info.time.text_part3')}
           </p>
         </div>
 
         <div className="info-card">
-          <h3>Popular Locations</h3>
+          <h3>{t('info.locations.label')}</h3>
           <p>
-            Popular spots around Seattle include <strong>Elliott Bay piers,
-            Edmonds Pier, Seacrest Park (West Seattle), Shilshole Bay Marina,
-            and Des Moines Pier</strong>.
+            {t('info.locations.text_part1')} <strong>{t('info.locations.bold')}</strong>.
           </p>
         </div>
       </div>

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import api from '../../Services/Api';
 import Carousel from '../Carousel/Carousel';
 import Item from '../Item/Item';
-
+import { useTranslation } from 'react-i18next';
 
 const RelatedProducts = ({ jig }) => {
+
+  const { t } = useTranslation();
 
   /* ---------- STATE ---------- */
 
@@ -74,13 +76,13 @@ const RelatedProducts = ({ jig }) => {
 
 
   /* ----------  JSX ----------  */
-  if (loading) return <div className="text-center py-8">Loading related jigs…</div>;
+  if (loading) return <div className="text-center py-8">{t('common.loadingRelated')}</div>;
   if (error || related.length === 0) return null;
   
 
   return (
     <Carousel
-      title="Related Jigs"
+      title="home.relatedJigsTitle"
       items={related}
       ItemComponent={Item}
     />

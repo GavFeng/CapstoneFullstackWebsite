@@ -1,0 +1,178 @@
+{
+  "nav": {
+    "home": "홈",
+    "all": "모든 에기",
+    "profile": "프로필",
+    "orders": "주문 내역",
+    "logout": "로그아웃",
+    "login": "로그인"
+  },
+  "hero": {
+    "title": "프리미엄 에기 (Squid Jigs)",
+    "subtitle": "뛰어난 성능과 내구성을 갖춘 수제 고품질 에기를 만나보세요.",
+    "button": "지금 쇼핑하기",
+    "imageAlt": "에기 낚시 루어"
+  },
+  "common": {
+    "loadingNew": "새 에기를 불러오는 중...",
+    "loadingPopular": "인기 에기를 불러오는 중...",
+    "loadingRelated": "관련 에기를 불러오는 중..."
+  },
+  "home": {
+    "newJigsTitle": "신상품 에기",
+    "popularJigsTitle": "인기 에기",
+    "relatedJigsTitle": "관련 에기"
+  },
+  "info": {
+    "title": "시애틀 화살오징어 낚시",
+    "season": {
+      "label": "최적의 시즌",
+      "text_part1": "퓨젯 사운드에서는 일년 내내 오징어가 발견되지만, 오징어가 얕은 물로 이동하여 부두에서 잡기 쉬워지는",
+      "bold": "10월부터 1월까지",
+      "text_part2": "가 가장 좋은 시기입니다."
+    },
+    "time": {
+      "label": "최적의 시간",
+      "text_part1": "오징어는 주로",
+      "bold1": "어두워진 후에",
+      "text_part2": "먹이 활동을 하며 빛에 강하게 끌립니다. 조명이 있는 부두 근처에서",
+      "bold2": "만조 때",
+      "text_part3": "낚시를 하면 종종 최고의 결과를 얻을 수 있습니다."
+    },
+    "locations": {
+      "label": "인기 장소",
+      "text_part1": "시애틀 주변의 인기 장소로는",
+      "bold": "엘리엇 베이 부두, 에드먼즈 부두, 시크레스트 공원 (웨스트 시애틀), 실쇼 베이 마리나 및 데모인 부두"
+    }
+  },
+  "category": {
+    "filters": "필터",
+    "category": "카테고리",
+    "allCategories": "모든 카테고리",
+    "weight": "무게",
+    "allWeights": "모든 무게",
+    "color": "색상",
+    "allColors": "모든 색상",
+    "priceRange": "가격대",
+    "min": "최소",
+    "max": "최대",
+    "reset": "필터 초기화",
+    "showingCount": "총 {{total}}개 중 {{count}}개 표시 중",
+    "loadingFilters": "필터를 불러오는 중...",
+    "loadingProducts": "상품을 불러오는 중...",
+    "noMatch": "선택한 필터와 일치하는 상품이 없습니다.",
+    "loadMore": "더 보기"
+  },
+  "breadcrumb":{
+    "home": "홈",
+    "shop": "상점"
+  },
+  "product": {
+    "descriptionTab": "상세 정보",
+    "noDescription": "이 제품에 대한 상세 설명이 없습니다.",
+    "weightLabel": "무게",
+    "categoryLabel": "카테고리",
+    "defaultName": "제품",
+    "unnamed": "이름 없는 제품",
+    "noImages": "사용 가능한 이미지가 없습니다",
+    "thumbnailAlt": "{{name}} 썸네일 {{index}}",
+    "outOfStock": "품절",
+    "inStock": "{{count}}개 재고 있음",
+    "lowStock": "{{count}}개 남음!",
+    "selectColor": "색상 선택",
+    "noColors": "선택 가능한 색상이 없습니다",
+    "quantity": "수량",
+    "addToCart": "장바구니에 담기",
+    "addedToCart": "✓ 장바구니에 추가됨",
+    "colorAria": "{{color}} 선택 – {{status}}",
+    "countAvailable": "{{count}}개 남음"
+  },
+  "cart": {
+    "title": "장바구니",
+    "emptyTitle": "장바구니가 비어 있습니다",
+    "emptySubtitle": "쇼핑을 시작하고 아이템을 추가해 보세요!",
+    "product": "상품",
+    "price": "가격",
+    "quantity": "수량",
+    "total": "합계",
+    "saveForLater": "나중에 구매하기 위해 저장",
+    "savedTitle": "나중에 구매할 상품 ({{count}})",
+    "moveToCart": "장바구니로 이동",
+    "remove": "삭제",
+    "summaryTitle": "결제 금액",
+    "subtotal": "소계",
+    "shipping": "배송비",
+    "free": "무료",
+    "stockWarning": "재고 상태가 변경되었습니다. 수량을 업데이트해 주세요.",
+    "checkout": "주문하기"
+  },
+  "checkout": {
+    "stockChangeError": "재고 상태가 변경되었습니다. 선택하신 상품을 다시 확인해 주세요.",
+    "successMessage": "🎉 주문이 성공적으로 완료되었습니다!",
+    "outOfStockError": "장바구니에 담긴 하나 이상의 상품이 현재 품절되었습니다.",
+    "generalError": "주문을 처리하는 중 오류가 발생했습니다.",
+    "title": "결제 (방문 수령)",
+    "stockError": "일부 상품의 재고가 없습니다. 장바구니로 돌아가 수량을 조절해 주세요.",
+    "pickupLocation": "수령 장소",
+    "selectLocation": "장소 선택",
+    "pickupTimeLabel": "2. 수령 시간",
+    "selectTimeWindow": "시간대를 선택하세요",
+    "selectLocationFirst": "장소를 먼저 선택하세요",
+    "scheduledPickup": "예약된 수령 시간",
+    "betweenTime": "{{start}}에서 {{end}} 사이",
+    "timezone": "시간대",
+    "selectItems": "구매할 상품 선택",
+    "orderSummary": "주문 내역",
+    "placeOrder": "주문하기",
+    "placingOrder": "주문 처리 중..."
+  },
+  "profile": {
+    "title": "계정 설정",
+    "subtitle": "프로필 정보 및 연락처를 관리하세요.",
+    "fullName": "성함",
+    "emailAddress": "이메일 주소",
+    "phoneNumber": "전화번호",
+    "accountStatus": "계정 상태",
+    "notProvided": "정보 없음",
+    "editBtn": "프로필 수정",
+    "saveBtn": "변경사항 저장",
+    "cancelBtn": "취소",
+    "invalidEmail": "유효한 이메일 주소를 입력해주세요.",
+    "invalidPhone": "유효한 전화번호를 입력해주세요.",
+    "updateSuccess": "프로필이 성공적으로 수정되었습니다!",
+    "updateError": "프로필 수정 중 오류가 발생했습니다."
+  },
+  "orders": {
+    "title": "주문 내역",
+    "noOrders": "주문 내역이 없습니다.",
+    "orderId": "주문 번호",
+    "date": "날짜",
+    "payment": "결제 상태",
+    "status": "진행 상태",
+    "viewDetails": "상세 보기",
+    "detailsTitle": "주문 상세 정보",
+    "fullId": "전체 ID",
+    "pickupLocation": "수령 장소",
+    "pickupTime": "수령 시간",
+    "pickupCode": "수령 코드",
+    "method": "배송 방법",
+    "totalPaid": "총 결제 금액",
+    "deliveryUnavailable": "배송 정보를 불러올 수 없습니다",
+    "paymentStatus": {
+      "unpaid": "미결제",
+      "paid": "결제 완료",
+      "failed": "결제 실패"
+    },
+    "orderStatus": {
+      "pending": "대기 중",
+      "processing": "처리 중",
+      "ready": "수령 가능",
+      "completed": "수령 완료",
+      "cancelled": "주문 취소"
+    },
+    "methods": {
+      "pickup": "방문 수령",
+      "shipping": "일반 배송"
+    }
+  }
+}

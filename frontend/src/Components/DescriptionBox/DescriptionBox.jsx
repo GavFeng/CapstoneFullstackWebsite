@@ -1,30 +1,38 @@
-import React from 'react';
-import './DescriptionBox.css';
+import React from "react";
+import "./DescriptionBox.css";
+import { useTranslation } from "react-i18next";
 
-{/* Description Compontent for Jig Page */}
 const DescriptionBox = ({ jig }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="description-box">
-      <div className="tab-header">Description</div>
+      <div className="tab-header">{t('product.descriptionTab')}</div>
       <div className="content">
+        
         {/* Description */}
         {jig?.description ? (
           <p>{jig.description}</p>
         ) : (
-          <p>No detailed description available for this product.</p>
+          <p>{t('product.noDescription')}</p>
         )}
 
         {/* Weight Information */}
         {jig?.weight && (
-          <p><strong>Weight:</strong> {jig.weight.label}</p>
+          <p>
+            <strong>{t('product.weightLabel')}:</strong> {jig.weight.label}
+          </p>
         )}
-         {/* Category Information */}
+
+        {/* Category Information */}
         {jig?.category && (
-          <p><strong>Category:</strong> {jig.category.name}</p>
+          <p>
+            <strong>{t('product.categoryLabel')}:</strong> {jig.category.name}
+          </p>
         )}
       </div>
     </div>
-  )
+  );
 }
 
 export default DescriptionBox

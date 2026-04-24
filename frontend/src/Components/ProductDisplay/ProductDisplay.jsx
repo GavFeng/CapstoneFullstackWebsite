@@ -1,9 +1,11 @@
 import React, { useState, useMemo, useContext } from 'react';
 import { JigContext } from '../../Context/JigContext';
+import { useTranslation } from "react-i18next";
 import './ProductDisplay.css';
 
 const ProductDisplay = ({ jig }) => {
 
+  const { t } = useTranslation();
   /* ---------- CONTEXT ---------- */
   const { addToCart } = useContext(JigContext);
 
@@ -100,118 +102,84 @@ const ProductDisplay = ({ jig }) => {
   /* ---------- JSX ---------- */
   return (
     <div className="product-display">
-
       {/* ---------- IMAGE SECTION ---------- */}
       <div className="image-section">
-
-        {/* Thumbnail previews */}
         <div className="thumbnails">
           {thumbnails.length > 0 ? (
             thumbnails.map((img, idx) => (
               <img
                 key={idx}
                 src={img.url}
-                alt={`${jig?.name || 'Product'} thumbnail ${idx + 1}`}
+                // Translate alt text placeholders
+                alt={t('product.thumbnailAlt', { name: jig?.name || t('product.defaultName'), index: idx + 1 })}
                 className="thumbnail"
               />
             ))
           ) : (
-            <div className="no-thumbnails">
-              No images available
-            </div>
+            <div className="no-thumbnails">{t('product.noImages')}</div>
           )}
         </div>
 
-        {/* Main product image */}
         <div className="main-image-wrapper">
           <img
             src={mainImage}
-            alt={jig?.name || 'Product'}
+            alt={jig?.name || t('product.defaultName')}
             className="main-image"
           />
         </div>
       </div>
 
-
       {/* ---------- INFO SECTION ---------- */}
       <div className="info-section">
-
-        {/* Product name */}
         <h1 className="product-title">
-          {jig?.name || 'Unnamed Product'}
+          {jig?.name || t('product.unnamed')}
         </h1>
 
-        {/* Price + stock status */}
         <div className="price-stock">
           <div className="price">
             ${jig?.price?.toFixed(2) || '—'}
           </div>
 
-          {/* Dynamic stock messaging */}
+          {/* Dynamic stock messaging using logic-based keys */}
           <div className={`stock ${isOutOfStock ? 'out-of-stock' : ''}`}>
             {isOutOfStock
-              ? 'Out of stock'
+              ? t('product.outOfStock')
               : stock <= 3
-                ? `Only ${stock} left!`
-                : `${stock} in stock`}
+                ? t('product.lowStock', { count: stock })
+                : t('product.inStock', { count: stock })}
           </div>
         </div>
 
-        {/* Description */}
-        {jig?.description && (
-          <div className="short-description">
-            {jig.description}
-          </div>
-        )}
-
         {/* ---------- COLOR SELECTOR ---------- */}
         <div className="page-color-selector">
-          <h3>Select Color</h3>
-
+          <h3>{t('product.selectColor')}</h3>
           <div className="color-dots">
             {variants.length === 0 ? (
-              <p>No colors available</p>
+              <p>{t('product.noColors')}</p>
             ) : (
               variants.map((variant, index) => {
                 const colorObj = variant.color;
                 const outOfStock = (variant.stock ?? 0) === 0;
                 const isSelected = selectedVariantIndex === index;
 
-                const backgroundColor =
-                  colorObj?.slug || '#ccc';
-
                 return (
                   <button
                     key={variant._id || index}
                     type="button"
-                    aria-label={`Select ${colorObj?.name || 'color'} – ${
-                      outOfStock
-                        ? 'out of stock'
-                        : `${variant.stock} available`
-                    }`}
-
+                    // Accessibility labels
+                    aria-label={t('product.colorAria', { 
+                      color: colorObj?.name || t('product.defaultColor'), 
+                      status: outOfStock ? t('product.outOfStock') : t('product.countAvailable', { count: variant.stock }) 
+                    })}
                     disabled={outOfStock}
-
-                    // Switch variant + reset quantity
                     onClick={() => {
                       setSelectedVariantIndex(index);
                       setQuantity(1);
                     }}
-
-                    className={`color-dot ${
-                      isSelected ? 'selected' : ''
-                    } ${outOfStock ? 'out-of-stock' : ''}`}
-
-                    style={{ backgroundColor }}
-
-                    // Tooltip for stock info
-                    title={
-                      outOfStock
-                        ? 'Out of stock'
-                        : `${variant.stock} left`
-                    }
+                    className={`color-dot ${isSelected ? 'selected' : ''} ${outOfStock ? 'out-of-stock' : ''}`}
+                    style={{ backgroundColor: colorObj?.slug || '#ccc' }}
+                    title={outOfStock ? t('product.outOfStock') : t('product.lowStock', { count: variant.stock })}
                   >
-                    {/* Cross overlay for out-of-stock variants */}
                     {outOfStock && <span className="cross">✕</span>}
                   </button>
                 );
@@ -220,73 +188,32 @@ const ProductDisplay = ({ jig }) => {
           </div>
         </div>
 
-
-        {/* ---------- QUANTITY SELECTOR ---------- */}
-        {/* Only visible when item is in stock */}
+        {/* ---------- QUANTITY ---------- */}
         {!isOutOfStock && (
           <div className="quantity-selector">
-            <label htmlFor="quantity">Quantity</label>
-
+            <label htmlFor="quantity">{t('product.quantity')}</label>
             <div className="quantity-controls">
-              <button
-                className="qty-btn decrease"
-                onClick={handleDecrease}
-                disabled={quantity <= 1}
-              >
-                −
-              </button>
-
-              <input
-                id="quantity"
-                value={quantity}
-                onChange={handleQuantityInput}
-                className="qty-input"
-              />
-
-              <button
-                className="qty-btn increase"
-                onClick={handleIncrease}
-                disabled={quantity >= stock}
-              >
-                +
-              </button>
+              <button className="qty-btn" onClick={handleDecrease} disabled={quantity <= 1}>−</button>
+              <input id="quantity" value={quantity} onChange={handleQuantityInput} className="qty-input" />
+              <button className="qty-btn" onClick={handleIncrease} disabled={quantity >= stock}>+</button>
             </div>
           </div>
         )}
 
-
         {/* ---------- ADD TO CART ---------- */}
         <button
-          className={`add-to-cart-btn ${
-            isOutOfStock || quantity < 1 ? 'disabled' : isAdded ? 'added' : 'active'
-          }`}
-          disabled={isOutOfStock || quantity < 1 || isAdded} // Disable while "Added" to prevent double-clicks
+          className={`add-to-cart-btn ${isOutOfStock || quantity < 1 ? 'disabled' : isAdded ? 'added' : 'active'}`}
+          disabled={isOutOfStock || quantity < 1 || isAdded}
           onClick={handleAddToCart}
         >
-          {isOutOfStock ? (
-            'Out of Stock'
-          ) : isAdded ? (
-            <>✓ Added to Cart</>
-          ) : (
-            'Add to Cart'
-          )}
+          {isOutOfStock ? t('product.outOfStock') : isAdded ? t('product.addedToCart') : t('product.addToCart')}
         </button>
 
-
-        {/* ---------- META INFO ---------- */}
+        {/* ---------- META ---------- */}
         <div className="meta">
-          {jig?.category && (
-            <p>
-              <strong>Category:</strong> {jig.category.name}
-            </p>
-          )}
-          {jig?.weight && (
-            <p>
-              <strong>Weight:</strong> {jig.weight.label}
-            </p>
-          )}
+          {jig?.category && <p><strong>{t('product.categoryLabel')}:</strong> {jig.category.name}</p>}
+          {jig?.weight && <p><strong>{t('product.weightLabel')}:</strong> {jig.weight.label}</p>}
         </div>
-
       </div>
     </div>
   );

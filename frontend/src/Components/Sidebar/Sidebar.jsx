@@ -1,10 +1,13 @@
 import React from 'react'
-import './Sidebar.css'
 import { NavLink, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next';
+import './Sidebar.css'
+
 const Sidebar = () => {
+  const { t } = useTranslation();
   const navLinks = [
-    {label: 'Profile', to: '/profile/my-profile'},
-    {label: 'Orders', to: '/profile/my-orders'},
+    {label: t('nav.profile'), to: '/profile/my-profile'},
+    {label: t('nav.orders'), to: '/profile/my-orders'},
   ]
 
   return (

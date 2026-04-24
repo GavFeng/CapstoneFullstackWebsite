@@ -1,18 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Breadcrumb.css';
+import { useTranslation } from "react-i18next";
 
 {/* BreadCrumb Compontent for Jig Page */}
 const Breadcrumb = ({ jig }) => {
+  const { t } = useTranslation();
+  
   if (!jig) return null;
 
   return (
     <nav className="breadcrumb">
 
-      <Link to="/">Home</Link>
+      <Link to="/">{t('breadcrumb.home')}</Link>
       <span className="separator">›</span>
 
-      <Link to="/alljigs">Shop</Link>
+      <Link to="/alljigs">{t('breadcrumb.shop')}</Link>
       <span className="separator">›</span>
 
       {jig.category && (

@@ -1,9 +1,11 @@
 import { useRef, useState, useEffect } from "react";
 import "./Carousel.css";
+import { useTranslation } from "react-i18next";
 
 {/* Carousel Compontent for Displaying Jigs */}
 const Carousel = ({ title, items, ItemComponent }) => {
-
+  
+  const { t } = useTranslation();
   /* ---------- STATE ---------- */
 
   const scrollRef = useRef(null);
@@ -89,7 +91,7 @@ const Carousel = ({ title, items, ItemComponent }) => {
     <div className="carousel-container">
       {title && (
         <div className="carousel-header">
-          <h2 className="carousel-title">{title}</h2>
+          <h2 className="carousel-title">{t(title)}</h2>
           <div className="carousel-underline"></div>
         </div>
       )}

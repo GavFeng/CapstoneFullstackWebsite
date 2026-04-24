@@ -222,6 +222,22 @@
   gap: 1.75rem; 
 }
 
+.lang-switcher select {
+  background: transparent;
+  border: 1px solid #ccc;
+  color: inherit;
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 15px;
+  font-size: 0.8rem;
+}
+
+.lang-switcher select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
 @media (max-width: 1024px) {
   .profile-name {
     display: none;

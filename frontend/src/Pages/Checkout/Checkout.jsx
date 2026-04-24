@@ -2,10 +2,13 @@ import React, { useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { JigContext } from "../../Context/JigContext";
 import { useAuth } from "../../Context/AuthContext";
+import { useTranslation } from "react-i18next";
 import api from "../../Services/Api";
 import "./Checkout.css";
 
 const Checkout = () => {
+  const { t, i18n } = useTranslation();
+  const currentLocale = i18n.language === 'ko' ? 'ko-KR' : i18n.language === 'zh' ? 'zh-CN' : 'en-US';
   const { 
     cartItems, 
     jigs, 
@@ -134,7 +137,7 @@ const handleSubmit = async () => {
     });
 
     if (itemsWithIssues.length > 0) {
-      setMessage("Stock levels just changed. Please review your selection.");
+      setMessage(t('checkout.stockChangeError'));
       setLoading(false);
       return;
     }
@@ -163,17 +166,17 @@ const handleSubmit = async () => {
       removePurchasedItems(items);
     }
 
-    setMessage("🎉Order placed successfully!");
+    setMessage(t('checkout.successMessage'));
     setTimeout(() => {
       navigate("/profile/my-orders");
     }, 2000);
   } catch (err) {
     const errorData = err.response?.data;
     if (errorData?.code === "OUT_OF_STOCK") {
-      setMessage(errorData.message);
+      setMessage(t('checkout.outOfStockError'));
       await refreshJigs(); 
     } else {
-      setMessage(errorData?.message || "Error placing order");
+      setMessage(errorData?.message || t('checkout.generalError'));
     }
   } finally {
     setLoading(false);
@@ -183,18 +186,18 @@ const handleSubmit = async () => {
   return (
     <div className="checkout-page-wrapper">
       <div className="checkout-container">
-        <h1>Checkout (Pickup)</h1>
+        <h1>{t('checkout.title')}</h1>
 
         {outOfStockWarnings.length > 0 && (
           <div className="stock-error">
-            ⚠️ Some items are unavailable. Please return to your cart to adjust quantities.
+            ⚠️ {t('checkout.stockError')}
           </div>
         )}
 
         <div className="checkout-section">
-          <label>Pickup Location</label>
+          <label>{t('checkout.pickupLocation')}</label>
           <select value={selectedLocationId} onChange={(e) => setSelectedLocationId(e.target.value)}>
-            <option value="">Select Location</option>
+            <option value="">{t('checkout.selectLocation')}</option>
             {locations.map(loc => (
               <option key={loc._id} value={loc._id}>{loc.name}</option>
             ))}
@@ -218,14 +221,14 @@ const handleSubmit = async () => {
 
       {/* TIME SLOT SELECTION */}
       <div className="checkout-section">
-        <label className="section-label">2. Pickup Time</label>
+        <label className="section-label">{t('checkout.pickupTimeLabel')}</label>
         <select
           className="slot-select"
           value={selectedSlotId}
           onChange={(e) => setSelectedSlotId(e.target.value)}
           disabled={!selectedLocationId}
         >
-          <option value="">{selectedLocationId ? "Select a time window" : "Select location first"}</option>
+          <option value="">{selectedLocationId ? t('checkout.selectTimeWindow') : t('checkout.selectLocationFirst')}</option>
           {availableSlots.map(slot => (
             <option key={slot._id} value={slot._id}>
               {new Date(slot.startTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} | {new Date(slot.startTime).getHours()}:00 - {new Date(slot.endTime).getHours()}:00
@@ -237,7 +240,7 @@ const handleSubmit = async () => {
           <div className="time-info-card">
             <div className="info-header">
               <span className="icon">⏰</span>
-              <strong>Scheduled Pickup</strong>
+              <strong>{t('checkout.scheduledPickup')}</strong>
             </div>
             <div className="info-body">
               <p className="highlight-text">
@@ -249,10 +252,13 @@ const handleSubmit = async () => {
                 })}
               </p>
               <p>
-                Between <strong>{new Date(selectedSlotData.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</strong> and <strong>{new Date(selectedSlotData.endTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</strong>
+                {t('checkout.betweenTime', {
+                    start: new Date(selectedSlotData.startTime).toLocaleTimeString(currentLocale, { hour: '2-digit', minute: '2-digit' }),
+                    end: new Date(selectedSlotData.endTime).toLocaleTimeString(currentLocale, { hour: '2-digit', minute: '2-digit' })
+                  })}
               </p>
               <p className="timezone-text">
-                Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_', ' ')}
+                {t('checkout.timezone')}: {Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_', ' ')}
               </p>
             </div>
           </div>
@@ -260,7 +266,7 @@ const handleSubmit = async () => {
       </div>
 
         <div className="checkout-items">
-          <h2>Select Items to Purchase</h2>
+          <h2>{t('checkout.selectItems')}</h2>
             {Object.values(cartItems).map((entry) => {
               const jig = jigs.find(j => j._id === entry.jigId);
               if (!jig) return null;
@@ -295,7 +301,7 @@ const handleSubmit = async () => {
 
                   <span className="item-price">
                     x {entry.quantity} (${(jig.price * entry.quantity).toFixed(2)})
-                    {isOutOfStock && <span className="oos-label"> (Out of Stock)</span>}
+                    {isOutOfStock && <span className="oos-label"> ({t('product.outOfStock')})</span>}
                   </span>
                 </div>
               );
@@ -303,8 +309,8 @@ const handleSubmit = async () => {
         </div>
 
         <div className="checkout-summary">
-          <h2>Order Summary</h2>
-          <p className="total-amount">Total: ${selectedTotal.toFixed(2)}</p>
+          <h2>{t('checkout.orderSummary')}</h2>
+          <p className="total-amount">{t('cart.total')}: ${selectedTotal.toFixed(2)}</p>
         </div>
 
         <button
@@ -312,7 +318,7 @@ const handleSubmit = async () => {
           onClick={handleSubmit}
           disabled={loading || outOfStockWarnings.length > 0}
         >
-          {loading ? "Placing Order..." : "Place Order"}
+          {loading ? t('checkout.placingOrder') : t('checkout.placeOrder')}
         </button>
 
         {message && (

@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import Carousel from '../Carousel/Carousel';
 import Item from '../Item/Item';
 import api from '../../Services/Api';
-
+import { useTranslation } from 'react-i18next';
 
 const PopularJigs = () => {
+
+  const { t } = useTranslation();
 
   /* ---------- STATE ---------- */
 
@@ -32,12 +34,12 @@ const PopularJigs = () => {
   }, []);
 
   /* ----------  JSX ----------  */
-  if (loading) return <div className="text-center py-12">Loading popular jigs...</div>;
+  if (loading) return <div className="text-center py-12">{t('common.loadingPopular')}</div>;
   if (error) return <div className="text-center py-12 text-red-600">{error}</div>;
 
   return (
     <Carousel 
-      title="Popular Jigs" 
+      title="home.popularJigsTitle"
       items={popularJigs} 
       ItemComponent={Item} 
     />

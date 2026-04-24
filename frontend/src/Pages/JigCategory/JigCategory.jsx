@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import api from "../../Services/Api";
 import Item from "../../Components/Item/Item";
 import "./JigCategory.css";
@@ -29,7 +30,7 @@ const parseQueryParams = (search) => {
 
 const JigCategory = () => {
   const location = useLocation();
-
+  const { t } = useTranslation();
   /* ---------- STATE ---------- */
 
   const [filters, setFilters] = useState(() =>
@@ -147,7 +148,7 @@ const JigCategory = () => {
   /* ---------- RENDER ---------- */
 
   if (filterOptionsLoading)
-    return <p className="loading-text">Loading filters...</p>;
+    return <p className="loading-text">{t('category.loadingFilters')}</p>;
 
   return (
     <div className="jig-category-page">
@@ -155,17 +156,17 @@ const JigCategory = () => {
 
         {/* ---------- FILTERS SIDEBAR ---------- */}
         <aside className="filters-sidebar">
-          <h2 className="filters-title">Filters</h2>
+          <h2 className="filters-title">{t('category.filters')}</h2>
 
           <div className="filter-group">
-            <label>Category</label>
+            <label>{t('category.category')}</label>
             <select
               value={filters.category}
               onChange={(e) =>
                 handleFilterChange("category", e.target.value)
               }
             >
-              <option value="">All Categories</option>
+              <option value="">{t('category.allCategories')}</option>
               {categories.map((cat) => (
                 <option key={cat._id} value={cat.slug || cat._id}>
                   {cat.name}
@@ -175,14 +176,14 @@ const JigCategory = () => {
           </div>
 
           <div className="filter-group">
-            <label>Weight</label>
+            <label>{t('category.weight')}</label>
             <select
               value={filters.weight}
               onChange={(e) =>
                 handleFilterChange("weight", e.target.value)
               }
             >
-              <option value="">All Weights</option>
+              <option value="">{t('category.allWeights')}</option>
               {weights.map((w) => (
                 <option key={w._id} value={w.slug || w._id}>
                   {w.label}
@@ -192,14 +193,14 @@ const JigCategory = () => {
           </div>
 
           <div className="filter-group">
-            <label>Color</label>
+            <label>{t('category.color')}</label>
             <select
               value={filters.color}
               onChange={(e) =>
                 handleFilterChange("color", e.target.value)
               }
             >
-              <option value="">All Colors</option>
+              <option value="">{t('category.allColors')}</option>
               {colors.map((c) => (
                 <option key={c._id} value={c._id}>
                   {c.name}
@@ -209,7 +210,7 @@ const JigCategory = () => {
           </div>
 
           <div className="filter-group price-range">
-            <label>Price Range</label>
+            <label>{t('category.priceRange')}</label>
             <div className="price-inputs">
               <input
                 type="number"
@@ -232,7 +233,7 @@ const JigCategory = () => {
           </div>
 
           <button className="reset-btn" onClick={handleReset}>
-            Reset Filters
+            {t('category.reset')}
           </button>
         </aside>
 
@@ -240,18 +241,17 @@ const JigCategory = () => {
         <main className="products-main">
           {!loading && jigs.length > 0 && (
             <p className="jig-count">
-              Showing <strong>{jigs.length}</strong> of{" "}
-              <strong>{totalJigs}</strong>
+              {t('category.showingCount', { count: jigs.length, total: totalJigs })}
             </p>
           )}
 
           {loading && page === 1 && (
-            <p className="loading-text">Loading products...</p>
+            <p className="loading-text">{t('category.loadingProducts')}</p>
           )}
 
           {jigs.length === 0 && !loading && (
             <p className="loading-text">
-              No products match the selected filters.
+              {t('category.noMatch')}
             </p>
           )}
 
@@ -273,7 +273,7 @@ const JigCategory = () => {
                 className="load-more-btn"
                 onClick={loadMore}
               >
-                Load More
+                {t('category.loadMore')}
               </button>
             </div>
           )}

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../Services/Api'; 
 import { useAuth } from '../../Context/AuthContext'; 
+import { useTranslation } from "react-i18next";
 import './MyOrders.css';
 
 const MyOrders = () => {
+  const { t, i18n } = useTranslation();
+  const currentLocale = i18n.language === 'ko' ? 'ko-KR' : i18n.language === 'zh' ? 'zh-CN' : 'en-US';
   const { user, loading: authLoading } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,20 +75,19 @@ const MyOrders = () => {
 
         return (
           <div className="delivery-details">
-            <p><strong>Pickup Location:</strong> {locationNameSnapshot}</p>
+            <p><strong>{t('orders.pickupLocation')}:</strong> {locationNameSnapshot}</p>
             <p>{addressSnapshot}</p>
             <p>{citySnapshot}, {stateSnapshot} {zipSnapshot}</p>
-            <p><strong>Phone:</strong> {phoneSnapshot}</p>
+            <p><strong>{t('profile.phoneNumber')}:</strong> {phoneSnapshot}</p>
             <hr className="mini-hr" />
-            <p><strong>Pickup Time:</strong> {timeSlotSnapshot}</p>
+            <p><strong>{t('orders.pickupTime')}:</strong> {timeSlotSnapshot}</p>
             {pickupCode && (
-              <p className="pickup-code"><strong>Code:</strong> {pickupCode}</p>
+              <p className="pickup-code"><strong>{t('orders.pickupCode')}:</strong> {pickupCode}</p>
             )}
           </div>
         );
       }
-
-    return <p>Delivery details unavailable</p>;
+    return <p>{t('orders.deliveryUnavailable')}</p>;
   };
 
   /* ---------- HANDLERS ---------- */
@@ -98,45 +100,46 @@ const MyOrders = () => {
     }
   };
 
-  if (authLoading || loading) return <div className="status-message">Loading...</div>;
+  if (authLoading || loading) return <div className="status-message">{t('common.loading')}</div>;
 
   return (
     <div className="orders-page-container">
-      <h1>My Orders</h1>
+      <h1>{t('orders.title')}</h1>
       
       <div className="table-wrapper">
         {orders.length === 0 ? (
-          <p className="no-orders">No orders found.</p>
+          <p className="no-orders">{t('orders.noOrders')}</p>
         ) : (
           <table className="orders-table">
             <thead>
               <tr>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th>Total</th>
-                <th>Payment</th>
-                <th>Action</th>
+                <th>{t('orders.orderId')}</th>
+                <th>{t('orders.date')}</th>
+                <th>{t('cart.total')}</th>
+                <th>{t('orders.payment')}</th>
+                <th>{t('orders.status')}</th>
+                <th>{t('cart.remove')}</th> 
               </tr>
             </thead>
             <tbody>
               {orders.map((order) => (
                 <tr key={order._id}>
                   <td>#{order._id.slice(-6).toUpperCase()}</td>
-                  <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                  <td>{new Date(order.createdAt).toLocaleDateString(currentLocale)}</td>
                   <td>${order.totalAmount.toFixed(2)}</td>
                   <td>
-                    <span className={`badge ${order.paymentStatus || 'pending'}`}>
-                      {order.paymentStatus || 'pending'}
+                    <span className={`badge ${order.paymentStatus || 'unpaid'}`}>
+                      {t(`orders.paymentStatus.${order.paymentStatus || 'unpaid'}`)}
                     </span>
                   </td>
                   <td>
                     <span className={`status-badge ${order.status || 'pending'}`}>
-                      {(order.status || 'pending').toUpperCase()}
+                      {t(`orders.orderStatus.${order.status || 'pending'}`)}
                     </span>
                   </td>
                   <td>
                     <button className="view-btn" onClick={() => openOrderDetails(order._id)}>
-                      View Details
+                      {t('orders.viewDetails')}
                     </button>
                   </td>
                 </tr>
@@ -152,8 +155,8 @@ const MyOrders = () => {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="close-modal" onClick={() => setSelectedOrder(null)}>&times;</button>
             
-            <h2>Order Details</h2>
-            <p className="order-meta">Full ID: {selectedOrder._id}</p>
+            <h2>{t('orders.detailsTitle')}</h2>
+            <p className="order-meta">{t('orders.fullId')}: {selectedOrder._id}</p>
             <hr />
 
             <div className="order-items-list">
@@ -164,14 +167,10 @@ const MyOrders = () => {
                     {imageUrl && <img src={imageUrl} alt={name} className="mini-img" />}
                     <div className="mini-info">
                       <p className="mini-name">{name}</p>
-                      <div className="mini-color-row">
-                        <span className="mini-color-name" style={{ color: colorName }}>
-                          {colorName}
-                        </span>
-                      </div>
+                      <span className="mini-color-name" style={{ color: colorName }}>{colorName}</span>
                       <div className="order-item-meta">
                         <p className="mini-price">${price.toFixed(2)} x {quantity}</p>
-                        <p className="mini-total-price">Total: ${(price * quantity).toFixed(2)}</p>
+                        <p className="mini-total-price">{t('cart.total')}: ${(price * quantity).toFixed(2)}</p>
                       </div>
                     </div>
                   </div>
@@ -181,11 +180,11 @@ const MyOrders = () => {
 
             <div className="modal-footer">
               <div className="shipping-info">
-                <h4>Method: {selectedOrder.deliveryMethod.toUpperCase()}</h4>
+                <h4>{t('orders.method')}: {t(`orders.methods.${selectedOrder.deliveryMethod}`)}</h4>
                 {renderDeliveryInfo(selectedOrder)}
               </div>
               <div className="total-section">
-                <h3>Total Paid: ${selectedOrder.totalAmount.toFixed(2)}</h3>
+                <h3>{t('orders.totalPaid')}: ${selectedOrder.totalAmount.toFixed(2)}</h3>
               </div>
             </div>
           </div>

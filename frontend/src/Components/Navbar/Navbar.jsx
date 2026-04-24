@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './Navbar.css';
 import logo from '../../Assets/TempLogo.png';
 import cart_icon from '../../Assets/cart_icon.png';
@@ -7,147 +8,83 @@ import { JigContext } from '../../Context/JigContext';
 import { useAuth } from '../../Context/AuthContext';
 
 const Navbar = () => {
-
-  /* ---------- STATE ---------- */
+  const { t, i18n } = useTranslation();
   const { totalItems = 0 } = useContext(JigContext);
   const { user, loading, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
-
   /* ---------- LINKS ---------- */
   const navLinks = [
-    { label: 'Home', to: '/' },
-    { label: 'All', to: '/alljigs' },
+    { label: t('nav.home'), to: '/' },
+    { label: t('nav.all'), to: '/alljigs' },
   ];
 
-
-  /* ---------- HELPERS ---------- */
-  // Generate user initials for avatar
-  const getInitials = (name) => {
-    if (!name) return '';
-
-    const parts = name.trim().split(/\s+/);
-
-    if (parts.length === 1) {
-      return parts[0][0].toUpperCase();
-    }
-
-    return (
-      parts[0][0] + parts[parts.length - 1][0]
-    ).toUpperCase();
-  };
-
-  // Memoized initials for display
-  const initials = user?.name ? getInitials(user.name) : '';
-
-
   /* ---------- HANDLERS ---------- */
-
-  // Toggle profile dropdown menu
-  const handleToggleMenu = () => {
-    setMenuOpen(prev => !prev);
-  };
-
-  // Handle logout and close dropdown
+  const handleToggleMenu = () => setMenuOpen(prev => !prev);
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
   };
 
-
-  /* ---------- JSX ---------- */
+  const changeLanguage = (e) => {
+    i18n.changeLanguage(e.target.value);
+  };
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-
-        {/* Logo / Brand */}
+        
         <Link to="/" className="nav-logo">
           <img src={logo} alt="SquidJigs" />
           <p>SquidJigs</p>
         </Link>
 
-        {/* Desktop Navigation Menu */}
         <ul className="nav-menu">
           {navLinks.map(({ label, to }) => (
             <li key={to} className="nav-item">
-              <NavLink
-                to={to}
-                // Highlight active route
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? 'active' : ''}`
-                }
-              >
+              <NavLink to={to} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                 {label}
               </NavLink>
-
-              {/* Underline for hover/active styling */}
               <span className="nav-underline" />
             </li>
           ))}
         </ul>
 
-        {/* Right Side (Auth + Cart) */}
         <div className="nav-right">
+          
+          <div className="lang-switcher">
+            <select onChange={changeLanguage} value={i18n.language}>
+              <option value="en">EN</option>
+              <option value="ko">KO</option>
+              <option value="zh">ZH</option>
+            </select>
+          </div>
 
-          {/* Auth Section */}
           {loading ? (
-            // Show loading state while auth is initializing
             <span className="nav-loading">...</span>
-
           ) : user ? (
-            // Logged-in state: show profile avatar + dropdown
             <div className="nav-profile-wrapper">
-
-              <div
-                className="profile-avatar"
-                onClick={handleToggleMenu}
-              >
-                {initials || "?"}
+              <div className="profile-avatar" onClick={handleToggleMenu}>
+                {user.name ? user.name[0].toUpperCase() : "?"}
               </div>
 
-              {/* Dropdown menu */}
               {menuOpen && (
                 <div className="profile-dropdown">
-
-                  <Link to="/profile" className="dropdown-item">
-                    Profile
+                  <Link to="/profile" className="dropdown-item">{t('nav.profile')}</Link>
+                  <Link to="/profile/my-orders" className="dropdown-item">{t('nav.orders')}</Link>
+                  <Link to="/login" className="dropdown-item" onClick={handleLogout}>
+                    {t('nav.logout')}
                   </Link>
-
-                  <Link to="/profile/my-orders" className="dropdown-item">
-                    My Orders
-                  </Link>
-
-                  <Link
-                    to="/login"
-                    state={{ message: "Successfully logged out" }}
-                    className="dropdown-item"
-                    onClick={handleLogout}
-                  >
-                    Sign Out
-                  </Link>
-
                 </div>
               )}
             </div>
-
           ) : (
-            // Logged-out state: show login button
-            <Link to="/login" className="nav-login">
-              Login
-            </Link>
+            <Link to="/login" className="nav-login">{t('nav.login')}</Link>
           )}
 
-          {/* Cart Icon + Item Count */}
           <Link to="/cart" className="nav-cart">
             <img src={cart_icon} alt="Cart" />
-
-            {/* Only show if items are in Cart */}
-            {totalItems > 0 && (
-              <span className="cart-count">
-                {totalItems}
-              </span>
-            )}
+            {totalItems > 0 && <span className="cart-count">{totalItems}</span>}
           </Link>
 
         </div>

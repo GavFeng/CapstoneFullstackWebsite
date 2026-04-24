@@ -1,0 +1,183 @@
+{
+  "nav": {
+    "home": "Home",
+    "all": "All Jigs",
+    "profile": "Profile",
+    "orders": "My Orders",
+    "logout": "Sign Out",
+    "login": "Login"
+  },
+  "hero": {
+    "title": "Premium Squid Jigs",
+    "subtitle": "Find your favorite handmade & high-quality squid jigs designed for performance and durability.",
+    "button": "Shop Now",
+    "imageAlt": "Squid Jig Fishing Lure"
+  },
+  "common": {
+    "loadingNew": "Loading new jigs...",
+    "loadingPopular": "Loading popular jigs...",
+    "loadingRelated": "Loading related jigs..."
+  },
+  "home": {
+    "newJigsTitle": "New Jigs",
+    "popularJigsTitle": "Popular Jigs",
+    "relatedJigsTitle": "Related Jigs"
+  },
+  "info": {
+    "title": "Squid Fishing in Seattle",
+    "season": {
+      "label": "Best Season",
+      "text_part1": "Squid are found in Puget Sound year-round, but the best fishing is typically from",
+      "bold": "October through January",
+      "text_part2": "when squid move into shallow water and are easier to catch from piers."
+    },
+    "time": {
+      "label": "Best Time",
+      "text_part1": "Squid feed mostly",
+      "bold1": "after dark",
+      "text_part2": "and are strongly attracted to light. Fishing near illuminated docks during",
+      "bold2": "high tide",
+      "text_part3": "often produces the best results."
+    },
+    "locations": {
+      "label": "Popular Locations",
+      "text_part1": "Popular spots around Seattle include",
+      "bold": "Elliott Bay piers, Edmonds Pier, Seacrest Park (West Seattle), Shilshole Bay Marina, and Des Moines Pier"
+    }
+  },
+  "category": {
+    "filters": "Filters",
+    "category": "Category",
+    "allCategories": "All Categories",
+    "weight": "Weight",
+    "allWeights": "All Weights",
+    "color": "Color",
+    "allColors": "All Colors",
+    "priceRange": "Price Range",
+    "min": "Min",
+    "max": "Max",
+    "reset": "Reset Filters",
+    "showingCount": "Showing {{count}} of {{total}}",
+    "loadingFilters": "Loading filters...",
+    "loadingProducts": "Loading products...",
+    "noMatch": "No products match the selected filters.",
+    "loadMore": "Load More"
+  },
+  "breadcrumb":{
+    "home": "Home",
+    "shop": "Shop"
+  },
+  "product": {
+    "descriptionTab": "Description",
+    "noDescription": "No detailed description available for this product.",
+    "weightLabel": "Weight",
+    "categoryLabel": "Category",
+    "defaultName": "Product",
+    "unnamed": "Unnamed Product",
+    "noImages": "No images available",
+    "thumbnailAlt": "{{name}} thumbnail {{index}}",
+    "outOfStock": "Out of stock",
+    "inStock": "{{count}} in stock",
+    "lowStock": "Only {{count}} left!",
+    "selectColor": "Select Color",
+    "noColors": "No colors available",
+    "quantity": "Quantity",
+    "addToCart": "Add to Cart",
+    "addedToCart": "✓ Added to Cart",
+    "colorAria": "Select {{color}} – {{status}}",
+    "countAvailable": "{{count}} available"
+  },
+  "cart": {
+    "title": "Cart",
+    "emptyTitle": "Your cart is empty",
+    "emptySubtitle": "Start shopping to add items!",
+    "product": "Product",
+    "price": "Price",
+    "quantity": "Quantity",
+    "total": "Total",
+    "saveForLater": "Save for Later",
+    "savedTitle": "Saved for Later ({{count}})",
+    "moveToCart": "Move to Cart",
+    "remove": "Remove",
+    "summaryTitle": "Cart Total",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "Free",
+    "stockWarning": "Stock levels have changed. Please update quantity.",
+    "checkout": "Proceed to Checkout"
+  },
+  "checkout": {
+    "stockChangeError": "Stock levels just changed. Please review your selection.",
+    "successMessage": "🎉 Order placed successfully!",
+    "outOfStockError": "One or more items in your cart are now out of stock.",
+    "generalError": "An error occurred while placing your order.",
+    "title": "Checkout (Pickup)",
+    "stockError": "Some items are unavailable. Please return to your cart to adjust quantities.",
+    "pickupLocation": "Pickup Location",
+    "selectLocation": "Select Location",
+    "pickupTimeLabel": "2. Pickup Time",
+    "selectTimeWindow": "Select a time window",
+    "selectLocationFirst": "Select location first",
+    "scheduledPickup": "Scheduled Pickup",
+    "betweenTime": "Between {{start}} and {{end}}",
+    "timezone": "Timezone",
+    "selectItems": "Select Items to Purchase",
+    "orderSummary": "Order Summary",
+    "placeOrder": "Place Order",
+    "placingOrder": "Placing Order..."
+  },
+  "profile": {
+    "title": "Account Settings",
+    "subtitle": "Manage your profile information and contact details.",
+    "fullName": "Full Name",
+    "emailAddress": "Email Address",
+    "phoneNumber": "Phone Number",
+    "accountStatus": "Account Status",
+    "notProvided": "Not provided",
+    "editBtn": "Edit Profile",
+    "saveBtn": "Save Changes",
+    "cancelBtn": "Cancel",
+    "invalidEmail": "Please enter a valid email address.",
+    "invalidPhone": "Please enter a valid phone number.",
+    "updateSuccess": "Profile updated successfully!",
+    "updateError": "Error updating profile."
+  },
+  "orders": {
+    "title": "My Orders",
+    "noOrders": "No orders found.",
+    "orderId": "Order ID",
+    "date": "Date",
+    "payment": "Payment",
+    "status": "Status",
+    "viewDetails": "View Details",
+    "detailsTitle": "Order Details",
+    "fullId": "Full ID",
+    "pickupLocation": "Pickup Location",
+    "pickupTime": "Pickup Time",
+    "pickupCode": "Code",
+    "method": "Method",
+    "totalPaid": "Total Paid",
+    "deliveryUnavailable": "Delivery details unavailable",
+    
+    "paymentStatus": {
+      "unpaid": "Unpaid",
+      "paid": "Paid",
+      "failed": "Failed"
+    },
+
+    "orderStatus": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "ready": "Ready for Pickup",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "methods": {
+      "pickup": "Pickup",
+      "shipping": "Shipping"
+    }
+  }
+}
+  
+
+
