@@ -118,7 +118,6 @@ const MyOrders = () => {
                 <th>{t('cart.total')}</th>
                 <th>{t('orders.payment')}</th>
                 <th>{t('orders.status')}</th>
-                <th>{t('cart.remove')}</th> 
               </tr>
             </thead>
             <tbody>
