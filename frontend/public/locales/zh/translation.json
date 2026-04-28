@@ -1,27 +1,27 @@
 {
   "nav": {
     "home": "首页",
-    "all": "所有木虾",
+    "all": "所有的鱿鱼钩",
     "profile": "个人资料",
     "orders": "我的订单",
     "logout": "登出",
     "login": "登录"
   },
   "hero": {
-    "title": "优质木虾",
-    "subtitle": "探索专为性能和耐用性设计的手工高品质木虾。",
+    "title": "优质鱿鱼钩",
+    "subtitle": "探索专为性能和耐用性设计的手工高品质鱿鱼钩。",
     "button": "立即选购",
-    "imageAlt": "木虾钓饵"
+    "imageAlt": "鱿鱼钩钓饵"
   },
   "common": {
-    "loadingNew": "正在加载新木虾...",
-    "loadingPopular": "正在加载热门木虾...",
-    "loadingRelated": "正在加载相关木虾..."
+    "loadingNew": "正在加载新鱿鱼钩...",
+    "loadingPopular": "正在加载热门鱿鱼钩...",
+    "loadingRelated": "正在加载相关鱿鱼钩..."
   },
   "home": {
-    "newJigsTitle": "最新木虾",
-    "popularJigsTitle": "热门木虾",
-    "relatedJigsTitle": "相关木虾"
+    "newJigsTitle": "最新鱿鱼钩",
+    "popularJigsTitle": "热门鱿鱼钩",
+    "relatedJigsTitle": "相关鱿鱼钩"
   },
   "info": {
     "title": "西雅图鱿鱼钓鱼指南",
