@@ -101,7 +101,6 @@ const Analytic = () => {
       <header className="analytics-header">
         <div>
           <h1>Business Insights</h1>
-          <p className="subtitle">Comprehensive sales and inventory performance</p>
         </div>
         <button className="refresh-btn" onClick={fetchStats}>↻ Refresh Data</button>
       </header>
