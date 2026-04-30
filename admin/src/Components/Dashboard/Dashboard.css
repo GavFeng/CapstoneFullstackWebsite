@@ -1,182 +1,196 @@
-.admin-orders-container {
-  max-width: 1100px;
-  margin: 2rem auto;
-  padding: 20px;
-  font-family: sans-serif;
+.admin-orders-container { padding: 20px; max-width: 1400px; margin: 0 auto; }
+.admin-header { margin-bottom: 30px; }
+.title-group { display: flex; justify-content: space-between; align-items: center; }
+
+/* Tabs */
+.admin-tabs { display: flex; gap: 10px; margin-top: 20px; border-bottom: 2px solid #eee; }
+.admin-tabs button { padding: 10px 20px; border: none; background: none; cursor: pointer; font-weight: bold; color: #666; }
+.admin-tabs button.active { color: #007bff; border-bottom: 3px solid #007bff; }
+
+/* Original Card Style */
+.admin-order-card { 
+    background: #fff; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    padding: 20px; 
+    margin-bottom: 20px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.card-header-dashboard { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start;
+    border-bottom: 1px solid #eee; 
+    padding-bottom: 10px; 
+    margin-bottom: 15px; 
+}
+.card-body { 
+    display: grid; 
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 30px; 
+    padding: 10px 0;
+    align-items: start;
 }
 
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 20px;
-  margin-bottom: 30px;
+.customer-box, .items-box, .delivery-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.admin-tabs {
-  display: flex;
-  background: #f0f0f0;
-  padding: 5px;
-  border-radius: 8px;
+.customer-box strong, .items-box strong, .delivery-box strong {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
 }
-
-.admin-tabs button {
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  background: transparent;
-}
-
-.admin-tabs button.active {
-  background: white;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.phone-text {
-  margin-top: 2px;
-  color: #555;
-  font-weight: 500;
-}
-
-.admin-order-card {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  padding: 20px;
-}
-
-.card-header-dashboard {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-}
-
-.order-id-group {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.order-date-time,
-.payment-status {
-  display: flex;
-  align-items: center;
-}
-
-.card-body {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr;
-  gap: 20px;
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-.subtext {
-  font-size: 0.85rem;
-  color: #666;
-  margin: 2px 0;
-}
-
 
 .admin-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #f9f9f9;
+    display: flex;
+    gap: 12px;
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7); /* Darken background */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px); /* Modern touch */
+.subtext { font-size: 0.85rem; color: #666; margin: 2px 0; }
+
+.phone-text {
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-.modal-content {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+.admin-item-line {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    line-height: 1.4;
 }
 
-.modal-warning {
-  color: #d9534f;
-  font-size: 0.9rem;
-  margin-top: 10px;
-  font-weight: 500;
+/* Timeline Colors */
+.timeline-info { padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; }
+.status-deadline { background: #fff5f5; color: #c92a2a; }
+.status-ready { background: #ebfbee; color: #2b8a3e; }
+.status-fulfilled { background: #f3f0ff; color: #5f3dc4; }
+.status-cancelled { background: #f1f3f5; color: #495057; text-decoration: line-through; }
+
+/* Calendar Layout */
+.calendar-dashboard-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.calendar-side-panel { background: #f9f9f9; padding: 20px; border-radius: 8px; max-height: 800px; overflow-y: auto; }
+.panel-date-title { margin-bottom: 20px; color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+
+/* Dots */
+.calendar-status-dots { display: flex; justify-content: center; gap: 2px; margin-top: 4px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.dot-pending { background: #f08c00; }
+.dot-ready { background: #40c057; }
+.dot-completed { background: #7950f2; }
+.dot-count { font-size: 10px; color: #888; margin-left: 2px; }
+
+/* Modal */
+.modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal-content { background: white; padding: 30px; border-radius: 8px; max-width: 400px; text-align: center; }
+.modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+.modal-warning { color: #e67e22; font-size: 0.85rem; margin-top: 10px; }
+
+/* Buttons */
+.btn-ready { background: #40c057; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+.btn-complete { background: #7950f2; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+.btn-cancel { background: #fa5252; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+.btn-confirm { background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+
+
+/* Container override to allow full expansion */
+.admin-orders-container {
+    max-width: 100%; /* Take up the whole screen */
+    padding: 20px;
 }
 
-.modal-actions {
-  display: flex;
-  gap: 15px;
-  margin-top: 25px;
-  justify-content: center;
+/* Force Calendar to fill the container */
+.large-admin-calendar.react-calendar {
+    width: 100% !important;
+    max-width: 100% !important;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    height: 800px; /* Force a large height */
+    display: flex;
+    flex-direction: column;
 }
 
-.btn-confirm {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
+/* Make the month grid fill the height */
+.large-admin-calendar .react-calendar__viewContainer,
+.large-admin-calendar .react-calendar__month-view,
+.large-admin-calendar .react-calendar__month-view > div,
+.large-admin-calendar .react-calendar__month-view > div > div {
+    height: 100%;
 }
 
-.btn-cancel {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
+/* Make individual tiles expand to fill space */
+.large-admin-calendar .react-calendar__tile {
+    height: 120px !important; /* Force tall tiles */
+    padding: 5px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    border: 0.5px solid #f0f0f0 !important;
+    overflow: hidden;
 }
 
-.calendar-dot-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 2px;
+/* Title Content Container */
+.calendar-tile-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.calendar-dot {
-  height: 18px;
-  width: 18px;
-  background-color: #ff4757;
-  color: white;
-  border-radius: 50%;
-  font-size: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* The Mini Order List inside tiles */
+.order-list-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    margin-top: 5px;
 }
 
-.react-calendar {
-  width: 100% !important;
-  border: none !important;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 10px;
+.mini-order-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    background: #f8f9fa;
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-left: 3px solid #ccc;
 }
 
-.btn-ready { background: #3182ce; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-.btn-complete { background: #38a169; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-.btn-cancel { background: white; border: 1px solid #e53e3e; color: #e53e3e; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+/* Dynamic colors for the mini list labels */
+.mini-order-item.pending { border-left-color: #f08c00; background: #fff9db; }
+.mini-order-item.ready { border-left-color: #40c057; background: #ebfbee; }
+.mini-order-item.completed { border-left-color: #7950f2; background: #f3f0ff; }
 
-/* Badges */
-.badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
-.badge.pending { background: #feebc8; color: #9c4221; }
-.badge.ready { background: #c6f6d5; color: #22543d; }
-.badge.paid { background: #e6fffa; color: #234e52; }
+.mini-text {
+    color: #333;
+    font-weight: 500;
+}
+
+.more-orders-text {
+    font-size: 10px;
+    color: #888;
+    padding-left: 5px;
+    font-style: italic;
+}
+
+/* Ensure the number in the tile stays at the top right */
+.react-calendar__month-view__days__day__number {
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+    align-self: flex-end;
+}
