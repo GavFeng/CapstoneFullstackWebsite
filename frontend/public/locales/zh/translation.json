@@ -1,179 +1,204 @@
 {
-  "nav": {
-    "home": "首页",
-    "all": "所有的鱿鱼钩",
-    "profile": "个人资料",
-    "orders": "我的订单",
-    "logout": "登出",
-    "login": "登录"
-  },
-  "hero": {
-    "title": "优质鱿鱼钩",
-    "subtitle": "探索专为性能和耐用性设计的手工高品质鱿鱼钩。",
-    "button": "立即选购",
-    "imageAlt": "鱿鱼钩钓饵"
-  },
-  "common": {
-    "loadingNew": "正在加载新鱿鱼钩...",
-    "loadingPopular": "正在加载热门鱿鱼钩...",
-    "loadingRelated": "正在加载相关鱿鱼钩..."
-  },
-  "home": {
-    "newJigsTitle": "最新鱿鱼钩",
-    "popularJigsTitle": "热门鱿鱼钩",
-    "relatedJigsTitle": "相关鱿鱼钩"
-  },
-  "info": {
-    "title": "西雅图鱿鱼钓鱼指南",
-    "season": {
-      "label": "最佳季节",
-      "text_part1": "普吉特海湾全年都有鱿鱼，但当鱿鱼移入浅水区且更容易在码头捕捉时，",
-      "bold": "十月至一月",
-      "text_part2": "通常是最佳的钓鱼季节。"
-    },
-    "time": {
-      "label": "最佳时间",
-      "text_part1": "鱿鱼主要在",
-      "bold1": "天黑后",
-      "text_part2": "觅食，并具有强烈的趋光性。在灯光充足的码头附近，尤其是",
-      "bold2": "高潮位期间",
-      "text_part3": "钓鱼，效果往往最好。"
-    },
-    "locations": {
-      "label": "热门地点",
-      "text_part1": "西雅图周边的热门地点包括",
-      "bold": "埃利奥特湾码头、埃德蒙兹码头、西克雷스트公园（西西雅图）、希尔舒尔湾游艇码头和德梅因码头"
-    }
-  },
-  "category": {
-    "filters": "筛选",
-    "category": "类别",
-    "allCategories": "所有类别",
-    "weight": "重量",
-    "allWeights": "所有重量",
-    "color": "颜色",
-    "allColors": "所有颜色",
-    "priceRange": "价格范围",
-    "min": "最低",
-    "max": "最高",
-    "reset": "重置筛选",
-    "showingCount": "显示第 {{count}} 个，共 {{total}} 个商品",
-    "loadingFilters": "正在加载筛选选项...",
-    "loadingProducts": "正在加载商品...",
-    "noMatch": "没有找到符合所选筛选条件的商品。",
-    "loadMore": "加载更多"
-  },
-  "breadcrumb":{
-    "home": "首页",
-    "shop": "商店"
-  },
-  "product": {
-    "descriptionTab": "产品描述",
-    "noDescription": "暂无该产品的详细描述。",
-    "weightLabel": "重量",
-    "categoryLabel": "类别",
-    "defaultName": "产品",
-    "unnamed": "未命名产品",
-    "noImages": "无可用图片",
-    "thumbnailAlt": "{{name}} 缩略图 {{index}}",
-    "outOfStock": "缺货",
-    "inStock": "库存 {{count}} 件",
-    "lowStock": "仅剩 {{count}} 件！",
-    "selectColor": "选择颜色",
-    "noColors": "无可用颜色",
-    "quantity": "数量",
-    "addToCart": "加入购物车",
-    "addedToCart": "✓ 已加入购物车",
-    "colorAria": "选择 {{color}} – {{status}}",
-    "countAvailable": "库存 {{count}} 件"
-  },
-  "cart": {
-    "title": "购物车",
-    "emptyTitle": "您的购物车是空的",
-    "emptySubtitle": "开始购物并添加商品吧！",
-    "product": "产品",
-    "price": "价格",
-    "quantity": "数量",
-    "total": "总计",
-    "saveForLater": "移入收藏夹",
-    "savedTitle": "已收藏 ({{count}})",
-    "moveToCart": "移入购物车",
-    "remove": "移除",
-    "summaryTitle": "订单摘要",
-    "subtotal": "小计",
-    "shipping": "运费",
-    "free": "免费",
-    "stockWarning": "库存水平已更改。请更新数量。",
-    "checkout": "前往结账"
-  },
-  "checkout": {
-    "stockChangeError": "库存状态刚刚发生了变化。请重新核对您的选择。",
-    "successMessage": "🎉 订单提交成功！",
-    "outOfStockError": "您购物车中的一件或多件商品现已售罄。",
-    "generalError": "提交订单时发生错误。",
-    "title": "结账 (自提)",
-    "stockError": "部分商品缺货。请返回购物车调整数量。",
-    "pickupLocation": "自提地点",
-    "selectLocation": "选择地点",
-    "pickupTimeLabel": "2. 自提时间",
-    "selectTimeWindow": "选择时间段",
-    "selectLocationFirst": "请先选择地点",
-    "scheduledPickup": "已预约自提",
-    "betweenTime": "在 {{start}} 至 {{end}} 之间",
-    "timezone": "时区",
-    "selectItems": "选择购买商品",
-    "orderSummary": "订单摘要",
-    "placeOrder": "下订单",
-    "placingOrder": "正在下订单..."
-  },
-  "profile": {
-    "title": "账户设置",
-    "subtitle": "管理您的个人资料和联系方式。",
-    "fullName": "姓名",
-    "emailAddress": "电子邮箱",
-    "phoneNumber": "电话号码",
-    "accountStatus": "账户状态",
-    "notProvided": "未提供",
-    "editBtn": "编辑资料",
-    "saveBtn": "保存更改",
-    "cancelBtn": "取消",
-    "invalidEmail": "请输入有效的电子邮箱地址。",
-    "invalidPhone": "请输入有效的电话号码。",
-    "updateSuccess": "个人资料已成功更新！",
-    "updateError": "更新资料时出错。"
-  },
-  "orders": {
-    "title": "我的订单",
-    "noOrders": "暂无订单。",
-    "orderId": "订单编号",
-    "date": "日期",
-    "payment": "付款状态",
-    "status": "订单状态",
-    "viewDetails": "查看详情",
-    "detailsTitle": "订单详情",
-    "fullId": "完整编号",
-    "pickupLocation": "自提地点",
-    "pickupTime": "自提时间",
-    "pickupCode": "提货码",
-    "method": "配送方式",
-    "totalPaid": "实付款",
-    "deliveryUnavailable": "无法获取配送详情",
-
-    "paymentStatus": {
-      "unpaid": "未付款",
-      "paid": "已付款",
-      "failed": "付款失败"
-    },
-    "orderStatus": {
-      "pending": "待处理",
-      "processing": "处理中",
-      "ready": "待自提",
-      "completed": "已完成",
-      "cancelled": "已取消"
-    },
-    "methods": {
-      "pickup": "自提",
-      "shipping": "快递运输"
-    }
-  }
+	"nav": {
+		"home": "首页",
+		"all": "所有的鱿鱼钩",
+		"profile": "个人资料",
+		"orders": "我的订单",
+		"logout": "登出",
+		"login": "登录"
+	},
+	"hero": {
+		"title": "优质鱿鱼钩",
+		"subtitle": "探索专为性能和耐用性设计的手工高品质鱿鱼钩。",
+		"button": "立即选购",
+		"imageAlt": "鱿鱼钩钓饵"
+	},
+	"common": {
+		"loadingNew": "正在加载新鱿鱼钩...",
+		"loadingPopular": "正在加载热门鱿鱼钩...",
+		"loadingRelated": "正在加载相关鱿鱼钩..."
+	},
+	"home": {
+		"newJigsTitle": "最新鱿鱼钩",
+		"popularJigsTitle": "热门鱿鱼钩",
+		"relatedJigsTitle": "相关鱿鱼钩"
+	},
+	"info": {
+		"title": "西雅图鱿鱼钓鱼指南",
+		"season": {
+			"label": "最佳季节",
+			"text_part1": "普吉特海湾全年都有鱿鱼，但当鱿鱼移入浅水区且更容易在码头捕捉时，",
+			"bold": "十月至一月",
+			"text_part2": "通常是最佳的钓鱼季节。"
+		},
+		"time": {
+			"label": "最佳时间",
+			"text_part1": "鱿鱼主要在",
+			"bold1": "天黑后",
+			"text_part2": "觅食，并具有强烈的趋光性。在灯光充足的码头附近，尤其是",
+			"bold2": "高潮位期间",
+			"text_part3": "钓鱼，效果往往最好。"
+		},
+		"locations": {
+			"label": "热门地点",
+			"text_part1": "西雅图周边的热门地点包括",
+			"bold": "埃利奥特湾码头、埃德蒙兹码头、西克雷스트公园（西西雅图）、希尔舒尔湾游艇码头和德梅因码头"
+		}
+	},
+	"category": {
+		"filters": "筛选",
+		"category": "类别",
+		"allCategories": "所有类别",
+		"weight": "重量",
+		"allWeights": "所有重量",
+		"color": "颜色",
+		"allColors": "所有颜色",
+		"priceRange": "价格范围",
+		"min": "最低",
+		"max": "最高",
+		"reset": "重置筛选",
+		"showingCount": "显示第 {{count}} 个，共 {{total}} 个商品",
+		"loadingFilters": "正在加载筛选选项...",
+		"loadingProducts": "正在加载商品...",
+		"noMatch": "没有找到符合所选筛选条件的商品。",
+		"loadMore": "加载更多"
+	},
+	"breadcrumb": {
+		"home": "首页",
+		"shop": "商店"
+	},
+	"product": {
+		"descriptionTab": "产品描述",
+		"noDescription": "暂无该产品的详细描述。",
+		"weightLabel": "重量",
+		"categoryLabel": "类别",
+		"defaultName": "产品",
+		"unnamed": "未命名产品",
+		"noImages": "无可用图片",
+		"thumbnailAlt": "{{name}} 缩略图 {{index}}",
+		"outOfStock": "缺货",
+		"inStock": "库存 {{count}} 件",
+		"lowStock": "仅剩 {{count}} 件！",
+		"selectColor": "选择颜色",
+		"noColors": "无可用颜色",
+		"quantity": "数量",
+		"addToCart": "加入购物车",
+		"addedToCart": "✓ 已加入购物车",
+		"colorAria": "选择 {{color}} – {{status}}",
+		"countAvailable": "库存 {{count}} 件"
+	},
+	"cart": {
+		"title": "购物车",
+		"emptyTitle": "您的购物车是空的",
+		"emptySubtitle": "开始购物并添加商品吧！",
+		"product": "产品",
+		"price": "价格",
+		"quantity": "数量",
+		"total": "总计",
+		"saveForLater": "移入收藏夹",
+		"savedTitle": "已收藏 ({{count}})",
+		"moveToCart": "移入购物车",
+		"remove": "移除",
+		"summaryTitle": "订单摘要",
+		"subtotal": "小计",
+		"shipping": "运费",
+		"free": "免费",
+		"stockWarning": "库存水平已更改。请更新数量。",
+		"checkout": "前往结账"
+	},
+	"checkout": {
+		"stockChangeError": "库存状态刚刚发生了变化。请重新核对您的选择。",
+		"successMessage": "🎉 订单提交成功！",
+		"outOfStockError": "您购物车中的一件或多件商品现已售罄。",
+		"generalError": "提交订单时发生错误。",
+		"title": "结账 (自提)",
+		"stockError": "部分商品缺货。请返回购物车调整数量。",
+		"pickupLocation": "自提地点",
+		"selectLocation": "选择地点",
+		"pickupTimeLabel": "2. 自提时间",
+		"selectTimeWindow": "选择时间段",
+		"selectLocationFirst": "请先选择地点",
+		"scheduledPickup": "已预约自提",
+		"betweenTime": "在 {{start}} 至 {{end}} 之间",
+		"timezone": "时区",
+		"selectItems": "选择购买商品",
+		"orderSummary": "订单摘要",
+		"placeOrder": "下订单",
+		"placingOrder": "正在下订单..."
+	},
+	"profile": {
+		"title": "账户设置",
+		"subtitle": "管理您的个人资料和联系方式。",
+		"fullName": "姓名",
+		"emailAddress": "电子邮箱",
+		"phoneNumber": "电话号码",
+		"accountStatus": "账户状态",
+		"notProvided": "未提供",
+		"editBtn": "编辑资料",
+		"saveBtn": "保存更改",
+		"cancelBtn": "取消",
+		"invalidEmail": "请输入有效的电子邮箱地址。",
+		"invalidPhone": "请输入有效的电话号码。",
+		"updateSuccess": "个人资料已成功更新！",
+		"updateError": "更新资料时出错。"
+	},
+	"orders": {
+		"title": "我的订单",
+		"noOrders": "暂无订单。",
+		"orderId": "订单编号",
+		"date": "日期",
+		"payment": "付款状态",
+		"status": "订单状态",
+		"viewDetails": "查看详情",
+		"detailsTitle": "订单详情",
+		"fullId": "完整编号",
+		"pickupLocation": "自提地点",
+		"pickupTime": "自提时间",
+		"pickupCode": "提货码",
+		"method": "配送方式",
+		"totalPaid": "实付款",
+		"deliveryUnavailable": "无法获取配送详情",
+		"paymentStatus": {
+			"unpaid": "未付款",
+			"paid": "已付款",
+			"failed": "付款失败"
+		},
+		"orderStatus": {
+			"pending": "待处理",
+			"processing": "处理中",
+			"ready": "待自提",
+			"completed": "已完成",
+			"cancelled": "已取消"
+		},
+		"methods": {
+			"pickup": "自提",
+			"shipping": "快递运输"
+		},
+		"login": {
+			"title": "登录",
+			"subtitle": "欢迎回来！请输入您的详细信息。",
+			"emailLabel": "电子邮件",
+			"emailPlaceholder": "name@example.com",
+			"passwordLabel": "密码",
+			"signInBtn": "登录",
+			"signingIn": "登录中...",
+			"noAccount": "还没有账号？",
+			"signUpLink": "立即注册"
+		},
+		"signup": {
+			"title": "创建账户",
+			"subtitle": "加入我们，开始探索吧！",
+			"nameLabel": "全名",
+			"usernameLabel": "用户名",
+			"emailLabel": "电子邮件",
+			"passwordLabel": "密码",
+			"confirmPasswordLabel": "确认密码",
+			"signUpBtn": "注册",
+			"creatingAccount": "正在创建账户...",
+			"haveAccount": "已有账户？",
+			"signInLink": "登录",
+			"errorMismatch": "密码不匹配",
+			"errorFailed": "注册失败。请稍后再试。"
+		}
+	}
 }

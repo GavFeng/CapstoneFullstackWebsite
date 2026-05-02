@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../Context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 
 import './LoginSignup.css';
 
 const Signup = () => {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     name: '',
     username: '',
@@ -27,7 +29,7 @@ const Signup = () => {
     setError('');
 
     if (form.password !== form.confirmPassword) {
-      return setError('Passwords do not match');
+      return setError(t('signup.errorMismatch'));
     }
 
     setLoading(true);
@@ -40,7 +42,7 @@ const Signup = () => {
         form.password
       );
     } catch (err) {
-      setError(err || 'Registration failed. Please try again.');
+      setError(err || t('signup.errorFailed'));
     } finally {
       setLoading(false);
     }
@@ -49,12 +51,12 @@ const Signup = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Create Account</h2>
-        <p className="auth-subtitle">Join us and start exploring!</p>
+        <h2>{t('signup.title')}</h2>
+        <p className="auth-subtitle">{t('signup.subtitle')}</p>
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="name">Full Name</label>
+            <label htmlFor="name">{t('signup.nameLabel')}</label>
             <input
               id="name"
               name="name"
@@ -67,7 +69,7 @@ const Signup = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">{t('signup.usernameLabel')}</label>
             <input
               id="username"
               name="username"
@@ -80,7 +82,7 @@ const Signup = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{t('signup.emailLabel')}</label>
             <input
               id="email"
               name="email"
@@ -93,7 +95,7 @@ const Signup = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">{t('signup.passwordLabel')}</label>
             <input
               id="password"
               name="password"
@@ -106,7 +108,7 @@ const Signup = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
+            <label htmlFor="confirmPassword">{t('signup.confirmPasswordLabel')}</label>
             <input
               id="confirmPassword"
               name="confirmPassword"
@@ -125,12 +127,13 @@ const Signup = () => {
             disabled={loading}
             className="btn-primary"
           >
-            {loading ? 'Creating account...' : 'Sign Up'}
+            {loading ? t('signup.creatingAccount') : t('signup.signUpBtn')}
           </button>
         </form>
 
         <p className="auth-link">
-          Already have an account? <Link to="/login">Sign in</Link>
+          {t('signup.haveAccount')}{' '}
+          <Link to="/login">{t('signup.signInLink')}</Link>
         </p>
       </div>
     </div>
