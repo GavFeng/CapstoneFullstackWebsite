@@ -175,33 +175,33 @@
     "methods": {
       "pickup": "Pickup",
       "shipping": "Shipping"
-    },
-    "login": {
-      "title": "Sign In",
-      "subtitle": "Welcome back! Please enter your details.",
-      "emailLabel": "Email",
-      "emailPlaceholder": "name@example.com",
-      "passwordLabel": "Password",
-      "signInBtn": "Sign In",
-      "signingIn": "Signing in...",
-      "noAccount": "Don't have an account?",
-      "signUpLink": "Sign up"
-    },
-    "signup": {
-      "title": "Create Account",
-      "subtitle": "Join us and start exploring!",
-      "nameLabel": "Full Name",
-      "usernameLabel": "Username",
-      "emailLabel": "Email",
-      "passwordLabel": "Password",
-      "confirmPasswordLabel": "Confirm Password",
-      "signUpBtn": "Sign Up",
-      "creatingAccount": "Creating account...",
-      "haveAccount": "Already have an account?",
-      "signInLink": "Sign in",
-      "errorMismatch": "Passwords do not match",
-      "errorFailed": "Registration failed. Please try again."
     }
+  },
+  "login": {
+    "title": "Sign In",
+    "subtitle": "Welcome back! Please enter your details.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "signInBtn": "Sign In",
+    "signingIn": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "signUpLink": "Sign up"
+  },
+  "signup": {
+    "title": "Create Account",
+    "subtitle": "Join us and start exploring!",
+    "nameLabel": "Full Name",
+    "usernameLabel": "Username",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "signUpBtn": "Sign Up",
+    "creatingAccount": "Creating account...",
+    "haveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "errorMismatch": "Passwords do not match",
+    "errorFailed": "Registration failed. Please try again."
   }
 }
   

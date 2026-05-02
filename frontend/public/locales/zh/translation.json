@@ -173,32 +173,32 @@
 		"methods": {
 			"pickup": "自提",
 			"shipping": "快递运输"
-		},
-		"login": {
-			"title": "登录",
-			"subtitle": "欢迎回来！请输入您的详细信息。",
-			"emailLabel": "电子邮件",
-			"emailPlaceholder": "name@example.com",
-			"passwordLabel": "密码",
-			"signInBtn": "登录",
-			"signingIn": "登录中...",
-			"noAccount": "还没有账号？",
-			"signUpLink": "立即注册"
-		},
-		"signup": {
-			"title": "创建账户",
-			"subtitle": "加入我们，开始探索吧！",
-			"nameLabel": "全名",
-			"usernameLabel": "用户名",
-			"emailLabel": "电子邮件",
-			"passwordLabel": "密码",
-			"confirmPasswordLabel": "确认密码",
-			"signUpBtn": "注册",
-			"creatingAccount": "正在创建账户...",
-			"haveAccount": "已有账户？",
-			"signInLink": "登录",
-			"errorMismatch": "密码不匹配",
-			"errorFailed": "注册失败。请稍后再试。"
 		}
-	}
+	},
+  "login": {
+    "title": "登录",
+    "subtitle": "欢迎回来！请输入您的详细信息。",
+    "emailLabel": "电子邮件",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "密码",
+    "signInBtn": "登录",
+    "signingIn": "登录中...",
+    "noAccount": "还没有账号？",
+    "signUpLink": "立即注册"
+  },
+  "signup": {
+    "title": "创建账户",
+    "subtitle": "加入我们，开始探索吧！",
+    "nameLabel": "全名",
+    "usernameLabel": "用户名",
+    "emailLabel": "电子邮件",
+    "passwordLabel": "密码",
+    "confirmPasswordLabel": "确认密码",
+    "signUpBtn": "注册",
+    "creatingAccount": "正在创建账户...",
+    "haveAccount": "已有账户？",
+    "signInLink": "登录",
+    "errorMismatch": "密码不匹配",
+    "errorFailed": "注册失败。请稍后再试。"
+  }
 }
