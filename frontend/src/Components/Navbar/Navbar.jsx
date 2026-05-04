@@ -9,8 +9,13 @@ import { useAuth } from '../../Context/AuthContext';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
-  const { totalItems = 0 } = useContext(JigContext);
+
   const { user, loading, logout } = useAuth();
+
+  /* ---------- CONTEXT ---------- */
+  const { totalItems = 0 } = useContext(JigContext);
+
+  /* ---------- STATE ---------- */
   const [menuOpen, setMenuOpen] = useState(false);
 
   /* ---------- LINKS ---------- */
@@ -19,6 +24,12 @@ const Navbar = () => {
     { label: t('nav.all'), to: '/alljigs' },
   ];
 
+  /* ---------- HELPERS ---------- */
+
+  const changeLanguage = (e) => {
+    i18n.changeLanguage(e.target.value);
+  };
+
   /* ---------- HANDLERS ---------- */
   const handleToggleMenu = () => setMenuOpen(prev => !prev);
   const handleLogout = () => {
@@ -26,9 +37,7 @@ const Navbar = () => {
     setMenuOpen(false);
   };
 
-  const changeLanguage = (e) => {
-    i18n.changeLanguage(e.target.value);
-  };
+
 
   return (
     <nav className="navbar">

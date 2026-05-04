@@ -6,8 +6,8 @@ import { useTranslation } from "react-i18next";
 const Carousel = ({ title, items, ItemComponent }) => {
   
   const { t } = useTranslation();
+ 
   /* ---------- STATE ---------- */
-
   const scrollRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -41,7 +41,7 @@ const Carousel = ({ title, items, ItemComponent }) => {
 
   /* ---------- HELPERS ---------- */
 
-  // Determines if user can scroll left/right based on current position
+  // Determines if user can scroll left/right
   const checkScroll = () => {
     const el = scrollRef.current;
     if (!el) return;
@@ -65,7 +65,7 @@ const Carousel = ({ title, items, ItemComponent }) => {
 
   /* ---------- HANDLERS ---------- */
 
-  // Scrolls carousel around one item length
+  // Scrolls carousel
   const handleScroll = (direction) => {
     if (!scrollRef.current) return;
 

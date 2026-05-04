@@ -5,11 +5,14 @@ import './Sidebar.css'
 
 const Sidebar = () => {
   const { t } = useTranslation();
+
+  /* ---------- LINKS ---------- */
   const navLinks = [
     {label: t('nav.profile'), to: '/profile/my-profile'},
     {label: t('nav.orders'), to: '/profile/my-orders'},
   ]
 
+  /* ----------  JSX ----------  */
   return (
     <div className='sidebar'>
       <ul>

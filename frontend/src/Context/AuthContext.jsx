@@ -5,10 +5,14 @@ import { useNavigate } from 'react-router-dom';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+
+  /* ---------- STATE ---------- */
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
+  /* ---------- EFFECTS ---------- */
   useEffect(() => {
     const loadUser = async () => {
       const token = localStorage.getItem("token");
@@ -31,6 +35,9 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
+
+  /* ---------- LOGIN ---------- */
+
   const login = async (email, password) => {
     try {
       const { data } = await api.post("/users/login", { email, password });
@@ -43,6 +50,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /* ---------- Register ---------- */
   const register = async (name, username, email, password) => {
     try {
       const { data } = await api.post("/users/register", {
@@ -59,11 +67,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /* ---------- LOG OUT ---------- */
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
   };
 
+
+  /* ---------- Update Profile ---------- */
   const updateProfile = async (userData) => {
     try {
       const { data } = await api.put("/users/profile", userData);

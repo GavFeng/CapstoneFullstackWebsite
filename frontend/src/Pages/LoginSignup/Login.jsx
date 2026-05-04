@@ -6,16 +6,19 @@ import './LoginSignup.css'
 
 const Login = () => {
   const { t } = useTranslation();
+
+  /* ---------- STATE ---------- */
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
+  const [logoutMessage, setLogoutMessage] = useState(location.state?.message || '');
 
   const location = useLocation();
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [logoutMessage, setLogoutMessage] = useState(location.state?.message || '');
+  /* ---------- EFFECTS ---------- */
 
   useEffect(() => {
     if (logoutMessage) {
@@ -26,6 +29,8 @@ const Login = () => {
       return () => clearTimeout(timer);
     }
   }, [logoutMessage]);
+
+  /* ---------- HANDLERS ---------- */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +47,8 @@ const Login = () => {
     }
   };
 
- return (
+  /* ----------  JSX ----------  */
+  return (
     <div className="auth-container">
       <div className="auth-card">
         {/* Login */}

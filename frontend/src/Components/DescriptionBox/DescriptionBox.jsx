@@ -2,6 +2,7 @@ import React from "react";
 import "./DescriptionBox.css";
 import { useTranslation } from "react-i18next";
 
+{/* Description Compontent for Jig Page */}
 const DescriptionBox = ({ jig }) => {
   const { t } = useTranslation();
 

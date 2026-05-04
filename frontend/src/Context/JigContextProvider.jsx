@@ -110,13 +110,13 @@ export const JigContextProvider = ({ children }) => {
         { jig: jigId, color: colorId },
       );
 
-      // 1. Remove from Cart
+      // Remove from Cart
       setCartItems(prev => {
         const { [key]: _, ...rest } = prev;
         return rest;
       });
 
-      // 2. Add to Saved Items immediately from server response
+      // Add to Saved Items immediately from server response
       setSavedItems(res.data.savedItems || []); 
     } catch (err) {
       console.error('Save for later failed:', err);
@@ -132,10 +132,10 @@ export const JigContextProvider = ({ children }) => {
         { jig: jigId, color: colorId, quantity },
       );
 
-      // 1. Update Saved Items from response
+      // Update Saved Items from response
       setSavedItems(res.data.savedItems || []);
 
-      // 2. Add to Cart state locally
+      // Add to Cart state locally
       const key = getKey(jigId, colorId);
       setCartItems(prev => ({
         ...prev,
@@ -208,15 +208,15 @@ export const JigContextProvider = ({ children }) => {
   const addToCart = async (jigId, colorId, qty = 1) => {
     const key = getKey(jigId, colorId);
     
-    // 1. Try to find it in our existing list
+    // Try to find it in our existing list
     let targetJig = jigs.find(j => String(j._id) === String(jigId));
 
-    // 2. If it's NOT in the list (because of pagination), fetch it specifically
+    // If it's NOT in the list (pagination), fetch it specifically
     if (!targetJig) {
       targetJig = await refreshSingleJig(jigId); 
     }
 
-    // 3. Now run your stock check
+    // Run stock check
     const variant = targetJig?.colors?.find(v => {
       const vColorId = v.color?._id || v.color;
       return String(vColorId) === String(colorId);
@@ -224,7 +224,7 @@ export const JigContextProvider = ({ children }) => {
 
     const available = variant?.stock ?? 0;
 
-    if (available <= 0) return; // Still out of stock or not found
+    if (available <= 0) return; // Out of stock or not found
 
     setCartItems(prev => {
       const current = prev[key]?.quantity || 0;

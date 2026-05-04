@@ -31,8 +31,8 @@ const parseQueryParams = (search) => {
 const JigCategory = () => {
   const location = useLocation();
   const { t } = useTranslation();
-  /* ---------- STATE ---------- */
 
+  /* ---------- STATE ---------- */
   const [filters, setFilters] = useState(() =>
     parseQueryParams(location.search)
   );
@@ -47,7 +47,7 @@ const JigCategory = () => {
   const [colors, setColors] = useState([]);
   const [filterOptionsLoading, setFilterOptionsLoading] = useState(true);
 
-  /* ---------- HELPERS ---------- */
+  /* ---------- HELPER ---------- */
   const buildParams = () => ({
     page,
     limit: LIMIT,
@@ -90,7 +90,7 @@ const JigCategory = () => {
     setHasMore(true);
   }, [filters]);
 
-  /* ---------- FETCH JIGS ---------- */
+  /* ---------- FETCH JIGS + TRIGGER FETCH ---------- */
 
   const fetchJigs = useCallback(async () => {
     setLoading(true);
@@ -120,7 +120,6 @@ const JigCategory = () => {
     }
   }, [filters, page]);
 
-  /* ---------- TRIGGER FETCH ---------- */
 
   useEffect(() => {
     fetchJigs();
@@ -145,7 +144,7 @@ const JigCategory = () => {
     }
   };
 
-  /* ---------- RENDER ---------- */
+  /* ---------- JSX ---------- */
 
   if (filterOptionsLoading)
     return <p className="loading-text">{t('category.loadingFilters')}</p>;

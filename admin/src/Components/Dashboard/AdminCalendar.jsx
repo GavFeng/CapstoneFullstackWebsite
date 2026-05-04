@@ -4,7 +4,7 @@ import 'react-calendar/dist/Calendar.css';
 
 const AdminCalendar = ({ orders, selectedDate, onDateChange }) => {
   
-  // Filter out cancelled orders globally for the calendar view
+  // Filter out cancelled orders for calendar
   const validOrders = orders.filter(o => o.status !== 'cancelled');
 
   const getOrdersForDate = (date) => {

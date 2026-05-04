@@ -6,8 +6,11 @@ import { useTranslation } from "react-i18next";
 import api from "../../Services/Api";
 import "./Checkout.css";
 
+
 const Checkout = () => {
   const { t, i18n } = useTranslation();
+
+  // Set locale for localized date/time formatting based on current app language
   const currentLocale = i18n.language === 'ko' ? 'ko-KR' : i18n.language === 'zh' ? 'zh-CN' : 'en-US';
   const { 
     cartItems, 
@@ -22,9 +25,9 @@ const Checkout = () => {
 
   const navigate = useNavigate();
 
-
-  
   const { token } = useAuth();
+
+  /* ---------- STATE ---------- */
 
   const [location, setLocation] = useState("");
   const [pickupDate, setPickupDate] = useState("");
@@ -36,11 +39,14 @@ const Checkout = () => {
   const [selectedLocationId, setSelectedLocationId] = useState("");
   const [selectedSlotId, setSelectedSlotId] = useState("");
 
+  /* ---------- EFFECTS ---------- */
+
   // Sync selected items with cart
   useEffect(() => {
     setSelectedItems(Object.values(cartItems));
   }, [cartItems]);
   
+  // Initial Fetch for all available pickup locations
   useEffect(() => {
     const fetchLocations = async () => {
       try {
@@ -53,21 +59,27 @@ const Checkout = () => {
     fetchLocations();
   }, []);
 
+  // Fetch time slots whenever a new location is selected
   useEffect(() => {
     if (selectedLocationId) {
       const fetchSlots = async () => {
         try {
           const { data } = await api.get(`/timeSlots?locationId=${selectedLocationId}`);
-          console.log("Fetched Slots for location:", selectedLocationId, data);
           setAvailableSlots(data);
+          setSelectedSlotId("");
         } catch (err) {
           console.error("Error fetching slots", err);
         }
       };
       fetchSlots();
+    } else {
+      setAvailableSlots([]); 
+      setSelectedSlotId("");
     }
   }, [selectedLocationId]);
 
+  /* ---------- HELPERS ---------- */
+  // Warns if an item is out of Stock
   const outOfStockWarnings = useMemo(() => {
     return Object.values(cartItems).filter((entry) => {
       const available = getAvailableStock?.(entry.jigId, entry.colorId) ?? 0;
@@ -75,6 +87,7 @@ const Checkout = () => {
     });
   }, [cartItems, jigs, getAvailableStock]);
 
+  // Logic for the selection in the item list
   const toggleItem = (entry) => {
     setSelectedItems((prev) => {
       const exists = prev.find(
@@ -87,6 +100,7 @@ const Checkout = () => {
     });
   };
 
+  // Calculates the Cost of Selected Items
   const selectedTotal = useMemo(() => {
     return selectedItems.reduce((sum, entry) => {
       const jig = jigs.find((j) => j._id === entry.jigId);
@@ -94,94 +108,111 @@ const Checkout = () => {
     }, 0);
   }, [selectedItems, jigs]);
 
+  // Get full object data for the chosen location
   const selectedLocationData = useMemo(() => {
     return locations.find(loc => loc._id === selectedLocationId);
   }, [selectedLocationId, locations]);
 
+  // Get full object data for the chosen time slot
   const selectedSlotData = useMemo(() => {
     return availableSlots.find(slot => slot._id === selectedSlotId);
   }, [selectedSlotId, availableSlots]);
+
+  // Checks if Items are still in Stock when Checkout Button is pressed
   const freshOutOfStock = selectedItems.filter((item) => {
     const available = getAvailableStock?.(item.jigId, item.colorId) ?? 0;
     return item.quantity > available;
   });
 
-const handleSubmit = async () => {
-  try {
-    setLoading(true);
-    setMessage("");
+  // Prevents submission if loading, no items selected, or stock issues exist
+  const isButtonDisabled = loading || selectedItems.length === 0 || freshOutOfStock.length > 0;
 
-    const uniqueJigIds = [...new Set(selectedItems.map((item) => item.jigId))];
-    
-    const freshJigsFromServer = await Promise.all(
-      uniqueJigIds.map((id) => refreshSingleJig(id))
-    );
 
-    const itemsWithIssues = selectedItems.filter((selectedItem) => {
-      const freshJig = freshJigsFromServer.find(fj => String(fj?._id) === String(selectedItem.jigId));
-    
-      if (!freshJig) return true;
+  /* ---------- HANDLERS ---------- */
 
-      const colorData = freshJig.colors.find(c => {
-        const colorIdFromServer = c.color?._id; 
-        return String(colorIdFromServer) === String(selectedItem.colorId);
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      setMessage("");
+
+      // Get unique IDs of jigs in the selection to avoid redundant API calls
+      const uniqueJigIds = [...new Set(selectedItems.map((item) => item.jigId))];
+      
+      // Fetch latest data for every relevant product in Order
+      const freshJigsFromServer = await Promise.all(
+        uniqueJigIds.map((id) => refreshSingleJig(id))
+      );
+
+      // Verification Logic
+      const itemsWithIssues = selectedItems.filter((selectedItem) => {
+        const freshJig = freshJigsFromServer.find(fj => String(fj?._id) === String(selectedItem.jigId));
+      
+        if (!freshJig) return true;
+
+        const colorData = freshJig.colors.find(c => {
+          const colorIdFromServer = c.color?._id; 
+          return String(colorIdFromServer) === String(selectedItem.colorId);
+        });
+
+        if (!colorData) {
+          return true; 
+        }
+        const available = Number(colorData.stock || 0);
+        const requested = Number(selectedItem.quantity);
+
+        return requested > available;
       });
 
-      if (!colorData) {
-        return true; 
+      if (itemsWithIssues.length > 0) {
+        setMessage(t('checkout.stockChangeError'));
+        setLoading(false);
+        return;
       }
-      const available = Number(colorData.stock || 0);
-      const requested = Number(selectedItem.quantity);
 
-      return requested > available;
-    });
+      // Map data for Backend API
+      const items = selectedItems.map((item) => ({
+        jig: item.jigId,
+        color: item.colorId,
+        quantity: item.quantity,
+      }));
 
-    if (itemsWithIssues.length > 0) {
-      setMessage(t('checkout.stockChangeError'));
+      const orderData = {
+        items,
+        totalAmount: selectedTotal,
+        deliveryMethod: "pickup",
+        pickupDetails: { 
+          location: selectedLocationId, 
+          timeSlot: selectedSlotId 
+        },
+      };
+
+      const res = await api.post("/order", orderData);
+
+      // Clear whole cart or just remove what was bought
+      if (selectedItems.length === Object.values(cartItems).length) {
+        clearCart();
+      } else {
+        removePurchasedItems(items);
+      }
+
+      setMessage(t('checkout.successMessage'));
+      setTimeout(() => {
+        navigate("/profile/my-orders");
+      }, 2000);
+    } catch (err) {
+      const errorData = err.response?.data;
+      if (errorData?.code === "OUT_OF_STOCK") {
+        setMessage(t('checkout.outOfStockError'));
+        await refreshJigs(); 
+      } else {
+        setMessage(errorData?.message || t('checkout.generalError'));
+      }
+    } finally {
       setLoading(false);
-      return;
     }
+  };
 
-    const items = selectedItems.map((item) => ({
-      jig: item.jigId,
-      color: item.colorId,
-      quantity: item.quantity,
-    }));
-
-    const orderData = {
-      items,
-      totalAmount: selectedTotal,
-      deliveryMethod: "pickup",
-      pickupDetails: { 
-        location: selectedLocationId, 
-        timeSlot: selectedSlotId 
-      },
-    };
-
-    const res = await api.post("/order", orderData);
-
-    if (selectedItems.length === Object.values(cartItems).length) {
-      clearCart();
-    } else {
-      removePurchasedItems(items);
-    }
-
-    setMessage(t('checkout.successMessage'));
-    setTimeout(() => {
-      navigate("/profile/my-orders");
-    }, 2000);
-  } catch (err) {
-    const errorData = err.response?.data;
-    if (errorData?.code === "OUT_OF_STOCK") {
-      setMessage(t('checkout.outOfStockError'));
-      await refreshJigs(); 
-    } else {
-      setMessage(errorData?.message || t('checkout.generalError'));
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+  /* ----------  JSX ----------  */
 
   return (
     <div className="checkout-page-wrapper">
@@ -316,7 +347,7 @@ const handleSubmit = async () => {
         <button
           className="place-order-btn"
           onClick={handleSubmit}
-          disabled={loading || outOfStockWarnings.length > 0}
+          disabled={isButtonDisabled}
         >
           {loading ? t('checkout.placingOrder') : t('checkout.placeOrder')}
         </button>

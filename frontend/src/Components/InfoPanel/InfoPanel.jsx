@@ -1,6 +1,7 @@
 import "./InfoPanel.css";
 import { useTranslation } from "react-i18next";
 
+{/* Info Compontent for Home Page */}
 const InfoPanel = () => {
   const { t } = useTranslation();
 

@@ -7,6 +7,8 @@ import './LoginSignup.css';
 
 const Signup = () => {
   const { t } = useTranslation();
+
+  /* ---------- STATE ---------- */
   const [form, setForm] = useState({
     name: '',
     username: '',
@@ -19,6 +21,8 @@ const Signup = () => {
 
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  /* ---------- HANDLERS ---------- */
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -48,6 +52,7 @@ const Signup = () => {
     }
   };
 
+  /* ----------  JSX ----------  */
   return (
     <div className="auth-container">
       <div className="auth-card">

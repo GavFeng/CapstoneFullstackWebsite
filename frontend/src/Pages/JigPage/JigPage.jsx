@@ -8,12 +8,17 @@ import DescriptionBox from '../../Components/DescriptionBox/DescriptionBox';
 import RelatedProducts from '../../Components/CarouselJigs/RelatedProducts';
 
 const JigPage = () => {
+  /* ---------- CONTEXT ---------- */
   const { refreshSingleJig } = useContext(JigContext);
+
   const { id } = useParams();
+
+  /* ---------- STATE ---------- */
   const [jig, setJig] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  /* ---------- EFFECTS ---------- */
   useEffect(() => {
     if (!id) return;
 
@@ -40,6 +45,8 @@ const JigPage = () => {
   useEffect(() => {
     refreshSingleJig(id);
   }, []);
+
+  /* ----------  JSX ----------  */
 
   if (loading) return <div className="loading">Loading product details...</div>;
   if (error)   return <div className="error">{error} <Link to="/jigs">Back to shop</Link></div>;

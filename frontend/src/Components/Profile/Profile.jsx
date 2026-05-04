@@ -6,12 +6,13 @@ import './Profile.css';
 const Profile = () => {
   const { t } = useTranslation();
   const { user, updateProfile } = useAuth();
+
+  /* ---------- STATE ---------- */
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ name: "", phone: "", email: "" });
-  
-  // State for the popup message
   const [popup, setPopup] = useState({ show: false, text: "", type: "" });
 
+  /* ---------- EFFECTS ---------- */
   useEffect(() => {
     if (user) {
       setFormData({
@@ -21,6 +22,8 @@ const Profile = () => {
       });
     }
   }, [user]);
+
+  /* ---------- HELPERS ---------- */
 
   // Helper to trigger popup
   const showAlert = (text, type = "success") => {
@@ -45,6 +48,8 @@ const Profile = () => {
     return true;
   };
 
+  /* ---------- HANDLERS ---------- */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -56,6 +61,8 @@ const Profile = () => {
       showAlert(err.message || t('profile.updateError'), "error");
     }
   };
+
+  /* ----------  JSX ----------  */
 
   return (
     <div className="profile-wrapper">

@@ -7,11 +7,17 @@ import './MyOrders.css';
 const MyOrders = () => {
   const { t, i18n } = useTranslation();
   const currentLocale = i18n.language === 'ko' ? 'ko-KR' : i18n.language === 'zh' ? 'zh-CN' : 'en-US';
+
+
   const { user, loading: authLoading } = useAuth();
+
+  /* ---------- STATE ---------- */
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
+  /* ---------- EFFECTS ---------- */
   useEffect(() => {
     const fetchOrders = async () => {
       try {
