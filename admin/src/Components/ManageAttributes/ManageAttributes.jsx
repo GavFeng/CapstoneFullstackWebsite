@@ -64,7 +64,11 @@ const ManageAttributes = ({ title, endpoint, checkEndpoint, fields, itemName, on
   const fetchItems = async () => {
     try {
       const res = await api.get(endpoint);
-      setItems(res.data);
+      let data = res.data;
+      if (isWeight) {
+        data.sort((a, b) => (a.value || 0) - (b.value || 0));
+      }
+      setItems(data);
     } catch (err) { console.error(err); }
   };
 

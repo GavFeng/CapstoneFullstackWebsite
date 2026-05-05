@@ -3,15 +3,18 @@ const User = require("../models/User");
 const Color = require("../models/Color");
 const Cart = require("../models/Cart");
 
+// Get a Users Cart, Empty if No Cart
 exports.getCart = async (req, res) => {
   try {
+    // Attempt to find cart and populate jig/color details for both active and saved items
     let cart = await Cart.findOne({ user: req.user._id }).populate([
       { path: "items.jig", select: "name price" },
       { path: "items.color", select: "name" },
       { path: "savedItems.jig", select: "name price" },
       { path: "savedItems.color", select: "name" },
     ]);
-
+    
+    // Initialize a new cart if the user doesn't have one yet
     if (!cart) {
       cart = await Cart.create({
         user: req.user._id,
@@ -26,6 +29,8 @@ exports.getCart = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Modify or Add New Cart Items
 exports.addOrUpdateCartItem = async (req, res) => {
   const { jig, color, quantity } = req.body;
 
@@ -39,17 +44,20 @@ exports.addOrUpdateCartItem = async (req, res) => {
       cart = new Cart({ user: req.user._id, items: [] });
     }
 
+    // Check if the specific varient combination already exists in the cart
     const existingIndex = cart.items.findIndex(
       (i) => i.jig.toString() === jig && i.color.toString() === color
     );
 
     if (existingIndex !== -1) {
+      // Update or remove based on quantity
       if (quantity <= 0) {
         cart.items.splice(existingIndex, 1);
       } else {
         cart.items[existingIndex].quantity = quantity;
       }
     } else if (quantity > 0) {
+      // Add new item if it doesn't exist and quantity is positive
       cart.items.push({ jig, color, quantity });
     }
 
@@ -68,6 +76,7 @@ exports.addOrUpdateCartItem = async (req, res) => {
   }
 };
 
+// Clear Cart of All Items
 exports.clearCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user._id });
@@ -86,6 +95,7 @@ exports.clearCart = async (req, res) => {
   }
 };
 
+// Remove Item from Cart
 exports.removeCartItem = async (req, res) => {
   const { jig, color } = req.body;
 
@@ -93,6 +103,7 @@ exports.removeCartItem = async (req, res) => {
     const cart = await Cart.findOne({ user: req.user._id });
     if (!cart) return res.json({ items: [] });
 
+    // Filter for the item that matches both jig and color
     cart.items = cart.items.filter(
       (i) => !(i.jig.toString() === jig && i.color.toString() === color)
     );
@@ -111,6 +122,7 @@ exports.removeCartItem = async (req, res) => {
   }
 };
 
+// Clear Cart after Checkout
 exports.removePurchasedItems = async (req, res) => {
   const { items } = req.body; // [{ jig, color }]
 
@@ -118,6 +130,7 @@ exports.removePurchasedItems = async (req, res) => {
     const cart = await Cart.findOne({ user: req.user._id });
     if (!cart) return res.json({ items: [] });
 
+    // Keep items that were NOT in the 'purchased' list
     cart.items = cart.items.filter((cartItem) => {
       return !items.some(
         (i) =>
@@ -140,6 +153,7 @@ exports.removePurchasedItems = async (req, res) => {
   }
 };
 
+// Update Cart (Not Added)
 exports.updateCart = async (req, res) => {
   const { items } = req.body;
 
@@ -164,7 +178,7 @@ exports.updateCart = async (req, res) => {
   }
 };
 
-
+// Merge Cart after login (Not Added)
 exports.mergeCart = async (req, res) => {
   const { localItems } = req.body;
 
@@ -197,6 +211,7 @@ exports.mergeCart = async (req, res) => {
   }
 };
 
+// Move Item from Cart to Save for Later
 exports.saveForLater = async (req, res) => {
   const { jig, color } = req.body;
 
@@ -242,6 +257,7 @@ exports.saveForLater = async (req, res) => {
   }
 };
 
+// Move Item from Save for Later to Cart
 exports.moveToCart = async (req, res) => {
   const { jig, color, quantity = 1 } = req.body;
 
@@ -249,6 +265,7 @@ exports.moveToCart = async (req, res) => {
     let cart = await Cart.findOne({ user: req.user._id });
     if (!cart) return res.status(404).json({ message: "Cart not found" });
 
+    // Find in Saved
     const savedIndex = cart.savedItems.findIndex(
       i => i.jig.toString() === jig && i.color.toString() === color
     );
@@ -288,6 +305,7 @@ exports.moveToCart = async (req, res) => {
   }
 };
 
+// Remove an item from Save for Later
 exports.removeSavedItem = async (req, res) => {
   const { jig, color } = req.body;
 
@@ -303,6 +321,7 @@ exports.removeSavedItem = async (req, res) => {
 
     const initialLength = cart.savedItems.length;
 
+    // Filter out the target item
     cart.savedItems = cart.savedItems.filter(
       (item) =>
         item.jig.toString() !== jig.toString() ||

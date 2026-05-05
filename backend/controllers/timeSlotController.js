@@ -1,5 +1,10 @@
 const TimeSlot = require("../models/TimeSlot");
 
+// Helper: Check if there are Overlaping Timeslots
+  // Check if Existing slot: 
+  // Starts after 'start' but before 'end'
+  // Ends after 'start' but before/at 'end'
+  // Slot is between an existing slot
 const checkOverlap = async (location, start, end) => {
   return await TimeSlot.findOne({
     location,
@@ -12,10 +17,12 @@ const checkOverlap = async (location, start, end) => {
   });
 };
 
+// Create a Timeslot + Recurring time Slot
 exports.createTimeSlots = async (req, res) => {
   try {
     const { location, slots } = req.body;
 
+    // Check requested slots for conflicts
     for (const slot of slots) {
       const start = new Date(slot.startTime);
       const end = new Date(slot.endTime);
@@ -36,7 +43,7 @@ exports.createTimeSlots = async (req, res) => {
       capacity: slot.capacity || 5,
       currentBookings: 0
     }));
-
+    // Bulk insert
     const newSlots = await TimeSlot.insertMany(formattedSlots);
     res.status(201).json(newSlots);
   } catch (error) {
@@ -44,6 +51,7 @@ exports.createTimeSlots = async (req, res) => {
   }
 };
 
+// Get All TimeSlots that are not Full from a Location
 exports.getAvailableSlots = async (req, res) => {
   try {
     const { locationId } = req.query;
@@ -52,12 +60,14 @@ exports.getAvailableSlots = async (req, res) => {
       return res.status(400).json({ message: "locationId is required" });
     }
 
+    // Find all active slots in the future for this location
     const slots = await TimeSlot.find({
       location: locationId,
       isActive: true,
       startTime: { $gt: new Date() } 
     }).sort({ startTime: 1 });
 
+    // Filter full slots
     const availableSlots = slots.filter(slot => {
       const capacity = slot.capacity || 5; 
       return (slot.currentBookings || 0) < capacity;
@@ -69,6 +79,7 @@ exports.getAvailableSlots = async (req, res) => {
   }
 };
 
+// Get All TimeSlots
 exports.getAllUpcomingSlots = async (req, res) => {
   try {
     const slots = await TimeSlot.find({
@@ -85,6 +96,7 @@ exports.getAllUpcomingSlots = async (req, res) => {
   }
 };
 
+// Delete a Time Slot
 exports.deleteTimeSlot = async (req, res) => {
   try {
     await TimeSlot.findByIdAndDelete(req.params.id);

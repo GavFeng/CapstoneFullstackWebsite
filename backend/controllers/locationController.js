@@ -1,8 +1,10 @@
 const Location = require("../models/Location");
 const TimeSlot = require("../models/TimeSlot");
+
 // Get a Location
 exports.getLocations = async (req, res) => {
   try {
+    // Find Location
     const locations = await Location.find({ isActive: true }).sort({ name: 1 });
     res.json(locations);
   } catch (error) {
@@ -38,7 +40,7 @@ exports.updateLocation = async (req, res) => {
 exports.checkLocationName = async (req, res) => {
   try {
     const { name } = req.query;
-    // case-insensitive check
+    // Attempt to find Location by Name
     const existing = await Location.findOne({ 
       name: { $regex: new RegExp(`^${name}$`, 'i') } 
     });

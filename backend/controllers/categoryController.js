@@ -36,6 +36,7 @@ exports.getCategoryByName = async (req, res) => {
   try {
     const { name } = req.params;
 
+    // Find Category
     const category = await Category.findOne({
       name: new RegExp(`^${name.trim()}$`, "i"),
     });
@@ -74,6 +75,7 @@ exports.checkCategoryName = async (req, res) => {
     const { name } = req.query;
     if (!name) return res.status(400).json({ exists: false });
 
+    // Attempt to find Category by Name
     const exists = await Category.findOne({ name: new RegExp(`^${name.trim()}$`, 'i') });
     res.json({ exists: !!exists });
   } catch (err) {

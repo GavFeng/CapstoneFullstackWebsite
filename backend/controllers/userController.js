@@ -149,6 +149,7 @@ exports.getAllAccounts = async (req, res) => {
   }
 };
 
+// Update a Users Proile
 exports.updateProfile = async (req, res) => {
   try {
     const { name, phone, username } = req.body;

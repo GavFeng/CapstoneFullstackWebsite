@@ -24,6 +24,7 @@ exports.getColors = async (req, res) => {
 exports.getColorById = async (req, res) => {
   try {
     const { id } = req.params;
+    // Find Color
     const color = await Color.findById(id);
     if (!color) return res.status(404).json({message: "Color Not Found"});
     res.status(200).json(color);
@@ -56,6 +57,7 @@ exports.checkColorName = async (req, res) => {
     const { name } = req.query;
     if (!name) return res.status(400).json({ exists: false });
 
+    // Attempt to find Color by Name
     const exists = await Color.findOne({ name: new RegExp(`^${name.trim()}$`, 'i') });
     res.json({ exists: !!exists });
   } catch (err) {

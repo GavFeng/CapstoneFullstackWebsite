@@ -24,29 +24,12 @@ exports.getWeights = async (req, res) => {
 exports.getWeightById = async (req, res) => {
   try {
     const { id } = req.params;
+    // Find Weight
     const weight = await Weight.findById(id);
     if (!weight) return res.status(404).json({message: "Weight Not Found"});
     res.status(200).json(weight);
   } catch (err) {
     res.status(500).json({message: err.message});
-  }
-};
-// Viewing a Weight by Label in DB
-exports.getWeightByLabel = async (req, res) => {
-  try {
-    const { label } = req.params;
-
-    const weight = await Weight.findOne({
-      label: new RegExp(`^${label.trim()}$`, "i"),
-    });
-
-    if (!weight) {
-      return res.status(404).json({ message: "Weight Not Found" });
-    }
-
-    res.status(200).json(weight);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
   }
 };
 
@@ -74,6 +57,7 @@ exports.checkWeightLabel = async (req, res) => {
     const { label, value } = req.query;
     if (!label && !value) return res.status(400).json({ exists: false });
 
+    // Attempt to find Weight by Label
     const exists = await Weight.findOne({
       $or: [
         { label: new RegExp(`^${label.trim()}$`, 'i') },

@@ -467,6 +467,7 @@ exports.getRelatedJigs = async (req, res) => {
   }
 };
 
+// Update the Amount in Stock
 exports.updateInventory = async (req, res) => {
   try {
     const { id, colorId } = req.params;
@@ -509,6 +510,7 @@ exports.updateInventory = async (req, res) => {
   }
 };
 
+// Update the Amount Sold
 exports.updateSold = async (req, res) => {
   try {
     const { id } = req.params;

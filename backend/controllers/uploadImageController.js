@@ -1,5 +1,6 @@
 const { uploadImageToS3 } = require("../config/s3");
 
+// Uploads an Image to S3
 exports.uploadImage = async (req, res) => {
   try {
     if (!req.file) {
