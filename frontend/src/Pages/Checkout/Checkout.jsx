@@ -129,7 +129,6 @@ const Checkout = () => {
 
 
   /* ---------- HANDLERS ---------- */
-
   const handleSubmit = async () => {
     try {
       setLoading(true);

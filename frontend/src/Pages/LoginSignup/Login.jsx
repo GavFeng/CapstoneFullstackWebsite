@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useAuth } from '../../Context/AuthContext';
+import { JigContext } from "../../Context/JigContext";
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import './LoginSignup.css'
@@ -7,16 +8,19 @@ import './LoginSignup.css'
 const Login = () => {
   const { t } = useTranslation();
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const { loadCart } = useContext(JigContext);
+
+  const from = location.state?.from || "/";
+
   /* ---------- STATE ---------- */
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
   const [logoutMessage, setLogoutMessage] = useState(location.state?.message || '');
-
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { login } = useAuth();
 
   /* ---------- EFFECTS ---------- */
 
@@ -39,7 +43,8 @@ const Login = () => {
 
     try {
       await login(email, password);
-      navigate("/");
+      await loadCart(true);
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err || 'Something went wrong. Please try again.');
     } finally {

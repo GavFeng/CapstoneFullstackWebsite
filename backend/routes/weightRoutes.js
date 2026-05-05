@@ -12,7 +12,10 @@ const {
 
 const router = express.Router();
 
-router.post("/", createWeight);
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
+
+router.post("/", authMiddleware, adminMiddleware, createWeight);
 
 router.get("/", getWeights);
 
@@ -20,9 +23,9 @@ router.get("/check-label", checkWeightLabel);
 
 router.get("/:id", getWeightById);
 
-router.delete("/:id", deleteWeight);
+router.delete("/:id", authMiddleware, adminMiddleware, deleteWeight);
 
-router.put("/:id", updateWeight);
+router.put("/:id", authMiddleware, adminMiddleware, updateWeight);
 
 
 module.exports = router;

@@ -43,6 +43,22 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.post("/users/login", { email, password });
       localStorage.setItem("token", data.token);
       setUser(data.user);
+
+      const localCart = JSON.parse(localStorage.getItem("localCart") || "[]");
+      if (localCart.length > 0) {
+        const mergedItems = localCart.map(item => ({
+          jig: item.jigId,
+          color: item.colorId,
+          quantity: item.quantity
+        }));
+
+        try {
+          await api.post("/cart/merge", { localItems: mergedItems });
+          localStorage.removeItem("localCart"); 
+        } catch (mergeErr) {
+          console.error("Cart merge failed", mergeErr);
+        }
+      }
       navigate("/");
     } catch (err) {
       console.error(err);
@@ -61,6 +77,18 @@ export const AuthProvider = ({ children }) => {
       });
       localStorage.setItem("token", data.token);
       setUser(data.user);
+
+      const localCart = JSON.parse(localStorage.getItem("localCart") || "[]");
+      if (localCart.length > 0) {
+        const mergedItems = localCart.map(item => ({
+          jig: item.jigId,
+          color: item.colorId,
+          quantity: item.quantity
+        }));
+        
+        await api.post("/cart/merge", { localItems: mergedItems });
+        localStorage.removeItem("localCart");
+      }
       navigate("/");
     } catch (err) {
       throw err?.response?.data?.message || "Registration failed";

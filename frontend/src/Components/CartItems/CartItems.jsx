@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { JigContext } from "../../Context/JigContext";
+import { useAuth } from "../../Context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./CartItems.css";
@@ -20,6 +21,7 @@ const CartItems = () => {
     getAvailableStock,
   } = useContext(JigContext);
 
+  const { user } = useAuth();
   const navigate = useNavigate();
   const cartArray = Object.values(cartItems);
 
@@ -124,6 +126,10 @@ const CartItems = () => {
   };
 
   const handleCheckout = async () => {
+    if (!user) {
+      navigate("/login", { state: { from: "/checkout" } });
+      return;
+    }
     await refreshJigs();
     const invalid = cartArray.some((entry) => {
       const available = getAvailableStock(entry.jigId, entry.colorId);

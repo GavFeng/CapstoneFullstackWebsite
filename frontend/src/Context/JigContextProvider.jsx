@@ -5,7 +5,6 @@ import { useAuth } from './AuthContext';
 import { JigContext } from './JigContext';
 
 
-
 export const JigContextProvider = ({ children }) => {
   const { user, loading: authLoading } = useAuth();
 
@@ -52,36 +51,45 @@ export const JigContextProvider = ({ children }) => {
   };
 
   /* ---------------- LOAD CART & SAVED ITEMS ---------------- */
+
+  const loadCart = async (force = false) => {
+    if (!force && (!isAuthenticated || authLoading)) return;
+    try {
+      const res = await api.get(`cart`);
+      const newCart = {};
+      res.data.items?.forEach((item) => {
+        const jigId = item.jig?._id || item.jig;
+        const colorId = item.color?._id || item.color;
+        newCart[`${jigId}-${colorId}`] = { 
+          jigId, 
+          colorId, 
+          quantity: item.quantity 
+        };
+      });
+      setCartItems(newCart);
+      setSavedItems(res.data.savedItems || []);
+    } catch (err) {
+      console.error('Failed to load cart:', err);
+    }
+  };
+
   useEffect(() => {
-    if (!isAuthenticated || authLoading) return;
-
-    const loadCart = async () => {
-      try {
-        const res = await api.get(`cart`);
-
-        const newCart = {};
-        res.data.items?.forEach((item) => {
-          const jigId = item.jig?._id || item.jig;
-          const colorId = item.color?._id || item.color;
-          newCart[`${jigId}-${colorId}`] = { 
-            jigId, 
-            colorId, 
-            quantity: item.quantity 
-          };
-        });
-
-        setCartItems(newCart);
-        setSavedItems(res.data.savedItems || []);
-      } catch (err) {
-        console.error('Failed to load cart:', err);
-      }
-    };
     loadCart();
   }, [isAuthenticated, authLoading, token]);
 
   useEffect(() => {
     if (!isAuthenticated && !authLoading) {
-      setCartItems({});
+      const saved = localStorage.getItem("localCart");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const newCart = {};
+        parsed.forEach(item => {
+          newCart[`${item.jigId}-${item.colorId}`] = item;
+        });
+        setCartItems(newCart);
+      } else {
+        setCartItems({});
+      }
       setSavedItems([]);
     }
   }, [isAuthenticated, authLoading]);
@@ -229,9 +237,12 @@ export const JigContextProvider = ({ children }) => {
     setCartItems(prev => {
       const current = prev[key]?.quantity || 0;
       const newQty = Math.min(current + qty, available);
-      
       const updated = { ...prev, [key]: { jigId, colorId, quantity: newQty } };
+      if (isAuthenticated) {
       syncItem(jigId, colorId, newQty);
+      } else {
+        localStorage.setItem("localCart", JSON.stringify(Object.values(updated)));
+      }
       return updated;
     });
   };
@@ -252,8 +263,11 @@ export const JigContextProvider = ({ children }) => {
           [key]: { jigId, colorId, quantity: safeQty },
         };
       }
-
-      debouncedSync(jigId, colorId, safeQty);
+      if (isAuthenticated) {
+        debouncedSync(jigId, colorId, safeQty);
+      } else {
+        localStorage.setItem("localCart", JSON.stringify(Object.values(updated)));
+      }
       return updated;
     });
   };
@@ -282,6 +296,7 @@ export const JigContextProvider = ({ children }) => {
       }
     }
   };
+
 
   const removePurchasedItems = async (items) => {
     setCartItems(prev => {
@@ -333,6 +348,7 @@ export const JigContextProvider = ({ children }) => {
         refreshJigs,
         refreshSingleJig,
         getAvailableStock,
+        loadCart,
       }}
     >
       {children}

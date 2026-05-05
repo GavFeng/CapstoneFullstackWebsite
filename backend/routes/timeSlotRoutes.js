@@ -6,14 +6,14 @@ const {
   deleteTimeSlot
 } = require("../controllers/timeSlotController");
 
-const protect = require("../middleware/authMiddleware");
-const admin = require("../middleware/adminMiddleware");
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
 const router = express.Router();
 
-router.post("/", protect, admin, createTimeSlots);
+router.post("/", authMiddleware, adminMiddleware, createTimeSlots);
 router.get("/", getAvailableSlots);
-router.get("/all-upcoming", protect, admin, getAllUpcomingSlots);
-router.delete("/:id", protect, admin, deleteTimeSlot);
+router.get("/all-upcoming", authMiddleware, adminMiddleware, getAllUpcomingSlots);
+router.delete("/:id", authMiddleware, adminMiddleware, deleteTimeSlot);
 
 module.exports = router;

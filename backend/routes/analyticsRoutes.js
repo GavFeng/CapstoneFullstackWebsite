@@ -1,10 +1,10 @@
 const express = require("express");
-const router = express.Router();
 const { getGlobalAnalytics } = require("../controllers/analyticsController");
 
-const protect = require("../middleware/authMiddleware");
-const admin = require("../middleware/adminMiddleware");
+const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
-router.get("/global-stats", protect, admin, getGlobalAnalytics);
+router.get("/global-stats", authMiddleware, adminMiddleware, getGlobalAnalytics);
 
 module.exports = router;

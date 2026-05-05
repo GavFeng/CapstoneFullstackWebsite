@@ -12,7 +12,11 @@ const {
 
 const router = express.Router();
 
-router.post("/", createCategory);
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
+
+
+router.post("/", authMiddleware, adminMiddleware,  createCategory);
 
 router.get("/", getCategories);
 
@@ -22,9 +26,9 @@ router.get("/check-name", checkCategoryName);
 
 router.get("/:id", getCategoryById);
 
-router.delete("/:id", deleteCategory);
+router.delete("/:id", authMiddleware, adminMiddleware, deleteCategory);
 
-router.put("/:id", updateCategory);
+router.put("/:id", authMiddleware, adminMiddleware, updateCategory);
 
 module.exports = router;
 

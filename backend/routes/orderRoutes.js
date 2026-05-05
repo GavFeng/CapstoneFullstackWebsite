@@ -11,21 +11,21 @@ const {
 } = require("../controllers/orderController");
 
 const router = express.Router();
-const protect = require("../middleware/authMiddleware");
-const admin = require("../middleware/adminMiddleware");
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
-router.post("/", protect, createOrder);
+router.post("/", authMiddleware, createOrder);
 
-router.get("/all-orders", protect, admin, getAllOrders);
+router.get("/all-orders", authMiddleware, adminMiddleware, getAllOrders);
 
-router.get("/my-orders", protect, getUserOrders);
+router.get("/my-orders", authMiddleware, getUserOrders);
 
-router.get("/:id", protect, getOrderById);
+router.get("/:id", authMiddleware, getOrderById);
 
-router.put("/:id/status", protect, admin, updateOrderStatus);
+router.put("/:id/status", authMiddleware, adminMiddleware, updateOrderStatus);
 
-router.put("/:id/payment", protect, updatePaymentStatus);
+router.put("/:id/payment", authMiddleware, updatePaymentStatus);
 
-router.delete("/:id", protect, admin, deleteOrder);
+router.delete("/:id", authMiddleware, adminMiddleware, deleteOrder);
 
 module.exports = router;

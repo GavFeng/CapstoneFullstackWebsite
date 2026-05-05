@@ -17,7 +17,10 @@ const {
 
 const router = express.Router();
 
-router.post("/", createJig);
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
+
+router.post("/", authMiddleware, adminMiddleware, createJig);
 
 router.get("/", getJigs);
 
@@ -29,17 +32,17 @@ router.get("/newest", getNewestJigs);
 
 router.get("/:idOrSlug", getJigById);
 
-router.delete("/:id", deleteJig);
+router.delete("/:id", authMiddleware, adminMiddleware, deleteJig);
 
-router.patch("/:id", patchJig);
+router.patch("/:id", authMiddleware, adminMiddleware, patchJig);
 
 router.get('/related/:id', getRelatedJigs);
 
-router.delete("/:id/colors/:colorId", deleteColor);
+router.delete("/:id/colors/:colorId", authMiddleware, adminMiddleware, deleteColor);
 
-router.patch("/:id/colors/:colorId/stock", updateInventory);
+router.patch("/:id/colors/:colorId/stock", authMiddleware, adminMiddleware, updateInventory);
 
-router.patch("/:id/colors/sold", updateSold);
+router.patch("/:id/colors/sold", authMiddleware, adminMiddleware, updateSold);
 
 module.exports = router;
 

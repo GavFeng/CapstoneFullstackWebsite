@@ -184,29 +184,77 @@ exports.mergeCart = async (req, res) => {
 
   try {
     let cart = await Cart.findOne({ user: req.user._id });
-    if (!cart) cart = new Cart({ user: req.user._id });
+    if (!cart) cart = new Cart({ user: req.user._id, items: [] });
 
     const itemMap = new Map();
 
+    // Load existing items from DB into the Map
     cart.items.forEach(item => {
-      const key = `${item.jig}-${item.color}`;
-      itemMap.set(key, { ...item.toObject(), _id: item._id });
+      const key = `${item.jig.toString()}-${item.color.toString()}`;
+      itemMap.set(key, item.toObject());
     });
 
-    localItems.forEach(li => {
+    // Process Local Items and Validate against DB Stock
+    for (const li of localItems) {
       const key = `${li.jig}-${li.color}`;
-      if (itemMap.has(key)) {
-        itemMap.get(key).quantity += li.quantity;
-      } else {
-        itemMap.set(key, li);
-      }
-    });
+      
+      // Fetch fresh stock data for this specific Jig
+      const jigDoc = await Jig.findById(li.jig).lean();
+      if (!jigDoc) continue;
 
-    cart.items = Array.from(itemMap.values());
+      // Find the specific color variant to get its current stock
+      const variant = jigDoc.colors.find(
+        (c) => c.color.toString() === li.color.toString()
+      );
+      const currentStock = variant ? variant.stock : 0;
+
+      if (itemMap.has(key)) {
+        // Add guest quantity to account quantity
+        const existingItem = itemMap.get(key);
+        const newTotal = existingItem.quantity + li.quantity;
+        
+        // Cap the quantity at the maximum available stock
+        existingItem.quantity = Math.min(newTotal, currentStock);
+      } else {
+        // Add guest item, but cap at available stock
+        const cleanItem = {
+          jig: li.jig,
+          color: li.color,
+          quantity: Math.min(li.quantity, currentStock)
+        };
+        
+        if (cleanItem.quantity > 0) {
+          itemMap.set(key, cleanItem);
+        }
+      }
+    }
+
+    // Re-validate existing items that WEREN'T in the local cart
+    // Handles cases where items already in the DB cart might have gone out of stock
+    const finalItems = [];
+    for (const item of itemMap.values()) {
+        const jigDoc = await Jig.findById(item.jig).lean();
+        const variant = jigDoc?.colors.find(c => c.color.toString() === item.color.toString());
+        const stock = variant ? variant.stock : 0;
+        
+        if (stock > 0) {
+            item.quantity = Math.min(item.quantity, stock);
+            finalItems.push(item);
+        }
+    }
+
+    cart.items = finalItems;
+    cart.updatedAt = Date.now();
     await cart.save();
+
+    await cart.populate([
+      { path: "items.jig", select: "name price" },
+      { path: "items.color", select: "name" }
+    ]);
 
     res.json(cart);
   } catch (err) {
+    console.error("Merge error:", err);
     res.status(500).json({ message: "Merge failed" });
   }
 };
