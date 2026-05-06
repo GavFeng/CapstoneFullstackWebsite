@@ -3,6 +3,7 @@ import api from "../../../Services/api";
 import "./SoldEditorModal.css";
 
 const SoldEditorModal = ({ jigId, jigName, colors, onClose, onSuccess }) => {
+  /* ---------- STATE ---------- */
   const [loading, setLoading] = useState(false);
 
   // Create local state from colors
@@ -15,6 +16,7 @@ const SoldEditorModal = ({ jigId, jigName, colors, onClose, onSuccess }) => {
     return initial;
   });
 
+  /* ---------- HANDLERS ---------- */
   const handleChange = (colorId, value) => {
     if (value === "") {
       setLocalState(prev => ({ ...prev, [colorId]: "" }));
@@ -60,6 +62,7 @@ const SoldEditorModal = ({ jigId, jigName, colors, onClose, onSuccess }) => {
     }
   };
 
+  /* ----------  JSX ----------  */
   return (
     <div className="sold-modal-overlay">
       <div className="sold-modal">

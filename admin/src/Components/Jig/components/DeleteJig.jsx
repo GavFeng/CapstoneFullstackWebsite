@@ -3,11 +3,13 @@ import api from '../../../Services/api';
 import "./DeleteJig.css";
 
 const DeleteJig = ({ jigId, jigName, onDeleteSuccess }) => {
+  /* ---------- STATE ---------- */
   const [open, setOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  /* ---------- HANDLERS ---------- */
   const handleDelete = async () => {
     if (confirmText.toLowerCase() !== "delete") {
       setError("Type 'delete' to confirm.");
@@ -28,7 +30,8 @@ const DeleteJig = ({ jigId, jigName, onDeleteSuccess }) => {
       setLoading(false);
     }
   };
-
+  
+  /* ----------  JSX ----------  */
   return (
     <>
       <button className="delete-btn" onClick={() => setOpen(true)}>

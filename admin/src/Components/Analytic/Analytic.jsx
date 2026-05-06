@@ -31,8 +31,13 @@ ChartJS.register(
 );
 
 const Analytic = () => {
+
+  /* ---------- STATE ---------- */
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+
+  /* ---------- FETCH + EFFECT ---------- */
 
   const fetchStats = async () => {
     try {
@@ -60,7 +65,7 @@ const Analytic = () => {
     monthlySales = [] 
   } = data || {};
 
-  // --- CHART CONFIGURATIONS ---
+  /* ---------- CHART CONFIGURATIONS ---------- */
 
   const salesTrendData = {
     labels: (monthlySales || []).map(s => s._id),
@@ -96,6 +101,7 @@ const Analytic = () => {
     }]
   };
 
+  /* ----------  JSX ----------  */
   return (
     <div className="analytics-container">
       <header className="analytics-header">

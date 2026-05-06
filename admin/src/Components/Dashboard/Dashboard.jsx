@@ -4,6 +4,8 @@ import AdminCalendar from './AdminCalendar';
 import './Dashboard.css';
 
 const Dashboard = () => {
+
+  /* ---------- STATE ---------- */
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('active');
@@ -11,6 +13,7 @@ const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
 
+  /* ---------- FETCH + EFFECT ---------- */
   const fetchAllOrders = async () => {
     try {
       const { data } = await api.get("/order/all-orders");
@@ -29,10 +32,14 @@ const Dashboard = () => {
 
   useEffect(() => { fetchAllOrders(); }, []);
 
+  /* ---------- FILTERS ---------- */
+
   const activeOrders = orders.filter(o => o.status === 'pending');
   const readyOrders = orders.filter(o => o.status === 'ready');
   const completedOrders = orders.filter(o => ['completed', 'delivered', 'shipped'].includes(o.status));
   const cancelledOrders = orders.filter(o => o.status === 'cancelled');
+  
+  /* ---------- HELPERS ---------- */
 
   const getFilteredOrders = () => {
     if (showCalendar) {
@@ -70,6 +77,8 @@ const Dashboard = () => {
     }
   };
 
+  /* ---------- HANDLERS ---------- */
+
   const handleStatusUpdate = async () => {
     if (!confirmAction) return;
     try {
@@ -79,6 +88,8 @@ const Dashboard = () => {
     } catch (err) { console.error(err); }
   };
 
+
+  /* ----------  JSX ----------  */
   if (loading) return <div className="admin-status">Loading Admin Dashboard...</div>;
 
   return (

@@ -1,6 +1,7 @@
 import React from "react";
 import './ImagePopup.css';
 
+//Image Popup to expand small images
 const ImagePopup = ({ src, onClose }) => {
   if (!src) return null;
 

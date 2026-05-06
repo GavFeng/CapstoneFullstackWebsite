@@ -3,6 +3,7 @@ import api from '../../Services/api';
 import './ManageAccounts.css';
 
 const ManageAccounts = () => {
+  /* ---------- STATE ---------- */
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -16,6 +17,8 @@ const ManageAccounts = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
 
+
+  /* ---------- FETCH + EFFECTS ---------- */
   const fetchAccounts = async () => {
     try {
       setLoading(true);
@@ -32,6 +35,7 @@ const ManageAccounts = () => {
     fetchAccounts();
   }, []);
 
+  /* ---------- HANDLERS ---------- */
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -56,6 +60,7 @@ const ManageAccounts = () => {
     }
   };
 
+  /* ----------  JSX ----------  */
   return (
     <div className="admin-page-container">
       {/* CREATE ADMIN SECTION */}

@@ -2,17 +2,22 @@ import React from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
+
+// Calendar Component for Admin Dashboard
 const AdminCalendar = ({ orders, selectedDate, onDateChange }) => {
   
   // Filter out cancelled orders for calendar
   const validOrders = orders.filter(o => o.status !== 'cancelled');
 
+  // Matchs Orders to calendar dates
   const getOrdersForDate = (date) => {
     return validOrders.filter(order => {
       const orderDate = new Date(order.pickupDetails?.timeSlot?.startTime || order.createdAt);
       return orderDate.toDateString() === date.toDateString();
     });
   };
+
+  // Renderer for individual calendar tiles
   const tileContent = ({ date, view }) => {
     if (view !== 'month') return null;
     const dayOrders = getOrdersForDate(date);

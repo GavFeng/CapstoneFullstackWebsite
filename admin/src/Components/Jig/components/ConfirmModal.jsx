@@ -1,6 +1,7 @@
 import React from "react";
 import './ConfirmModal.css';
 
+// Modal for Confirmation when Adding Jig
 const ConfirmModal = ({ formData, colors, colorOrder, categories, weights, handleConfirmAdd, onClose }) => {
   return (
     <div className="modal-backdrop">

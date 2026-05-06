@@ -1,6 +1,7 @@
 import React from 'react';
 import './ViewJigsFilters.css';
 
+// Filters for View Jigs
 const ViewJigsFilters = ({ categories, weights, colors, filters, onFilterChange, onReset, }) => {
   return (
     <div className="jigs-filters">

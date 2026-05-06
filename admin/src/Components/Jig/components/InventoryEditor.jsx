@@ -3,13 +3,15 @@ import api from "../../../Services/api";
 import '../ViewJigs/ViewJigs.css';
 
 const InventoryEditor = ({ jigId, colorId, stock, sold = 0, onUpdate }) => {
+
+  /* ---------- STATE ---------- */
   const [currentStock, setCurrentStock] = useState(stock);
   const [displayValue, setDisplayValue] = useState(stock);
   const [loading, setLoading] = useState(false);
 
-
   const lastValidStock = currentStock;
   
+  /* ---------- HELPERS ---------- */
   const updateStock = async (action, value = 1) => {
     setLoading(true);
     try {
@@ -32,17 +34,18 @@ const InventoryEditor = ({ jigId, colorId, stock, sold = 0, onUpdate }) => {
     }
   };
 
-const handleInputChange = (e) => {
-  let value = e.target.value;
-  if (value === "") {
-    setDisplayValue("");
-    return;
-  }
-  value = value.replace(/^0+(?=\d)/, "");
-  if (/^\d*$/.test(value)) {
-    setDisplayValue(value);
-  }
-};
+  /* ---------- HANDLERS ---------- */
+  const handleInputChange = (e) => {
+    let value = e.target.value;
+    if (value === "") {
+      setDisplayValue("");
+      return;
+    }
+    value = value.replace(/^0+(?=\d)/, "");
+    if (/^\d*$/.test(value)) {
+      setDisplayValue(value);
+    }
+  };
 
   const handleBlur = () => {
     if (!displayValue || displayValue === "") {
@@ -60,8 +63,9 @@ const handleInputChange = (e) => {
     setCurrentStock(numValue);
     updateStock("set", numValue);
   };
-
-return (
+  
+  /* ----------  JSX ----------  */
+  return (
     <div className="stock-editor">
       {/* Decrement button */}
       <div className="stock-btn-wrapper" data-tooltip="Remove stock">

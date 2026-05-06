@@ -4,11 +4,15 @@ import { InventoryEditor } from '../Jig/components';
 import './ManageStock.css';
 
 const ManageStock = () => {
+
+  /* ---------- STATE ---------- */
+
   const [jigs, setJigs] = useState([]);
   const [loading, setLoading] = useState(true);
   
   const STOCK_THRESHOLD = 10; 
 
+  /* ---------- FETCH + EFFECTS ---------- */
   const fetchStockData = async () => {
     try {
       setLoading(true);
@@ -25,6 +29,7 @@ const ManageStock = () => {
     fetchStockData();
   }, []);
 
+  /* ---------- HELPERS ---------- */
   const lowStockItems = jigs.flatMap(jig => 
     jig.colors
       .filter(c => c.stock <= STOCK_THRESHOLD)
@@ -42,6 +47,7 @@ const ManageStock = () => {
     return totalB - totalA;
   }).slice(0, 8);
 
+   /* ----------  JSX ----------  */
   if (loading) return <div className="stock-loading">Gathering Inventory Data...</div>;
 
   return (

@@ -12,6 +12,8 @@ const fractionToDecimal = (str) => {
 };
 
 const ManageAttributes = ({ title, endpoint, checkEndpoint, fields, itemName, onSelect, selectedId, onDelete}) => {
+
+  /* ---------- STATE ---------- */
   const [items, setItems] = useState([]);
   const [formData, setFormData] = useState({});
   const [editingId, setEditingId] = useState(null);
@@ -27,7 +29,7 @@ const ManageAttributes = ({ title, endpoint, checkEndpoint, fields, itemName, on
 
   const isWeight = itemName.toLowerCase() === "weight";
 
-
+  /* ---------- VALIDATE + FETCH + EFFECTS ---------- */
   const validateExistence = async (data, isEdit = false, originalItem = null) => {
     if (!checkEndpoint) return null;
 
@@ -51,9 +53,6 @@ const ManageAttributes = ({ title, endpoint, checkEndpoint, fields, itemName, on
     return null;
   };
 
-  useEffect(() => { fetchItems(); }, [endpoint]);
-
-
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => setError(""), 5000);
@@ -72,11 +71,26 @@ const ManageAttributes = ({ title, endpoint, checkEndpoint, fields, itemName, on
     } catch (err) { console.error(err); }
   };
 
+  useEffect(() => { fetchItems(); }, [endpoint]);
+
+  /* ---------- HELPERS ---------- */
+
   const startEditing = (item) => {
     setError("");
     setEditingId(item._id);
     setEditData(item);
   };
+
+  const promptDelete = (id) => {
+    setConfirmModal({
+      show: true,
+      type: "DELETE",
+      id: id,
+      message: `Are you sure you want to delete this ${itemName}? This action cannot be undone.`
+    });
+  };
+
+  /* ---------- HANDLERS ---------- */
 
   const handleBlur = (fieldName, isEdit = false) => {
     const currentData = isEdit ? editData : formData;
@@ -141,15 +155,6 @@ const handleSubmit = async (e) => {
     }
   };
 
-  const promptDelete = (id) => {
-    setConfirmModal({
-      show: true,
-      type: "DELETE",
-      id: id,
-      message: `Are you sure you want to delete this ${itemName}? This action cannot be undone.`
-    });
-  };
-
   const executeConfirm = async () => {
     const { type, id } = confirmModal;
     setConfirmModal({ ...confirmModal, show: false });
@@ -183,7 +188,8 @@ const handleSubmit = async (e) => {
     }
   };
 
-return (
+  /* ----------  JSX ----------  */
+  return (
     <div className="manage-card">
       <div className="card-header">
         <h3>{title}</h3>

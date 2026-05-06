@@ -16,6 +16,7 @@ import './ViewJigs.css';
 const ViewJigs = () => {
   const navigate = useNavigate();
 
+  /* ---------- STATE ---------- */
   // Filter state
   const [filters, setFilters] = useState({
     category: '',

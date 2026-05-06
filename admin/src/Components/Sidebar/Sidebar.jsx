@@ -2,6 +2,8 @@ import React from 'react'
 import './Sidebar.css'
 import { NavLink, Link } from 'react-router-dom'
 const Sidebar = () => {
+
+  /* ---------- LINKS ---------- */
   const navLinks = [
     {label: 'Order Dashboard', to: '/home'},
     {label: 'Add', to: '/addjig'},
@@ -15,7 +17,8 @@ const Sidebar = () => {
     // {label: 'Add Weight', to: '/add-weight'},
     // {label: 'Add Color', to: '/add-color'},
   ]
-
+  
+  /* ----------  JSX ----------  */
   return (
     <div className='sidebar'>
       <ul>

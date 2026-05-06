@@ -1,6 +1,7 @@
 import React from "react";
 import "./ConfirmModal.css";
 
+// Renders and Fills in Jig Information 
 const renderJig = ({
   title,
   data,
@@ -63,6 +64,7 @@ const renderJig = ({
   </div>
 );
 
+// Modal for Confirmation when Editted Jig with Old and New Jig Comparison 
 const ConfirmEditModal = ({
   oldJig,
   formData,

@@ -3,6 +3,9 @@ import api from "../../Services/api";
 import "./ManageTimeSlots.css";
 
 const ManageTimeSlots = ({ location, endpoint, onUpdate }) => {
+
+  /* ---------- STATE ---------- */
+
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("individual");
@@ -21,14 +24,47 @@ const ManageTimeSlots = ({ location, endpoint, onUpdate }) => {
 
   const today = new Date().toISOString().split("T")[0];
 
+  /* ---------- FETCH + EFFECTS ---------- */
+  // Get all slots for the specific location
+  const fetchSlots = async () => {
+    try {
+      const res = await api.get(`${endpoint}?locationId=${location._id}`);
+      setSlots(res.data);
+    } catch (err) { console.error(err); }
+  };
+
+  // Re-fetch data whenever the location prop changes
+  useEffect(() => { fetchSlots(); }, [location]);
+
+  // Auto-clear status messages
+  useEffect(() => {
+    if (statusMessage.text) {
+      const timer = setTimeout(() => setStatusMessage({ text: "", type: "" }), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [statusMessage]);
+
+  /* ---------- HELPERS ---------- */
+
   const isTimeBefore = (start, end) => {
     return start < end;
   };
 
+  // Toggle day selection for recurring slots
+  const toggleDay = (day) => {
+    setRecurData(prev => ({
+      ...prev,
+      days: prev.days.includes(day) ? prev.days.filter(d => d !== day) : [...prev.days, day]
+    }));
+  };
+
+
+  /* ---------- HANDLERS ---------- */
   const handleSingleDateChange = (e) => {
     setSingleSlot({ ...singleSlot, date: e.target.value });
   };
 
+  // Ensure end date doesn't precede start date
   const handleRecurDateChange = (field, value) => {
     setRecurData(prev => {
       let newData = { ...prev, [field]: value };
@@ -40,6 +76,7 @@ const ManageTimeSlots = ({ location, endpoint, onUpdate }) => {
     });
   };
 
+  // Adjusts end time automatically if start time moves past it
   const handleTimeChange = (mode, field, value) => {
     const setter = mode === 'single' ? setSingleSlot : setRecurData;
     const data = mode === 'single' ? singleSlot : recurData;
@@ -60,30 +97,7 @@ const ManageTimeSlots = ({ location, endpoint, onUpdate }) => {
     });
   };
 
-  const fetchSlots = async () => {
-    try {
-      const res = await api.get(`${endpoint}?locationId=${location._id}`);
-      setSlots(res.data);
-    } catch (err) { console.error(err); }
-  };
-
-  useEffect(() => { fetchSlots(); }, [location]);
-
-  // Auto-clear status messages
-  useEffect(() => {
-    if (statusMessage.text) {
-      const timer = setTimeout(() => setStatusMessage({ text: "", type: "" }), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [statusMessage]);
-
-  const toggleDay = (day) => {
-    setRecurData(prev => ({
-      ...prev,
-      days: prev.days.includes(day) ? prev.days.filter(d => d !== day) : [...prev.days, day]
-    }));
-  };
-
+  // Process and Submit new slots (Single or via Date Loop)
   const handleCreateSlots = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -110,7 +124,6 @@ const ManageTimeSlots = ({ location, endpoint, onUpdate }) => {
         current.setDate(current.getDate() + 1);
       }
     }
-
     try {
       await api.post(endpoint, { location: location._id, slots: generatedSlots });
       if (onUpdate) onUpdate();
@@ -134,6 +147,7 @@ const ManageTimeSlots = ({ location, endpoint, onUpdate }) => {
     }
     setModal({ show: false, type: null, id: null, message: "" });
   };
+
 
   return (
     <div className="slots-manager-card">

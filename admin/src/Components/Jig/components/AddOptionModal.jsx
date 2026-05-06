@@ -12,7 +12,7 @@ const fractionToDecimal = (str) => {
   return (num / den).toFixed(2);
 };
 
-
+// Jig Form Component for Adding Weight, Color, or Category
 const AddOptionModal = ({ title, value, setValue, onClose, onSave, error, isWeight }) => {
   return (
     <div className="modal-backdrop">

@@ -2,11 +2,29 @@ import React, { useState, useEffect } from "react";
 import './ColorInput.css';
 
 const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor, isEditing }) => {
+  /* ---------- STATE ---------- */
   const [message, setMessage] = useState("");
   const [failedImageAttempts, setFailedImageAttempts] = useState(0);
 
   const isFirstColor = formData.colors.length === 0;
 
+  /* ---------- EFFECTS ---------- */
+  useEffect(() => {
+    return () => {
+      formData.colors.forEach(color => {
+        color.images.forEach(img => URL.revokeObjectURL(img.preview));
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
+  /* ---------- HANDLERS ---------- */
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -53,14 +71,7 @@ const ColorInput = ({ colors, formData, newJigColor, setNewJigColor, addColor, i
     setFailedImageAttempts(0);
   };
 
-  useEffect(() => {
-    return () => {
-      formData.colors.forEach(color => {
-        color.images.forEach(img => URL.revokeObjectURL(img.preview));
-      });
-    };
-  }, []);
-
+  /* ----------  JSX ----------  */
   return (
     <div className="color-inputs">
       <select

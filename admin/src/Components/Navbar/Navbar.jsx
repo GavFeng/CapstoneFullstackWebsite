@@ -4,10 +4,14 @@ import logo from '../../Assets/TempLogo.png';
 import './Navbar.css';
 
 const Navbar = ({ setToken }) => {
+
+  /* ---------- STATE ---------- */
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [adminName, setAdminName] = useState('');
   const navigate = useNavigate();
 
+  /* ---------- EFFECTS ---------- */
   // Load admin data from localStorage on mount
   useEffect(() => {
     const adminData = JSON.parse(localStorage.getItem("admin_user") || "{}");
@@ -22,6 +26,8 @@ const Navbar = ({ setToken }) => {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
+  /* ---------- HANDLERS ---------- */
+
   const handleLogout = () => {
     localStorage.removeItem("admin_token");
     localStorage.removeItem("admin_user");
@@ -30,6 +36,8 @@ const Navbar = ({ setToken }) => {
     }
     navigate("/login");
   };
+
+  /* ----------  JSX ----------  */
 
   return (
     <div className='navbar'>

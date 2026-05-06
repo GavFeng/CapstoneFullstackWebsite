@@ -2,6 +2,7 @@ import React from "react";
 import './ColorList.css';
 
 const ColorList = ({ colors, colorOrder, formData, setFormData, setPopupImage, setNewJigColor, isEditing}) => {
+  /* ---------- HELPERS ---------- */
   const editColor = (colorId) => {
     const target = formData.colors.find(c => c.color === colorId);
     if (!target) return;

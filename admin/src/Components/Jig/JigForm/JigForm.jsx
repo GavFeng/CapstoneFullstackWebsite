@@ -201,7 +201,7 @@ const JigForm = ({ mode: initialMode = "add" }) => {
       Number(newJigColor.stock) !== 1
     );
 
-  /* ---------- FORM HANDLERS ---------- */
+  /* ---------- HANDLERS ---------- */
   const handleChange = (e) => {
     const { name, value } = e.target;
 
