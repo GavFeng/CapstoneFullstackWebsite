@@ -35,9 +35,21 @@ const Analytic = () => {
   /* ---------- STATE ---------- */
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
 
 
   /* ---------- FETCH + EFFECT ---------- */
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   const fetchStats = async () => {
     try {
@@ -53,9 +65,6 @@ const Analytic = () => {
   };
 
   useEffect(() => { fetchStats(); }, []);
-
-  if (loading) return <div className="loading-screen">Gathering Insights...</div>;
-  if (!data) return <div className="error-screen">Failed to load statistics.</div>;
 
   const { 
     global = {}, 
@@ -102,6 +111,11 @@ const Analytic = () => {
   };
 
   /* ----------  JSX ----------  */
+
+  
+  if (loading) return <div className="loading-screen">Gathering Insights...</div>;
+  if (!data) return <div className="error-screen">Failed to load statistics.</div>;
+  
   return (
     <div className="analytics-container">
       <header className="analytics-header">
@@ -136,9 +150,11 @@ const Analytic = () => {
           <h3>Monthly Revenue Trend</h3>
           <div className="chart-wrapper">
             <Line 
-              data={salesTrendData} 
+              data={salesTrendData}
               options={{ 
+                responsive: true,
                 maintainAspectRatio: false,
+                resizeDelay: 200,
                 scales: {
                   y: {
                     beginAtZero: true,
@@ -148,7 +164,11 @@ const Analytic = () => {
                   }
                 },
                 plugins: {
-                  legend: { display: true, position: 'top' }
+                  legend: { 
+                    display: true, 
+                    position: 'top',
+                    labels: { usePointStyle: true } 
+                  }
                 }
               }} 
             />
@@ -158,7 +178,18 @@ const Analytic = () => {
         <section className="chart-box">
           <h3>Popularity by Weight</h3>
           <div className="chart-wrapper">
-            <Bar data={weightData} options={{ maintainAspectRatio: false, indexAxis: 'y' }} />
+            <Bar 
+              data={weightData}
+              options={{ 
+                responsive: true,
+                maintainAspectRatio: false, 
+                resizeDelay: 200,
+                indexAxis: 'y',
+                plugins: {
+                  legend: { display: false }
+                }
+              }} 
+            />
           </div>
         </section>
 
@@ -168,13 +199,21 @@ const Analytic = () => {
             <Doughnut 
               data={colorData} 
               options={{ 
+                responsive: true,
                 maintainAspectRatio: false,
+                resizeDelay: 200,
                 plugins: {
                   legend: {
+                    display: !isMobile,
                     position: 'bottom',
-                    labels: { boxWidth: 12, padding: 15 }
+                    labels: { 
+                      boxWidth: 10, 
+                      padding: 10,
+                      font: { size: 11 }
+                    }
                   }
-                }
+                },
+                cutout: '70%' // Makes it look more modern and sleeker
               }} 
             />
           </div>
@@ -195,6 +234,6 @@ const Analytic = () => {
       </section>
     </div>
   );
-};
+}
 
-export default Analytic;
+export default Analytic

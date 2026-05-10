@@ -107,3 +107,78 @@
 .btn-refresh:hover {
   color: #0ea5e9;
 }
+
+
+.pickup-manager-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.upcoming-summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 8px; 
+}
+
+.pickup-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.location-section, 
+.slots-section {
+  width: 100%;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.summary-grid {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.summary-item {
+  flex: 0 0 240px;
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #f1f5f9;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .summary-grid {
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 160px; 
+    padding-right: 4px;
+    gap: 10px;
+  }
+
+  .summary-item {
+    flex: 0 0 auto; 
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .summary-grid::-webkit-scrollbar {
+    width: 4px;
+  }
+  .summary-grid::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+  }
+}

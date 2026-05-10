@@ -70,13 +70,13 @@ exports.checkColorName = async (req, res) => {
 exports.updateColor = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedColor = await Color.findByIdAndUpdate(
-      id, 
-      req.body, 
-      { new: true, runValidators: true }
-    );
-    if (!updatedColor) return res.status(404).json({ message: "Not Found" });
-    res.json(updatedColor);
+    const color = await Color.findById(id);
+    if (!color) return res.status(404).json({ message: "Not Found" });
+
+    color.set(req.body);
+    await color.save(); 
+
+    res.json(color);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

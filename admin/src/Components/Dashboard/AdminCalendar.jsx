@@ -56,6 +56,6 @@ const AdminCalendar = ({ orders, selectedDate, onDateChange }) => {
       </div>
     </div>
   );
-};
+}
 
-export default AdminCalendar;
+export default AdminCalendar

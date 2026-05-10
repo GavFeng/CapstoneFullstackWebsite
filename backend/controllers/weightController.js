@@ -76,13 +76,14 @@ exports.checkWeightLabel = async (req, res) => {
 exports.updateWeight = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedWeight = await Weight.findByIdAndUpdate(
-      id, 
-      req.body, 
-      { new: true, runValidators: true }
-    );
-    if (!updatedWeight) return res.status(404).json({ message: "Not Found" });
-    res.json(updatedWeight);
+    const weight = await Weight.findById(id);
+    if (!weight) return res.status(404).json({ message: "Not Found" });
+
+    weight.set(req.body); 
+
+    await weight.save(); 
+    
+    res.json(weight);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

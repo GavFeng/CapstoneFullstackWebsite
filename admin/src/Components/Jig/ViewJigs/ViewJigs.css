@@ -1,7 +1,7 @@
 /* ── Container ── */
 .jigs-container {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
 	gap: 20px;
 	width: 100%;
 	margin: 0 auto;
@@ -460,4 +460,42 @@
 @keyframes scaleUp {
 	from { transform: scale(0.8); }
 	to { transform: scale(1); }
+}
+
+@media (min-width: 768px) {
+  .jigs-container {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .color-info{
+    gap: 5px;
+  }
+  .color-swatch {
+    width: 18px;
+    height: 18px;
+  }
+  .color-info span{
+    font-size: 16px;
+  }
+  .stock-editor{
+    margin-left: 5px;
+  }
+  .stock-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .stock-input {
+    width: 40px;
+    height: 24px;
+    font-size: 12px;
+  }
+  
+  .color-images img {
+    width: 30px;
+    height: 30px;
+  }
 }

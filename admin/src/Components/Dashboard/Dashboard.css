@@ -16,6 +16,12 @@
     margin-bottom: 20px; 
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+
+.admin-order-card.pending { border-left-color: #f08c00; }
+.admin-order-card.ready { border-left-color: #40c057; }
+.admin-order-card.completed { border-left-color: #7950f2; }
+.admin-order-card.cancelled { border-left-color: #fa5252; }
+
 .card-header-dashboard { 
     display: flex; 
     justify-content: space-between; 
@@ -66,6 +72,49 @@
     font-size: 0.95rem;
     margin-bottom: 4px;
     line-height: 1.4;
+}
+
+.admin-color-tag {
+  margin-left: 4px;
+  font-weight: bold;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: white;
+}
+
+.badge.pending {
+  background-color: #f08c00;
+}
+
+.badge.ready {
+  background-color: #40c057;
+}
+
+.badge.completed {
+  background-color: #7950f2;
+}
+
+.badge.cancelled {
+  background-color: #fa5252;
+}
+
+.payment-status .badge {
+  background: none;
+  border: 1px solid #ddd;
+  color: #444;
+  font-weight: 600;
+}
+
+.payment-status .badge.paid {
+  border-color: #40c057;
+  color: #2b8a3e;
 }
 
 /* Timeline Colors */
@@ -200,4 +249,141 @@
     justify-content: center;
     gap: 10px;
     padding-right: 20px;
+}
+
+@media (max-width: 1400px) {
+  .calendar-dashboard-layout {
+    grid-template-columns: 1fr 500px; 
+    gap: 10px;
+  }
+  .card-header-dashboard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .large-admin-calendar .react-calendar__tile {
+    height: 100px !important;
+  }
+}
+
+@media (max-width: 1200px) {
+.calendar-dashboard-layout {
+    grid-template-columns: 1fr; 
+  }
+
+  .card-header-dashboard {
+    flex-direction: row; 
+    align-items: center;
+    justify-content: space-between;
+    gap: 0px;
+  }
+  
+  .card-body {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .delivery-box {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+  }
+}
+
+
+@media (max-width: 876px) {
+    .calendar-dashboard-layout {
+        grid-template-columns: 1fr; 
+        gap: 20px;
+    }
+    .card-header-dashboard {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .timeline-info {
+        display: block;
+        padding: 8px;
+    }
+    .calendar-side-panel {
+        max-height: none; 
+        overflow-y: visible;
+        padding: 15px;
+    }
+
+    .card-body {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .admin-header {
+        text-align: center;
+    }
+
+    .title-group {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        display: flex;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-tabs button {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .admin-actions {
+        flex-wrap: wrap;
+    }
+
+    .admin-actions button {
+        flex: 1;
+        min-width: 100px;
+        font-size: 12px;
+    }
+
+    .large-admin-calendar.react-calendar {
+        height: auto !important; 
+        min-height: 450px;
+    }
+
+    .large-admin-calendar .react-calendar__tile {
+        height: 80px !important; 
+        padding: 2px !important;
+    }
+
+    .mini-order-item {
+        height: 8px;
+        margin-bottom: 2px;
+        border-radius: 2px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .large-admin-calendar.react-calendar {
+        height: auto;
+    }
+
+    .large-admin-calendar .react-calendar__tile {
+        height: 70px !important;
+    }
+
+    .mini-order-item {
+        height: 6px;
+        width: 100%;
+        margin-bottom: 2px;
+        padding: 0;
+    }
+
+    .more-orders-text {
+        font-size: 8px;
+    }
 }

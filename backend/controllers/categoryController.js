@@ -88,13 +88,13 @@ exports.checkCategoryName = async (req, res) => {
 exports.updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedCategory = await Category.findByIdAndUpdate(
-      id, 
-      req.body, 
-      { new: true, runValidators: true }
-    );
-    if (!updatedCategory) return res.status(404).json({ message: "Not Found" });
-    res.json(updatedCategory);
+    const category = await Category.findById(id);
+    if (!category) return res.status(404).json({ message: "Not Found" });
+
+    category.set(req.body);
+    await category.save(); 
+
+    res.json(category);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

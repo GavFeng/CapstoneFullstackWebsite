@@ -9,7 +9,7 @@ const fractionToDecimal = (str) => {
   const den = Number(match[2]);
   if (!den) return null;
 
-  return (num / den).toFixed(2);
+  return (num / den).toFixed(3);
 };
 
 // Jig Form Component for Adding Weight, Color, or Category

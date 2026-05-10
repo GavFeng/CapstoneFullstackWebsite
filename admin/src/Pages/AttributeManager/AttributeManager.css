@@ -1,7 +1,23 @@
+.attribute-manager-page{
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100%;
+}
+
 .attribute-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  padding-right: 20px;
   gap: 20px;
-  padding: 20px;
 }
 
+@media (max-width: 480px) {
+  .attribute-manager-page{
+    margin-left: -10px;
+  }
+  .attribute-grid {
+    padding: 0;
+  }
+
+}

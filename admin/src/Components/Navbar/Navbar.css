@@ -120,6 +120,9 @@
 }
 
 @media (max-width: 768px) {
+    .nav-center {
+        display: none;
+    }
     .navbar {
         padding: 10px 20px;
         height: auto;

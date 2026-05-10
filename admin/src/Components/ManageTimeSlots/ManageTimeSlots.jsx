@@ -281,7 +281,7 @@ const ManageTimeSlots = ({ location, endpoint, onUpdate }) => {
         </div>
       </div>
 
-      {/* Logic-Based Modal Overlay */}
+      {/* Modal Overlay */}
       {modal.show && (
         <div className="modal-backdrop">
           <div className="modal-box fade-in">

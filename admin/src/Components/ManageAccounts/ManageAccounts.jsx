@@ -126,36 +126,38 @@ const ManageAccounts = () => {
         {loading ? (
           <p>Loading accounts...</p>
         ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Type</th>
-                <th>Joined</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(u => (
-                <tr key={u._id}>
-                  <td>{u.name} (<i>{u.username}</i>)</td>
-                  <td>{u.email}</td>
-                  <td>{u.phone || <span className="no-data">N/A</span>}</td>
-                  <td>
-                    <span className={`badge ${u.accountType}`}>
-                      {u.accountType}
-                    </span>
-                  </td>
-                  <td>{new Date(u.createdAt).toLocaleDateString()}</td>
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Type</th>
+                  <th>Joined</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {users.map(u => (
+                  <tr key={u._id}>
+                    <td>{u.name} (<i>{u.username}</i>)</td>
+                    <td>{u.email}</td>
+                    <td>{u.phone || <span className="no-data">N/A</span>}</td>
+                    <td>
+                      <span className={`badge ${u.accountType}`}>
+                        {u.accountType}
+                      </span>
+                    </td>
+                    <td>{new Date(u.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
   );
-};
+}
 
-export default ManageAccounts;
+export default ManageAccounts
