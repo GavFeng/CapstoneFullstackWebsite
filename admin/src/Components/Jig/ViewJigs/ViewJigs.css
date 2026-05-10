@@ -38,8 +38,6 @@
 	align-items: center;
 }
 
-
-
 /* ── Description & Info ── */
 .jig-desc {
 	font-size: 0.95rem;
@@ -469,6 +467,10 @@
 }
 
 @media (max-width: 480px) {
+  .jigs-page{
+    margin-left: -25px;
+    margin-right: -27px;
+  }
   .color-info{
     gap: 5px;
   }

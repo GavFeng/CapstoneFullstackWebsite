@@ -370,7 +370,7 @@
 @media (max-width: 480px) {
     .admin-orders-container{
         margin-left: -30px;
-        margin-right: -40px;
+        margin-right: -32px;
         max-width: none;
     }
     .large-admin-calendar.react-calendar {
