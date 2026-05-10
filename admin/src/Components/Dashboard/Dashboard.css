@@ -368,6 +368,11 @@
 
 
 @media (max-width: 480px) {
+    .admin-orders-container{
+        margin-left: -30px;
+        margin-right: -40px;
+        max-width: none;
+    }
     .large-admin-calendar.react-calendar {
         height: auto;
     }
@@ -377,7 +382,6 @@
     }
 
     .mini-order-item {
-        height: 6px;
         width: 100%;
         margin-bottom: 2px;
         padding: 0;

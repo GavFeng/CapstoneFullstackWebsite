@@ -159,6 +159,10 @@
 }
 
 @media (max-width: 600px) {
+  .pickup-manager-container {
+    margin-left: -30px;
+    margin-right: -30px;
+  }
   .summary-grid {
     flex-direction: column;
     overflow-x: hidden;

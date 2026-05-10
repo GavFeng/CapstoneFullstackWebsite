@@ -217,6 +217,10 @@
 }
 
 @media (max-width: 768px) {
+    .admin-page-container {
+      margin-left: -30px;
+      margin-right: -30px;
+    }
     .form-group {
         flex-direction: column;
         gap: 1.25rem;

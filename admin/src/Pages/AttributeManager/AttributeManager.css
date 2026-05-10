@@ -14,7 +14,8 @@
 
 @media (max-width: 480px) {
   .attribute-manager-page{
-    margin-left: -10px;
+    margin-left: -30px;
+    margin-right: -30px;
   }
   .attribute-grid {
     padding: 0;
