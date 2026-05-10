@@ -124,20 +124,21 @@ const MyOrders = () => {
                 <th>{t('cart.total')}</th>
                 <th>{t('orders.payment')}</th>
                 <th>{t('orders.status')}</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {orders.map((order) => (
                 <tr key={order._id}>
-                  <td>#{order._id.slice(-6).toUpperCase()}</td>
-                  <td>{new Date(order.createdAt).toLocaleDateString(currentLocale)}</td>
-                  <td>${order.totalAmount.toFixed(2)}</td>
-                  <td>
+                  <td data-label={t('orders.orderId')}>#{order._id.slice(-6).toUpperCase()}</td>
+                  <td data-label={t('orders.date')}>{new Date(order.createdAt).toLocaleDateString(currentLocale)}</td>
+                  <td data-label={t('cart.total')}>${order.totalAmount.toFixed(2)}</td>
+                  <td data-label={t('orders.payment')}>
                     <span className={`badge ${order.paymentStatus || 'unpaid'}`}>
                       {t(`orders.paymentStatus.${order.paymentStatus || 'unpaid'}`)}
                     </span>
                   </td>
-                  <td>
+                  <td data-label={t('orders.status')}>
                     <span className={`status-badge ${order.status || 'pending'}`}>
                       {t(`orders.orderStatus.${order.status || 'pending'}`)}
                     </span>

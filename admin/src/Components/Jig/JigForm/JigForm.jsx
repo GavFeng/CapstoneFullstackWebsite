@@ -625,7 +625,6 @@ const JigForm = ({ mode: initialMode = "add" }) => {
           }}
         />
       )}
-
     </div>
   )
 }

@@ -268,3 +268,85 @@
 .no-orders{
   padding-left: 20px;
 }
+
+/* --- RESPONSIVE TABLE --- */
+@media (max-width: 768px) {
+  /* Hide the actual table header */
+  .orders-table thead {
+    display: none;
+  }
+
+  .orders-table, 
+  .orders-table tbody, 
+  .orders-table tr, 
+  .orders-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .orders-table tr {
+    margin-bottom: 1.5rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #fff;
+    padding: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  .orders-table td {
+    text-align: right;
+    padding: 12px 15px;
+    position: relative;
+    border-bottom: 1px solid #f9f9f9;
+  }
+
+  .orders-table td:last-child {
+    border-bottom: none;
+    text-align: center; 
+    padding-top: 1.5rem;
+  }
+
+  .orders-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+  }
+
+  .view-btn {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .orders-page-container{
+    margin-left: -30px;
+    margin-right: -30px;
+  }
+  .modal-content {
+    padding: 1.25rem;
+    width: 95%;
+  }
+
+  .order-modal-item {
+    flex-direction: row;
+    gap: 0.75rem;
+  }
+
+  .mini-img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .order-item-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

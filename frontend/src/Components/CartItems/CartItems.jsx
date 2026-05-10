@@ -263,7 +263,9 @@ return (
 
                   return (
                     <div key={`${jigId}-${colorId}`} className="saved-item-mini">
-                      <img src={imageUrl} alt={jig.name} className="mini-img" />
+                      <Link to={`/jig/${jig.slug}`} className="mini-img-link">
+                        <img src={imageUrl} alt={jig.name} className="mini-img" />
+                      </Link>
                       <div className="mini-info">
                         <p className="mini-name">{jig.name}</p>
                         {/* Added Color Info below */}
