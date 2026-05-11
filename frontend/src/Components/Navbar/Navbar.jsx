@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import './Navbar.css';
-
+import { useTranslation } from 'react-i18next';
 import logo from '../../Assets/TempLogo.png';
 import cart_icon from '../../Assets/cart_icon.png';
 
@@ -9,18 +9,36 @@ import { JigContext } from '../../Context/JigContext';
 import { useAuth } from '../../Context/AuthContext';
 
 const Navbar = () => {
+  const { t, i18n } = useTranslation();
   const { user, loading, logout } = useAuth();
 
+  /* ---------- STATE ---------- */
   const { totalItems = 0 } = useContext(JigContext);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  /* ---------- LINKS ---------- */
   const navLinks = [
-    { label: 'Home', to: '/' },
-    { label: 'All', to: '/alljigs' },
+    { label: t('nav.home'), to: '/' },
+    { label: t('nav.all'), to: '/alljigs' },
   ];
 
+  /* ---------- HELPERS ---------- */
+  const changeLanguage = (e) => {
+    i18n.changeLanguage(e.target.value);
+    setMobileMenuOpen(false);
+  };
+
+  const LanguageSelect = () => (
+    <select onChange={changeLanguage} value={i18n.language}>
+      <option value="en">EN</option>
+      <option value="ko">KO</option>
+      <option value="zh">ZH</option>
+    </select>
+  );
+
+  /* ---------- HANDLERS ---------- */
   const handleToggleMenu = () => setMenuOpen(prev => !prev);
 
   const handleLogout = () => {
@@ -28,6 +46,8 @@ const Navbar = () => {
     setMenuOpen(false);
     setMobileMenuOpen(false);
   };
+
+  /* ---------- JSX ---------- */
 
   return (
     <nav className="navbar">
@@ -58,7 +78,9 @@ const Navbar = () => {
 
         {/* Right Side */}
         <div className="nav-right">
-
+          <div className="lang-switcher hide-mobile">
+            <LanguageSelect />
+          </div>
           {loading ? (
             <span className="nav-loading">...</span>
           ) : user ? (
@@ -171,6 +193,12 @@ const Navbar = () => {
                   >
                     Logout
                   </Link>
+                </li>
+                <li className="mobile-lang-item">
+                  <div className="mobile-lang-switcher">
+                    <span>{t('Language')}: </span>
+                    <LanguageSelect />
+                  </div>
                 </li>
               </>
             )}

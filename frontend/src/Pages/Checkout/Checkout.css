@@ -144,3 +144,19 @@
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@media (max-width: 480px) {
+  .checkout-item{
+    gap: 10px;
+  }
+  .color-tag{
+    font-size: .75rem;
+    padding: 1.5px 6px;
+  }
+  .item-price{
+    font-size: 12px;
+  }
+  .jig-name{
+    font-size: 12px;
+  }
+}

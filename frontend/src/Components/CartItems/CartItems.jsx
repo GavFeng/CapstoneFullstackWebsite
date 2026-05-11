@@ -177,12 +177,14 @@ return (
 
           return (
             <div key={`${entry.jigId}-${entry.colorId}`} className="cart-item">
+              {/* Product Image */}
               <Link to={`/jig/${jig.slug}`} className="cart-item-image-link">
                 <div className="cart-item-image">
                   <img src={imageUrl} alt={jig.name} />
                 </div>
               </Link>
 
+              {/* Product Name */}
               <div className="cart-item-name">
                 <p className="name">{jig.name}</p>
                 <span className="name" style={{ color: colorObj?.slug || "#666" }}>
@@ -195,8 +197,13 @@ return (
                   ) : null}
               </div>
 
-              <div className="cart-item-price">${jig.price.toFixed(2)}</div>
+              {/* Product Price */}
+              <div className="cart-item-price">
+                <span className="mobile-label">{t('cart.price')}: </span>
+                ${jig.price.toFixed(2)}
+              </div>
 
+              {/* Quantity Controls */}
               <div className="cart-item-quantity">
                 <div className={`quantity-controls ${entry.quantity > availableStock ? "at-limit" : ""}`}>
                   <button 
@@ -224,7 +231,9 @@ return (
                 </div>
               </div>
 
+              {/* Product Total */}
               <div className="cart-item-total">
+                <span className="mobile-label">{t('cart.total')}: </span>
                 ${(jig.price * entry.quantity).toFixed(2)}
               </div>
 

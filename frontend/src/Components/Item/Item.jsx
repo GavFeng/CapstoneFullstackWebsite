@@ -80,35 +80,12 @@ const Item = ({ id, name, price, colors }) => {
           return (
             <button
               key={c.color?._id}
-
-              // Only allow selection if variant is in stock
-              onClick={() =>
-                !outOfStock && setSelectedColorId(c.color?._id)
-              }
-
+              onClick={() => !outOfStock && setSelectedColorId(c.color?._id)}
               disabled={outOfStock}
-
-              className={`color-dot-item ${
-                isSelected ? "selected" : ""
-              }`}
-
-              // Use color slug for visual swatch
-              style={{
-                backgroundColor: c.color?.slug || "#ccc",
-                opacity: outOfStock ? 0.5 : 1,
-              }}
-
-              // Tooltip shows stock info
-              title={
-                outOfStock
-                  ? "Out of stock"
-                  : `${c.stock} left`
-              }
+              className={`color-dot-item ${isSelected ? "selected" : ""} ${outOfStock ? "is-out" : ""}`}
+              style={{ backgroundColor: c.color?.slug || "#ccc" }}
+              title={outOfStock ? "Out of stock" : `${c.stock} left`}
             >
-              {/* Overlay X for out-of-stock variants */}
-              {outOfStock && (
-                <span className="color-x">⃠</span>
-              )}
             </button>
           );
         })}

@@ -24,7 +24,7 @@
 
 .desktop-only { display: none; }
 
-/* --- MAIN CART ITEMS (STACKED ON MOBILE) --- */
+/* --- MAIN CART ITEMS --- */
 .cart-items-list {
   display: flex;
   flex-direction: column;
@@ -68,7 +68,15 @@
   color: #333;
 }
 
-/* --- ORIGINAL QUANTITY CONTROLS --- */
+.mobile-label {
+  display: none; 
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 400;
+  margin-right: 4px;
+}
+
+/* --- QUANTITY CONTROLS --- */
 .quantity-controls {
   display: flex;
   align-items: center;
@@ -102,7 +110,7 @@
   font-weight: 600;
 }
 
-/* --- ORIGINAL ACTIONS (STACKED ICONS) --- */
+/* --- ORIGINAL ACTIONS --- */
 .cart-item-actions {
   display: flex;
   justify-content: center;
@@ -128,7 +136,7 @@
   margin-bottom: 6px;
 }
 
-/* --- SAVED FOR LATER (NEVER STACKED) --- */
+/* --- SAVED FOR LATER  --- */
 .saved-items-mini-section h2 {
   font-size: 1.3rem;
   margin-bottom: 1.5rem;
@@ -163,7 +171,14 @@
 
 .mini-info .mini-name { font-weight: 600; margin: 0; font-size: 0.95rem; }
 .mini-info .mini-price { font-size: 0.9rem; color: #444; font-weight: 600; margin: 2px 0; }
-.mini-actions { display: flex; gap: 0.75rem; margin-top: 4px; }
+.mini-actions { 
+  display: flex; 
+  gap: 0.75rem; 
+  padding-left: 0;
+  justify-content: flex-start;
+  margin-top: 4px; 
+  margin-left: -4px;
+}
 
 .move-link { color: #2e7d32; font-weight: 600; text-decoration: underline; background: none; border: none; cursor: pointer; font-size: 0.75rem; }
 .remove-link { color: #999; text-decoration: underline; background: none; border: none; cursor: pointer; font-size: 0.75rem; }
@@ -203,8 +218,11 @@
   cursor: pointer;
 }
 
-/* --- DESKTOP VIEW (HORIZONTAL + SIDE BY SIDE) --- */
+/* --- DESKTOP VIEW --- */
 @media (min-width: 992px) {
+  .mobile-label {
+    display: none !important;
+  }
   .desktop-only, .cart-item {
     display: grid;
     /* Image | Name | Price | Quantity | Total | Actions */
@@ -247,7 +265,6 @@
     margin-left: 30px;
   }
 
-  /* SIDE BY SIDE LAYOUT */
   .cart-footer-flex {
     display: flex;
     justify-content: space-between;
@@ -262,11 +279,39 @@
   .cart-summary { flex: 0.8; max-width: 450px; }
 }
 
-/* Mobile fix for footer */
+/* --- MOBILE VIEW --- */
 @media (max-width: 991px) {
+  .mobile-label {
+    display: inline; 
+  }
+  .cart-item-price, 
+  .cart-item-total {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem 0;
+    border-top: 1px dashed #eee;
+  }
+  .cart-item-total {
+    color: #333;
+    font-size: 1.2rem;
+  }
   .cart-footer-flex {
     display: flex;
-    flex-direction: column-reverse; /* Summary on top of saved items for mobile */
+    flex-direction: column-reverse;
     gap: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mini-actions{
+    gap: .6rem;
+  }
+  .move-link{
+    font-size: .65rem;
+  }
+  .remove-link{
+    font-size: .65rem;
   }
 }

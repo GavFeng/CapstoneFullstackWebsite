@@ -254,7 +254,8 @@ p, h1, h2, h3 {
   display: none;
   background: white;
   border-top: 1px solid #ddd;
-  padding: 20px 0;
+  padding: 20px 0 40px 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .mobile-menu ul {
@@ -265,6 +266,7 @@ p, h1, h2, h3 {
   list-style: none;
   margin: 0;
   padding: 0;
+  width: 100%;
 }
 
 .mobile-link {
@@ -278,6 +280,43 @@ p, h1, h2, h3 {
 .mobile-link.active {
   color: black;
   font-weight: 600;
+}
+
+.mobile-lang-item {
+  width: 100%;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.mobile-lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #4b5563;
+  font-size: 1rem;
+}
+
+.mobile-lang-switcher span {
+  font-weight: 500;
+}
+
+.mobile-lang-switcher select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+  font-size: 1rem;
+  color: #111827;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.mobile-lang-switcher select:focus {
+  border-color: #0d9488;
 }
 
 
@@ -302,6 +341,9 @@ p, h1, h2, h3 {
 
   .mobile-menu {
     display: block;
+  }
+  .lang-switcher.hide-mobile {
+    display: none;
   }
 }
 
