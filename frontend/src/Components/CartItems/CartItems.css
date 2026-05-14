@@ -305,6 +305,9 @@
 }
 
 @media (max-width: 480px) {
+  .cart-container{
+    margin: 3rem auto 4rem;
+  }
   .mini-actions{
     gap: .6rem;
   }

@@ -360,7 +360,7 @@
     }
 
     .mini-order-item {
-        height: 8px;
+        height: 12px;
         margin-bottom: 2px;
         border-radius: 2px;
     }
@@ -369,6 +369,7 @@
 
 @media (max-width: 480px) {
     .admin-orders-container{
+        padding-top: 15px;
         margin-left: -30px;
         margin-right: -32px;
         max-width: none;
@@ -385,6 +386,7 @@
         width: 100%;
         margin-bottom: 2px;
         padding: 0;
+        gap: 3px;
     }
 
     .more-orders-text {

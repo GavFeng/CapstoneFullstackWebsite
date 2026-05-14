@@ -16,6 +16,7 @@
 
 @media (max-width: 768px) {
   .content-area {
+    padding-top: 5px;
     padding-bottom: 70px; 
   }
 }

@@ -143,6 +143,7 @@
 
 @media (max-width: 480px) {
   .manage-stock-page{
+    padding-top: 15px;
     margin-left: -32px;
     margin-right: -32px;
   }

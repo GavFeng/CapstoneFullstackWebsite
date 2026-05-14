@@ -141,3 +141,9 @@
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
 }
+
+@media (max-width: 480px) {
+  .jig-category-page{
+    margin-top: 30px;
+  }
+}
