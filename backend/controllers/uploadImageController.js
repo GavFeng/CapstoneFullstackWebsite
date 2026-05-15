@@ -20,6 +20,10 @@ exports.uploadImage = async (req, res) => {
 
   } catch (err) {
     console.error("Upload error:", err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ 
+      message: err.message, 
+      stack: err.stack,
+      details: err
+    });
   }
 };
