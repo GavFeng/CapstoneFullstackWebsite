@@ -7,6 +7,6 @@ const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
-router.post("/", upload.single("image"), authMiddleware, adminMiddleware, uploadImage);
+router.post("/", upload.single("image"), uploadImage);
 
 module.exports = router;
