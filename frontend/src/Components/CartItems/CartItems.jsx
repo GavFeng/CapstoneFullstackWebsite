@@ -88,7 +88,7 @@ const CartItems = () => {
     if (entry.quantity > availableStock && availableStock > 0) {
       setCartQuantity(entry.jigId, entry.colorId, availableStock);
     } else if (entry.quantity > 1) {
-      setCartQuantity(entry.jigId, entry.colorId, entry.quantity);
+      setCartQuantity(entry.jigId, entry.colorId, entry.quantity - 1);
     }
   };
 
