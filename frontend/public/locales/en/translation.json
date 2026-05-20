@@ -5,7 +5,8 @@
     "profile": "Profile",
     "orders": "My Orders",
     "logout": "Sign Out",
-    "login": "Login"
+    "login": "Login",
+    "language": "Language"
   },
   "hero": {
     "title": "Premium Squid Jigs",

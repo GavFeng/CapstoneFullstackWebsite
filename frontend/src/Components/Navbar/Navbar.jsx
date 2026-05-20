@@ -104,14 +104,14 @@ const Navbar = () => {
                     className="dropdown-item"
                     onClick={handleLogout}
                   >
-                    Logout
+                    {t('nav.logout')}
                   </Link>
                 </div>
               )}
             </div>
           ) : (
             <Link to="/login" className="nav-login">
-              Login
+              {t('nav.login')}
             </Link>
           )}
 
@@ -160,7 +160,7 @@ const Navbar = () => {
                   className="mobile-link"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Login
+                  {t('nav.login')}
                 </Link>
               </li>
             ) : (
@@ -191,17 +191,17 @@ const Navbar = () => {
                     className="mobile-link"
                     onClick={handleLogout}
                   >
-                    Logout
+                    {t('nav.logout')}
                   </Link>
-                </li>
-                <li className="mobile-lang-item">
-                  <div className="mobile-lang-switcher">
-                    <span>{t('Language')}: </span>
-                    <LanguageSelect />
-                  </div>
                 </li>
               </>
             )}
+            <li className="mobile-lang-item">
+              <div className="mobile-lang-switcher">
+                <span>{t('nav.language')}: </span>
+                <LanguageSelect />
+              </div>
+            </li>
           </ul>
         </div>
       )}
