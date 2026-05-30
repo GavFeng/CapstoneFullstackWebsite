@@ -213,7 +213,7 @@ const Analytic = () => {
                     }
                   }
                 },
-                cutout: '70%' // Makes it look more modern and sleeker
+                cutout: '70%'
               }} 
             />
           </div>
