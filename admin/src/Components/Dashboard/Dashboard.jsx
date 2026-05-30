@@ -155,7 +155,7 @@ const Dashboard = () => {
                       <strong>Items</strong>
                       {order.items?.map((item, i) => (
                         <div key={i} className="admin-item-line">
-                          {item.quantity}x {item.jig?.name} 
+                          {item.quantity}x {item.jig?.name || "Deleted Jig"} 
                           <span className="admin-color-tag" style={{ color: item.color?.name || "#666", fontWeight: 'bold' }}>
                             ({item.color?.name || "Standard"})
                           </span>
