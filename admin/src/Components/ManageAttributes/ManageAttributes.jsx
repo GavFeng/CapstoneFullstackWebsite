@@ -104,23 +104,49 @@ const ManageAttributes = ({ title, endpoint, checkEndpoint, fields, itemName, on
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoading(true); 
+    setError("");
+
     try {
       const payload = { ...formData };
       if (payload.value) payload.value = Number(payload.value);
       
-      // Slugs are only for non-weight, non-location attributes (e.g., Strains, Categories)
-      if (!isWeight && itemName.toLowerCase() !== "location" && payload.name) {
+      if (itemName.toLowerCase() !== "location" && payload.name) {
         payload.slug = payload.name.toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/^-+|-+$/g, '');
       }
 
+      /* ---------- 1. CLIENT-SIDE DUPLICATE CHECK ---------- */
+      if (checkEndpoint) {
+        const queryParam = isWeight 
+          ? `label=${encodeURIComponent(payload.label)}` 
+          : `name=${encodeURIComponent(payload.name)}`;
+        console.log("Checking duplicate:", `${checkEndpoint}?${queryParam}`);  
+        const checkRes = await api.get(`${checkEndpoint}?${queryParam}`);
+        
+        if (checkRes.data && (checkRes.data.exists === true || checkRes.data === true)) {
+          setError(`${itemName} "${payload.label || payload.name}" already exists.`);
+          setLoading(false);
+          return; 
+        }
+      }
+
+      /* ---------- 2. SUBMIT DATA ---------- */
       await api.post(endpoint, payload);
       setFormData({});
       fetchItems();
-    } catch (err) { setError("Submit failed"); }
-    finally { setLoading(false); }
+    } catch (err) { 
+      console.error("Submit error details:", err);
+      
+      const serverMessage = err.response?.data?.message 
+        || err.response?.data?.error 
+        || (typeof err.response?.data === 'string' ? err.response.data : null);
+        
+      setError(serverMessage || `${itemName} could not be saved.`); 
+    } finally { 
+      setLoading(false); 
+    }
   };
 
   return (
